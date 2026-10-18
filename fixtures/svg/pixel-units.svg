@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="151.18110236220474px"
+   height="151.18110236220474px"
+   viewBox="0 0 96 96"
+   version="1.1"
+   id="svg12"
+   sodipodi:docname="seed.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview14"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
+  <title
+     id="title2">CoinPrint original fixture artwork</title>
+  <defs
+     id="defs4" />
+  <g
+     id="base"
+     inkscape:groupmode="layer"
+     inkscape:label="Base"
+     fill="#242424">
+    <rect
+       x="0"
+       y="0"
+       width="96"
+       height="96"
+       id="rect6" />
+  </g>
+  <g
+     id="art"
+     inkscape:groupmode="layer"
+     inkscape:label="Inset"
+     fill="#d8a32b">
+    <rect
+       x="24"
+       y="24"
+       width="48"
+       height="48"
+       id="rect9" />
+  </g>
+</svg>

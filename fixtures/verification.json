@@ -1,0 +1,327 @@
+{
+  "command": "python3 scripts/check-fixtures.py",
+  "inkscapeVersion": "Inkscape 1.2.2 (b0a8486541, 2022-12-01)",
+  "fixtures": 21,
+  "positiveImports": 11,
+  "rejectedImports": 10,
+  "measuredLayers": 26,
+  "boundsToleranceMm": 0.001,
+  "rasterAreaRelativeTolerance": 0.003,
+  "rasterAreaAbsoluteToleranceMm2": 0.15,
+  "result": "pass",
+  "measurements": [
+    {
+      "fixture": "bezier-ellipse.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1256.51763,
+      "expectedAreaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "bezier-ellipse.svg",
+      "layer": "art",
+      "rasterAreaMm2": 123.38424,
+      "expectedAreaMm2": 123.39822368615503,
+      "boundsMm": [
+        7.999995,
+        14.000004,
+        28.000007,
+        25.999996
+      ]
+    },
+    {
+      "fixture": "edge-sharing.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1600.0,
+      "expectedAreaMm2": 1600,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "edge-sharing.svg",
+      "layer": "art",
+      "rasterAreaMm2": 400.0,
+      "expectedAreaMm2": 400,
+      "boundsMm": [
+        0.0,
+        10.000006,
+        20.000013,
+        30.000019
+      ]
+    },
+    {
+      "fixture": "letter-o-evenodd.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1256.51763,
+      "expectedAreaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "letter-o-evenodd.svg",
+      "layer": "letter",
+      "rasterAreaMm2": 256.0,
+      "expectedAreaMm2": 256,
+      "boundsMm": [
+        10.999999,
+        8.999987,
+        29.0,
+        30.999986
+      ]
+    },
+    {
+      "fixture": "monogram-o.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1256.51763,
+      "expectedAreaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "monogram-o.svg",
+      "layer": "plaque",
+      "rasterAreaMm2": 728.0,
+      "expectedAreaMm2": 728,
+      "boundsMm": [
+        7.000002,
+        6.000009,
+        32.999997,
+        34.00007
+      ]
+    },
+    {
+      "fixture": "monogram-o.svg",
+      "layer": "letter",
+      "rasterAreaMm2": 256.0,
+      "expectedAreaMm2": 256,
+      "boundsMm": [
+        10.999999,
+        8.999987,
+        29.0,
+        30.999986
+      ]
+    },
+    {
+      "fixture": "offset-nested-transforms.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1256.51763,
+      "expectedAreaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "offset-nested-transforms.svg",
+      "layer": "art",
+      "rasterAreaMm2": 36.0,
+      "expectedAreaMm2": 36,
+      "boundsMm": [
+        3.999997,
+        10.000006,
+        10.000006,
+        16.000016
+      ]
+    },
+    {
+      "fixture": "outside-rim.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1256.51763,
+      "expectedAreaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "outside-rim.svg",
+      "layer": "art",
+      "rasterAreaMm2": 32.0,
+      "expectedAreaMm2": 32,
+      "boundsMm": [
+        34.000017,
+        18.000001,
+        42.000011,
+        21.999998
+      ]
+    },
+    {
+      "fixture": "over-lower-hole.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1256.51763,
+      "expectedAreaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "over-lower-hole.svg",
+      "layer": "ring",
+      "rasterAreaMm2": 640.0,
+      "expectedAreaMm2": 640,
+      "boundsMm": [
+        6.000009,
+        6.000009,
+        34.00007,
+        34.00007
+      ]
+    },
+    {
+      "fixture": "over-lower-hole.svg",
+      "layer": "art",
+      "rasterAreaMm2": 36.0,
+      "expectedAreaMm2": 36,
+      "boundsMm": [
+        17.000008,
+        17.000008,
+        23.000017,
+        23.000017
+      ]
+    },
+    {
+      "fixture": "overlapping-shapes.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1256.51763,
+      "expectedAreaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "overlapping-shapes.svg",
+      "layer": "art",
+      "rasterAreaMm2": 320.0,
+      "expectedAreaMm2": 320,
+      "boundsMm": [
+        7.999995,
+        11.999992,
+        32.000005,
+        27.999981
+      ]
+    },
+    {
+      "fixture": "pixel-units.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1600.0,
+      "expectedAreaMm2": 1600,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "pixel-units.svg",
+      "layer": "art",
+      "rasterAreaMm2": 400.0,
+      "expectedAreaMm2": 400,
+      "boundsMm": [
+        10.000006,
+        10.000006,
+        30.000019,
+        30.000019
+      ]
+    },
+    {
+      "fixture": "sun-medallion.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1256.51763,
+      "expectedAreaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "sun-medallion.svg",
+      "layer": "field",
+      "rasterAreaMm2": 804.172658,
+      "expectedAreaMm2": 804.247719318987,
+      "boundsMm": [
+        3.999997,
+        3.999997,
+        36.000029,
+        36.000029
+      ]
+    },
+    {
+      "fixture": "sun-medallion.svg",
+      "layer": "sun",
+      "rasterAreaMm2": 113.083621,
+      "expectedAreaMm2": 113.09733552923255,
+      "boundsMm": [
+        14.000004,
+        14.000004,
+        25.999996,
+        25.999996
+      ]
+    },
+    {
+      "fixture": "twin-stars.svg",
+      "layer": "base",
+      "rasterAreaMm2": 1256.51763,
+      "expectedAreaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0.0,
+        0.0,
+        39.999973,
+        39.999973
+      ]
+    },
+    {
+      "fixture": "twin-stars.svg",
+      "layer": "field",
+      "rasterAreaMm2": 1017.773194,
+      "expectedAreaMm2": 1017.8760197630929,
+      "boundsMm": [
+        2.000001,
+        2.000001,
+        38.000003,
+        38.000003
+      ]
+    },
+    {
+      "fixture": "twin-stars.svg",
+      "layer": "stars",
+      "rasterAreaMm2": 135.988645,
+      "expectedAreaMm2": 136,
+      "boundsMm": [
+        3.000005,
+        11.999992,
+        33.999911,
+        25.999996
+      ]
+    }
+  ],
+  "limitations": "Independent Inkscape XML/bounds/raster-area checks only. Support/topology/volume are analytical oracles for later engine tests. No CoinPrint import, mesh, slicer or physical-print acceptance performed."
+}

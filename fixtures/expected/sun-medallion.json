@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "source": "fixtures/svg/sun-medallion.svg",
+  "physicalPageMm": [
+    40,
+    40
+  ],
+  "intendedLayerOrder": [
+    "Base",
+    "Gold field",
+    "Sun"
+  ],
+  "coordinateConvention": "SVG page-relative mm, +X right, +Y down; bounds=[minX,minY,maxX,maxY]",
+  "layers": [
+    {
+      "id": "base",
+      "name": "Base",
+      "areaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "regions": 1,
+      "holes": 0,
+      "supportedByPrevious": null,
+      "thicknessMm": 1.6,
+      "order": 0,
+      "bottomZMm": 0,
+      "topZMm": 1.6
+    },
+    {
+      "id": "field",
+      "name": "Gold field",
+      "areaMm2": 804.247719318987,
+      "boundsMm": [
+        4,
+        4,
+        36,
+        36
+      ],
+      "regions": 1,
+      "holes": 0,
+      "supportedByPrevious": true,
+      "thicknessMm": 0.4,
+      "order": 1,
+      "bottomZMm": 1.6,
+      "topZMm": 2.0
+    },
+    {
+      "id": "sun",
+      "name": "Sun",
+      "areaMm2": 113.09733552923255,
+      "boundsMm": [
+        14,
+        14,
+        26,
+        26
+      ],
+      "regions": 1,
+      "holes": 0,
+      "supportedByPrevious": true,
+      "thicknessMm": 0.4,
+      "order": 2,
+      "bottomZMm": 2.0,
+      "topZMm": 2.4
+    }
+  ],
+  "importOutcome": "accept",
+  "expectedDiagnostics": [],
+  "geometryOutcome": "valid",
+  "exportAllowedAfterGeometryValidation": true,
+  "analyticalVolumeMm3": 2377.5573202367555,
+  "totalHeightMm": 2.4,
+  "realisticSample": true,
+  "physicalPrintCandidate": true,
+  "notes": "Three nested disks. First print candidate: 40 mm diameter, 2.4 mm high; 1.6/0.4/0.4 mm tiers aligned to 0.2 mm print layers. Minimum radial terrace is 4 mm. Hide field: sun remains supported by base; total height becomes 2.0 mm.",
+  "provenance": "Original procedural artwork authored for DIG-6; opened and saved by Inkscape CLI.",
+  "manualAcceptance": {
+    "slicer": "not run",
+    "physicalPrint": "not run"
+  },
+  "inkscapeVersion": "Inkscape 1.2.2 (b0a8486541, 2022-12-01)"
+}

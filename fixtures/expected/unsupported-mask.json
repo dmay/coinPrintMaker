@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "source": "fixtures/svg/unsupported-mask.svg",
+  "physicalPageMm": [
+    40,
+    40
+  ],
+  "intendedLayerOrder": [
+    "Base",
+    "Unsupported artwork"
+  ],
+  "coordinateConvention": "SVG page-relative mm, +X right, +Y down; bounds=[minX,minY,maxX,maxY]",
+  "layers": [],
+  "importOutcome": "reject",
+  "expectedDiagnostics": [
+    "MASK_UNSUPPORTED"
+  ],
+  "geometryOutcome": "blocked",
+  "exportAllowedAfterGeometryValidation": false,
+  "analyticalVolumeMm3": null,
+  "totalHeightMm": null,
+  "realisticSample": false,
+  "physicalPrintCandidate": false,
+  "notes": "Reject at preflight; do not return partial printable geometry. Diagnostic names describe expected categories, not a frozen application API. Intended layers: Base then Unsupported artwork. No geometry oracle for rejected content.",
+  "provenance": "Handcrafted negative mutation for parser/preflight tests; intentionally not normalized by Inkscape.",
+  "manualAcceptance": {
+    "slicer": "not run",
+    "physicalPrint": "not run"
+  }
+}

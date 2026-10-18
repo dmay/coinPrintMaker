@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "source": "fixtures/svg/pixel-units.svg",
+  "physicalPageMm": [
+    40,
+    40
+  ],
+  "intendedLayerOrder": [
+    "Base",
+    "Inset"
+  ],
+  "coordinateConvention": "SVG page-relative mm, +X right, +Y down; bounds=[minX,minY,maxX,maxY]",
+  "layers": [
+    {
+      "id": "base",
+      "name": "Base",
+      "areaMm2": 1600,
+      "boundsMm": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "regions": 1,
+      "holes": 0,
+      "supportedByPrevious": null,
+      "thicknessMm": 1.6,
+      "order": 0,
+      "bottomZMm": 0,
+      "topZMm": 1.6
+    },
+    {
+      "id": "art",
+      "name": "Inset",
+      "areaMm2": 400,
+      "boundsMm": [
+        10,
+        10,
+        30,
+        30
+      ],
+      "regions": 1,
+      "holes": 0,
+      "supportedByPrevious": true,
+      "thicknessMm": 0.4,
+      "order": 1,
+      "bottomZMm": 1.6,
+      "topZMm": 2.0
+    }
+  ],
+  "importOutcome": "accept",
+  "expectedDiagnostics": [],
+  "geometryOutcome": "valid",
+  "exportAllowedAfterGeometryValidation": true,
+  "analyticalVolumeMm3": 2720.0,
+  "totalHeightMm": 2.0,
+  "realisticSample": false,
+  "physicalPrintCandidate": false,
+  "notes": "96 CSS px/in and 25.4 mm/in make this a 40 mm page. Root user-unit scale is 40/96 mm; do not treat viewBox units as CSS pixels.",
+  "provenance": "Original procedural artwork authored for DIG-6; opened and saved by Inkscape CLI.",
+  "manualAcceptance": {
+    "slicer": "not run",
+    "physicalPrint": "not run"
+  },
+  "inkscapeVersion": "Inkscape 1.2.2 (b0a8486541, 2022-12-01)"
+}

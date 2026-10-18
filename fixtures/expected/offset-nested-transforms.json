@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "source": "fixtures/svg/offset-nested-transforms.svg",
+  "physicalPageMm": [
+    40,
+    40
+  ],
+  "intendedLayerOrder": [
+    "Base",
+    "Transformed tile"
+  ],
+  "coordinateConvention": "SVG page-relative mm, +X right, +Y down; bounds=[minX,minY,maxX,maxY]",
+  "layers": [
+    {
+      "id": "base",
+      "name": "Base",
+      "areaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "regions": 1,
+      "holes": 0,
+      "supportedByPrevious": null,
+      "thicknessMm": 1.6,
+      "order": 0,
+      "bottomZMm": 0,
+      "topZMm": 1.6
+    },
+    {
+      "id": "art",
+      "name": "Transformed tile",
+      "areaMm2": 36,
+      "boundsMm": [
+        4,
+        10,
+        10,
+        16
+      ],
+      "regions": 1,
+      "holes": 0,
+      "supportedByPrevious": true,
+      "thicknessMm": 0.4,
+      "order": 1,
+      "bottomZMm": 1.6,
+      "topZMm": 2.0
+    }
+  ],
+  "importOutcome": "accept",
+  "expectedDiagnostics": [],
+  "geometryOutcome": "valid",
+  "exportAllowedAfterGeometryValidation": true,
+  "analyticalVolumeMm3": 2025.019298297468,
+  "totalHeightMm": 2.0,
+  "realisticSample": false,
+  "physicalPrintCandidate": false,
+  "notes": "Subtract root viewBox origin, then scale 0.5 mm/user-unit. Tile: local [0,0,6,4] \u2192 scale(2,3) \u2192 rotate90 \u2192 translate(40,50) \u2192 page mm [4,10,10,16]. Nested groups are not printing layers.",
+  "provenance": "Original procedural artwork authored for DIG-6; opened and saved by Inkscape CLI.",
+  "manualAcceptance": {
+    "slicer": "not run",
+    "physicalPrint": "not run"
+  },
+  "inkscapeVersion": "Inkscape 1.2.2 (b0a8486541, 2022-12-01)"
+}
