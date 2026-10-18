@@ -13,3 +13,31 @@ main {
   margin: 3rem auto;
   padding: 0 1.5rem;
 }
+
+section {
+  max-width: 42rem;
+  padding: 1.5rem;
+  border: 1px solid #cbd0d7;
+  border-radius: 0.5rem;
+  background: white;
+}
+
+label, input {
+  display: block;
+  margin-block: 0.75rem;
+}
+
+input {
+  max-width: 100%;
+  font: inherit;
+}
+
+[role="alert"] {
+  border-left: 0.25rem solid #a52323;
+  padding-left: 1rem;
+}
+
+.import-note {
+  color: #505963;
+  font-size: 0.9rem;
+}
