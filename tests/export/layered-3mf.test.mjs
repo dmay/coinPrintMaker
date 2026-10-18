@@ -140,7 +140,7 @@ test('all retained sample packages match regeneration and load as one assembly i
   }
   // Python's ZIP reader independently checks CRCs, local/central directory records,
   // UTF-8 XML and standard-library XML parsing for every retained package.
-  execFileSync('python3',['-c',`import glob,zipfile,xml.etree.ElementTree as ET
+  execFileSync(process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3'),['-c',`import glob,zipfile,xml.etree.ElementTree as ET
 for path in glob.glob('spikes/layered-3mf/samples/*.3mf'):
  with zipfile.ZipFile(path) as z:
   assert z.testzip() is None
