@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 1,
+  "coordinateConvention": "mm; XY face, +Z up; absolute part vertices",
+  "packaging": "3MF Core; one assembly build item; one named mesh per layer; base-material display colors",
+  "slicer": {
+    "status": "not run",
+    "version": null
+  },
+  "decisions": {
+    "D06": "pending joint STL/3MF validation",
+    "D07": "pending joint STL/3MF validation"
+  },
+  "samples": [
+    {
+      "name": "sun-medallion",
+      "outcome": "automated checks passed; slicer pending",
+      "comparisonStl": "spikes/tiered-stl/samples/sun-medallion.stl",
+      "dimensionsMm": [
+        40,
+        40,
+        2.4
+      ],
+      "volumeMm3": 2375.8691518186865,
+      "parts": [
+        {
+          "objectId": 2,
+          "name": "Base",
+          "displayColor": "#242424",
+          "bottomZMm": 0,
+          "topZMm": 1.6,
+          "closedShells": 1,
+          "vertices": 200,
+          "triangles": 396,
+          "volumeMm3": 2009.2966249380272
+        },
+        {
+          "objectId": 3,
+          "name": "Gold field",
+          "displayColor": "#D4AF37",
+          "bottomZMm": 1.6,
+          "topZMm": 2,
+          "closedShells": 1,
+          "vertices": 178,
+          "triangles": 352,
+          "volumeMm3": 321.4319285640024
+        },
+        {
+          "objectId": 4,
+          "name": "Sun",
+          "displayColor": "#F5F5F5",
+          "bottomZMm": 2,
+          "topZMm": 2.4,
+          "closedShells": 1,
+          "vertices": 110,
+          "triangles": 216,
+          "volumeMm3": 45.140598316653936
+        }
+      ],
+      "packageBytes": 65940,
+      "sha256": "08f4d6105f4994e1155659c6d9586c715064edd830b4df0f051c964c8632b7fc"
+    },
+    {
+      "name": "monogram-o",
+      "outcome": "automated checks passed; slicer pending",
+      "comparisonStl": "spikes/tiered-stl/samples/monogram-o.stl",
+      "dimensionsMm": [
+        40,
+        40,
+        2.4
+      ],
+      "volumeMm3": 2402.8966249380273,
+      "parts": [
+        {
+          "objectId": 2,
+          "name": "Base",
+          "displayColor": "#242424",
+          "bottomZMm": 0,
+          "topZMm": 1.6,
+          "closedShells": 1,
+          "vertices": 200,
+          "triangles": 396,
+          "volumeMm3": 2009.2966249380272
+        },
+        {
+          "objectId": 3,
+          "name": "Plaque",
+          "displayColor": "#D4AF37",
+          "bottomZMm": 1.6,
+          "topZMm": 2,
+          "closedShells": 1,
+          "vertices": 8,
+          "triangles": 12,
+          "volumeMm3": 291.19999999999993
+        },
+        {
+          "objectId": 4,
+          "name": "Letter O",
+          "displayColor": "#F5F5F5",
+          "bottomZMm": 2,
+          "topZMm": 2.4,
+          "closedShells": 1,
+          "vertices": 16,
+          "triangles": 32,
+          "volumeMm3": 102.39999999999979
+        }
+      ],
+      "packageBytes": 30394,
+      "sha256": "20ed9775c62c6c2b8245153ea750dc37662d6197abda19cf9236e4b1574db84e"
+    },
+    {
+      "name": "twin-stars",
+      "outcome": "automated checks passed; slicer pending",
+      "comparisonStl": "spikes/tiered-stl/samples/twin-stars.stl",
+      "dimensionsMm": [
+        40,
+        40,
+        2.4
+      ],
+      "volumeMm3": 2470.5502620470365,
+      "parts": [
+        {
+          "objectId": 2,
+          "name": "Base",
+          "displayColor": "#242424",
+          "bottomZMm": 0,
+          "topZMm": 1.6,
+          "closedShells": 1,
+          "vertices": 200,
+          "triangles": 396,
+          "volumeMm3": 2009.2966249380272
+        },
+        {
+          "objectId": 3,
+          "name": "Blue field",
+          "displayColor": "#D4AF37",
+          "bottomZMm": 1.6,
+          "topZMm": 2,
+          "closedShells": 1,
+          "vertices": 190,
+          "triangles": 376,
+          "volumeMm3": 406.85363710900793
+        },
+        {
+          "objectId": 4,
+          "name": "Twin stars",
+          "displayColor": "#F5F5F5",
+          "bottomZMm": 2,
+          "topZMm": 2.4,
+          "closedShells": 2,
+          "vertices": 40,
+          "triangles": 72,
+          "volumeMm3": 54.400000000000134
+        }
+      ],
+      "packageBytes": 57022,
+      "sha256": "6957aa0da640e2944d24a2fc0b4f7801d0d4394d691e16a775ce4536381606d4"
+    },
+    {
+      "name": "letter-o-evenodd",
+      "outcome": "automated checks passed; slicer pending",
+      "comparisonStl": "spikes/tiered-stl/samples/letter-o-evenodd.stl",
+      "dimensionsMm": [
+        40,
+        40,
+        2
+      ],
+      "volumeMm3": 2111.6966249380275,
+      "parts": [
+        {
+          "objectId": 2,
+          "name": "Base",
+          "displayColor": "#242424",
+          "bottomZMm": 0,
+          "topZMm": 1.6,
+          "closedShells": 1,
+          "vertices": 200,
+          "triangles": 396,
+          "volumeMm3": 2009.2966249380272
+        },
+        {
+          "objectId": 3,
+          "name": "Letter O",
+          "displayColor": "#D4AF37",
+          "bottomZMm": 1.6,
+          "topZMm": 2,
+          "closedShells": 1,
+          "vertices": 16,
+          "triangles": 32,
+          "volumeMm3": 102.4
+        }
+      ],
+      "packageBytes": 29583,
+      "sha256": "f02b0f2faccad292876ebf1ab5ac94209b8ea5ed3c569f065a32a4c904dded6d"
+    },
+    {
+      "name": "edge-sharing",
+      "outcome": "automated checks passed; slicer pending",
+      "comparisonStl": "spikes/tiered-stl/samples/edge-sharing.stl",
+      "dimensionsMm": [
+        40,
+        40,
+        2
+      ],
+      "volumeMm3": 2720,
+      "parts": [
+        {
+          "objectId": 2,
+          "name": "Base",
+          "displayColor": "#242424",
+          "bottomZMm": 0,
+          "topZMm": 1.6,
+          "closedShells": 1,
+          "vertices": 8,
+          "triangles": 12,
+          "volumeMm3": 2560
+        },
+        {
+          "objectId": 3,
+          "name": "Shared edge",
+          "displayColor": "#D4AF37",
+          "bottomZMm": 1.6,
+          "topZMm": 2,
+          "closedShells": 1,
+          "vertices": 8,
+          "triangles": 12,
+          "volumeMm3": 160
+        }
+      ],
+      "packageBytes": 2953,
+      "sha256": "65b04f0c986d4609d741075f4aa0271e0d1be10828c13e11262d75a2ac6b4060"
+    },
+    {
+      "name": "overlapping-shapes",
+      "outcome": "automated checks passed; slicer pending",
+      "comparisonStl": "spikes/tiered-stl/samples/overlapping-shapes.stl",
+      "dimensionsMm": [
+        40,
+        40,
+        2
+      ],
+      "volumeMm3": 2137.2966249380293,
+      "parts": [
+        {
+          "objectId": 2,
+          "name": "Base",
+          "displayColor": "#242424",
+          "bottomZMm": 0,
+          "topZMm": 1.6,
+          "closedShells": 1,
+          "vertices": 200,
+          "triangles": 396,
+          "volumeMm3": 2009.2966249380272
+        },
+        {
+          "objectId": 3,
+          "name": "Overlapping bars",
+          "displayColor": "#D4AF37",
+          "bottomZMm": 1.6,
+          "topZMm": 2,
+          "closedShells": 1,
+          "vertices": 16,
+          "triangles": 28,
+          "volumeMm3": 127.9999999999999
+        }
+      ],
+      "packageBytes": 29470,
+      "sha256": "faf774417570ed1290fee7a516be992d40a265c570d9b6129c21abbdccf13b93"
+    },
+    {
+      "name": "outside-rim",
+      "outcome": "rejected: unsupported upper footprint"
+    },
+    {
+      "name": "over-lower-hole",
+      "outcome": "rejected: unsupported upper footprint"
+    }
+  ]
+}

@@ -44,6 +44,11 @@ See D-03–D-05 in `docs/design-decisions.md` for the production decisions and l
 
 ## OrcaSlicer acceptance — pending
 
+The operator authorized DIG-9 coding before this last manual check. Record the
+STL and paired 3MF acceptance together in the shared
+[M0 worksheet](../../docs/m0-slicer-validation.md); its session/evidence record
+completes the checklist below. This changes the session sequence, not the gate.
+
 OrcaSlicer is not installed in the execution environment. No slicer version,
 repair status, import dimensions, sliced preview or physical print is claimed.
 DIG-8 stays unfinished until the following evidence is recorded:

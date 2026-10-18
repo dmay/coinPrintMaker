@@ -1,8 +1,9 @@
 # CoinPrint design decisions
 
 Baseline: project requirements and technical design dated 2026-10-17.
-Evidence task: DIG-7 / M0.2. These decisions establish the import spike contract;
-they do not satisfy the M0 end-to-end slicer gate.
+Evidence tasks: DIG-7 / M0.2, DIG-8 / M0.3 and DIG-9 / M0.4. These findings
+establish bounded prototype contracts; they do not satisfy the M0 end-to-end
+slicer gate. Joint manual acceptance: [M0 worksheet](m0-slicer-validation.md).
 
 ## D-01 — Layer identity, order, base and supported SVG
 
@@ -134,3 +135,63 @@ proves the raised-island case, and explicit tests reject a disconnected base.
 Point-touching geometry cannot substitute for a material connection: cyclic vertex
 link and shell checks reject nonmanifold pinches. Revisit multi-coin input only as
 an explicit scope change.
+
+## D-06 — 3MF assembly and aligned selectable parts
+
+**Candidate implemented in DIG-9; OrcaSlicer decision pending.** One Core model
+part declares millimeters. One build item references a components-only coin
+assembly; its children reference one named mesh object per layer, each capped
+and positioned at its absolute Z interval. No independent build items, per-part
+recentering or transforms. Raised islands occupy multiple independently validated
+closed shells inside the same named layer mesh. Layer volumes meet only at faces,
+and their sum agrees with the unified STL volume.
+
+**Automated evidence:** Six retained `.3mf` samples, two unsupported-stack
+rejections, `fixtures/layered-3mf-verification.json`, ZIP/XML/resource checks,
+reparsed mesh shell topology and volume, comparison with actual STL facets,
+ThreeMFLoader assembly/dimension checks and independent Python ZIP/XML checks.
+Pinned Three.js's bundled fflate avoids new dependencies; deterministic STORE
+packages are a spike convenience, not a production performance choice. These
+checks do not prove OrcaSlicer compatibility or full OPC/XSD conformance.
+
+**Open manual gate:** Verify exact import behavior, one object/selectable layer
+parts, elevated parts staying at Z, multi-shell layers, no repair, slice and
+save/reopen in a recorded OrcaSlicer version. If this structure fails, revise
+packaging and retest; investigate nested components for islands if necessary.
+Do not silently flatten layers or move upper parts to the bed. Finalize D-06
+from the joint worksheet, then reverify during M4.
+
+## D-07 — Generic display colors and filament assignment
+
+**Candidate implemented; OrcaSlicer decision pending.** Core base-material
+entries carry unique ordinal/name labels and opaque sRGB `displaycolor` values.
+Each mesh references its material via `pid`/`pindex`. The spike harness explicitly
+sets colors independently of SVG paint. Escaping/Unicode and a consumer color
+round trip pass in ThreeMFLoader. Core specification chapters 4–5 distinguish
+assembly placement and display properties from physical printer configuration:
+[primary format reference](https://github.com/3MFConsortium/spec_core/blob/master/3MF%20Core%20Specification.md).
+
+No printer/extruder presets or automatic filament mapping are promised. Record
+OrcaSlicer's actual pre-assignment color behavior, then exact manual mapping and
+save/reopen results. If colors are ignored, document reliable part-name-based
+assignment; if part identity or placement is lost, fix D-06 first. Final D-07
+and user guidance remain pending the same recorded session as STL acceptance.
+
+## M0 consolidation and remaining gate
+
+| Decision | Current evidence / next action |
+|---|---|
+| D-01 / D-02 | Import adapter and physical-unit contract established on DIG-7 fixtures; production hardening remains M1. |
+| D-03 / D-04 | Shared-edge/holes/terrace topology pass DIG-8 automation; actual STL import/slice remains pending. |
+| D-05 | Reject disconnected bases; retain supported raised islands. |
+| D-06 / D-07 | DIG-9 coding/sample evidence prepared; packaging/color conclusions require joint OrcaSlicer validation. |
+| D-08 | Responsiveness/worker decision deferred to measured production UI work in M3. |
+| D-09 | Root `index.html` / main Pages arrangement retained; reproducible production build remains M1/M5 work. |
+
+The operator explicitly authorized DIG-9 coding while DIG-8's last manual check
+is pending. This replans validation into one paired session, **not a waiver of
+the M0 exit gate**. DIG-8 and DIG-9 remain unfinished until their manual criteria
+are evidenced. M1 is still blocked. Record actual observations in
+`docs/m0-slicer-validation.md`, revise D-06/D-07, link retained evidence in both
+issues, and resolve/replan any failed gate before starting M1. No slicer version,
+successful slice or physical print is claimed by these prototype results.
