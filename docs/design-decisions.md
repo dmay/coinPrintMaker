@@ -251,3 +251,40 @@ Node 24.14.0 / Windows. GitHub CI supplies the separate Linux verification.
 Import/domain/editor/geometry/export implementation remains later work. The
 synced project Library source directory was empty during implementation; the
 current issue and repository decisions define this bounded build scope.
+
+## D-10 — Serializable canonical contracts and fixture boundaries
+
+**DIG-11 implementation, 2026-10-18:** Canonical production DTOs use page-relative
+mm with +Y up and +Z height, implicitly closed exterior CCW/hole CW rings, plain
+indexed triangle tuples and immutable imported source separate from editable
+settings. Opaque source-scoped layer IDs remain stable through edits; the base
+is fixed first and enabled. Diagnostics have stable codes, explicit locations and
+remediation. Generated results distinguish invalid diagnostics-only data from
+validated geometry and carry an import/settings revision key. The small pure
+freshness predicate does not validate meshes or implement UI state coordination.
+Color-only changes may reuse geometry but must update result metadata/revision;
+the async/cache/store policy remains DIG-24.
+
+See [domain-contracts.md](domain-contracts.md) for the full contract and numerical
+test thresholds. Core compiles without browser/Node ambient types. Vitest reads
+all 21 authored SVG/JSON pairs without rewriting reports: 11 accepted and 10
+rejected imports, nine derived valid planar stacks, two support rejections and
+the six existing validated M0 mesh samples. It replaces the former two
+report-writing Node fixture checks; other adversarial/export/build tests remain.
+M0 closed-ring adaptation is test-only; production normalization stays DIG-16.
+Fixture category labels are adopted as initial stable diagnostic codes; the M0
+adapters do not yet emit structured diagnostics.
+
+**Bounded finding:** An expanded mesh probe of the existing
+`offset-nested-transforms.svg` reaches M0 `buildCoin` but throws
+`Degenerate triangle`. It was never one of the six M0 mesh samples, and its
+planar import metrics still pass. Keep the M0 mesher unchanged here; production
+triangulation/stitching and validation must cover this input in
+[DIG-20](https://linear.app/diggy-01/issue/DIG-20) /
+[DIG-21](https://linear.app/diggy-01/issue/DIG-21) /
+[DIG-22](https://linear.app/diggy-01/issue/DIG-22).
+No previously passing fixture or manual acceptance is removed or broadened.
+
+**Source limitation:** The synced Library directory remained empty. These
+bounded contracts follow the live DIG-11 criteria and repository D-01 through
+D-09; no unavailable baseline sections or future defaults are claimed reviewed.
