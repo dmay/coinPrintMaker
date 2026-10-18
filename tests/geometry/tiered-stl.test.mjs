@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { buildCoin, validateMesh, writeStl } from '../../spikes/tiered-stl/mesh.mjs';
 const rect=(x,y,w,h)=>[[[[x,y],[x+w,y],[x+w,y+h],[x,y+h],[x,y]]]];
 const layer=(p,t=1)=>({footprintMm:p,thicknessMm:t});
-test('authored fixtures meet analytical bounds, volume and topology checks',async()=>{await import('../../scripts/check-tiered-stl.mjs');});
+
 test('identical footprints remove internal faces and retain cumulative Z',()=>{
  const r=buildCoin([layer(rect(0,0,40,40),1.6),layer(rect(0,0,40,40),.4)]);
  assert.deepEqual(r.metrics.dimensionsMm,[40,40,2]);assert.ok(Math.abs(r.metrics.volumeMm3-3200)<1e-8);

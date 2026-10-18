@@ -3,14 +3,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/import/*.test.mjs tests/geometry/*.test.mjs tests/export/*.test.mjs tests/build/*.test.mjs",
+    "test": "npm run test:unit && npm run test:legacy",
     "spike:svg": "node scripts/check-svg-extraction.mjs",
     "spike:stl": "node scripts/check-tiered-stl.mjs",
     "spike:3mf": "node scripts/check-layered-3mf.mjs",
     "dev": "vite",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.core.json && tsc -p tsconfig.tests.json",
     "build:pages": "npm run typecheck && node scripts/build-pages.mjs",
-    "check:pages": "npm run typecheck && node scripts/build-pages.mjs --check"
+    "check:pages": "npm run typecheck && node scripts/build-pages.mjs --check",
+    "test:unit": "vitest run",
+    "test:legacy": "node --test tests/import/*.test.mjs tests/geometry/*.test.mjs tests/export/*.test.mjs tests/build/*.test.mjs"
   },
   "dependencies": {
     "polygon-clipping": "0.15.7",
@@ -19,12 +21,15 @@
     "three": "0.186.1"
   },
   "devDependencies": {
+    "@types/jsdom": "30.0.0",
+    "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
     "jsdom": "26.1.0",
     "typescript": "7.0.2",
-    "vite": "8.3.4"
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
   },
   "engines": {
     "node": ">=24.0.0 <25"

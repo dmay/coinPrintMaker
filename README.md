@@ -66,3 +66,17 @@ Completed operator-reported STL/3MF acceptance and the export-only scope decisio
 are recorded in the [M0 worksheet](docs/m0-slicer-validation.md). All six pairs
 passed in OrcaSlicer 2.4.2 build 8500fcdc; the M0 gate is satisfied. Production
 implementation and later QA/physical-print gates remain separate work.
+
+## Canonical domain and fixture tests
+
+Pure serializable types for import, settings, active tiers, diagnostics and mesh
+results live in `app/src/core/`. Their units, ring winding/closure, stable layer
+identity, base protection and generation-freshness rules are documented in
+[docs/domain-contracts.md](docs/domain-contracts.md).
+
+`npm run test:unit` runs the read-only Vitest fixture/contract suite; `npm test`
+also runs the retained Node build/export/adversarial suites. Fixture metrics are
+analytical oracles with explicit tolerances, adapted from the retained M0
+prototypes until the production importer/mesher replaces them. Tests do not
+regenerate historical M0 fixture reports or samples. Use the explicit `spike:*`
+commands for that purpose. `npm run typecheck` checks app, ES-only core and tests.

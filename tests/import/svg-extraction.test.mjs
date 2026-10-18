@@ -7,7 +7,7 @@ globalThis.DOMParser = new JSDOM('').window.DOMParser;
 const wrap = (body,attrs='width="40mm" height="20mm"') => `<svg xmlns="http://www.w3.org/2000/svg" xmlns:i="http://www.inkscape.org/namespaces/inkscape" viewBox="10 20 40 20" ${attrs}>${body}</svg>`;
 const layer = (body,name='Base') => `<g i:groupmode="layer" i:label="${name}">${body}</g>`;
 const rect = '<rect x="10" y="20" width="40" height="20"/>';
-test('fixture analytical oracles and deterministic report', async()=>{ await import('../../scripts/check-svg-extraction.mjs'); });
+
 test('missing source size uses 40mm width and aspect ratio with warning',()=>{
   const r=extractSvg(wrap(layer(rect),''));
   assert.deepEqual(r.physicalPageMm,[40,20]); assert.equal(r.warnings.length,1);
