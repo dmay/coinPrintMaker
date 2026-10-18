@@ -221,3 +221,33 @@ complexity budgets, arbitrary self-intersections and cross-version compatibility
 remain bounded risks assigned to later work. M4 must validate production package
 output and initial loading under this same boundary. Physical-print acceptance
 remains a separate later gate; no later issue is completed by M0 acceptance.
+
+## D-09 — Editable source and main-root Pages publication
+
+**DIG-10 implementation, 2026-10-18:** Keep main-branch/root GitHub Pages
+publication. Vite 8.3.4 builds `app/` React 19.3.1 / TypeScript 7.0.2 source with
+relative `./` asset URLs. Existing pinned M0 libraries/tests/fixtures remain in
+place; do not expose spike functionality as completed production features. Add
+only the React/build/type dependencies needed by this shell. The lockfile pins
+transitive packages; runtime bundles have no CDN or processing service.
+
+`build:pages` type-checks, builds in a fresh child staging directory and validates
+complete local asset references before replacing only `index.html`, `assets/` and
+`.nojekyll`. Vite never cleans the repository root. Publication has an exclusive
+lock, backup/rollback for ordinary replacement errors and retained recovery data
+if rollback itself fails. Abrupt process/OS interruption is not crash-atomic and
+may require recovery of the stage/lock. `check:pages` compares staged bytes without
+publishing and fails on missing, modified or obsolete output; CI runs it with clean
+install, type-checking and the existing plus build-specific tests. LF text and
+explicit binary rules prevent Windows checkout conversion from invalidating byte
+checks. The existing independent Python ZIP/XML audit is retained with a portable
+command (`PYTHON` override supported); CI provisions Python explicitly.
+
+**Evidence:** build safety tests preserve root/source/current output after failed
+or incomplete builds, reject symbolic links/concurrent publication, detect drift
+and serve real production JS/CSS at `/coinPrintMaker/`. Local clean install,
+type-checking, all 24 tests, production build and generated-byte check pass on
+Node 24.14.0 / Windows. GitHub CI supplies the separate Linux verification.
+Import/domain/editor/geometry/export implementation remains later work. The
+synced project Library source directory was empty during implementation; the
+current issue and repository decisions define this bounded build scope.
