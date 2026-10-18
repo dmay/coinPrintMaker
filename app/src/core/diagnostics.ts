@@ -1,4 +1,9 @@
 export const diagnosticCatalog = {
+  SOURCE_EMPTY: ['error', 'The selected SVG file is empty.', 'Select a nonempty SVG saved from Inkscape.'],
+  SOURCE_UNREADABLE: ['error', 'The selected file could not be read.', 'Check file access, download a local copy if needed, and select it again.'],
+  SOURCE_ENCODING_INVALID: ['error', 'The SVG is not valid supported UTF-8 text.', 'Save the SVG with UTF-8 encoding in Inkscape and select it again.'],
+  SOURCE_NOT_SVG: ['error', 'The selected content is not an SVG document.', 'Save or export a valid SVG in Inkscape, then select that file.'],
+  SOURCE_DOCTYPE_UNSUPPORTED: ['error', 'SVG document type declarations are unsupported.', 'Save a plain SVG without a DOCTYPE or custom entities.'],
   MALFORMED_XML: ['error', 'The SVG XML is malformed.', 'Open and save a valid SVG in Inkscape.'],
   SVG_UNSUPPORTED: ['error', 'This SVG structure is unsupported.', 'Use named, non-nested Inkscape layers with closed filled artwork.'],
   IMPORT_LIMIT_EXCEEDED: ['error', 'The SVG exceeds an import complexity limit.', 'Simplify the artwork or split it into smaller files.'],

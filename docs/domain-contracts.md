@@ -122,3 +122,12 @@ The former report-writing fixture tests are replaced by these read-only oracles:
 all original import metrics and six-mesh bounds/volume/topology checks remain,
 including in-memory STL float32 validation, without writing samples or reports.
 Explicit `spike:*` commands remain the way to regenerate M0 reports/samples.
+
+## Staged local file loading
+
+DIG-12 adds a local SourceDocument loading stage before canonical import. It
+checks UTF-8/XML/SVG content and provisional source/structure limits, without
+creating an ImportedCoin or validating artwork/geometry. The replacement state
+transition retains the previous source on failure and ignores stale asynchronous
+completions. See [local-svg-loading.md](local-svg-loading.md) for the exact boundary,
+limits and future full-import transaction requirements.

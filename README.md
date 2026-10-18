@@ -2,7 +2,7 @@
 
 A browser-only utility for turning layered Inkscape SVG artwork into 3D-printable
 coins. The production UI is being built incrementally; the current page is a
-React/TypeScript application shell. M0 prototypes remain reference implementations.
+React/TypeScript application with local SVG file loading. M0 prototypes remain reference implementations.
 
 ## Development and publication
 
@@ -80,3 +80,13 @@ analytical oracles with explicit tolerances, adapted from the retained M0
 prototypes until the production importer/mesher replaces them. Tests do not
 regenerate historical M0 fixture reports or samples. Use the explicit `spike:*`
 commands for that purpose. `npm run typecheck` checks app, ES-only core and tests.
+
+## Local SVG loading
+
+Select or replace a local SVG on the current page. Files remain in the browser;
+failed replacements preserve the previous loaded source. Strict UTF-8/XML/SVG
+checks and provisional source/structure limits have actionable errors.
+Loading alone does not validate artwork or create exportable coin geometry;
+those production stages follow in M1/M2.
+See [docs/local-svg-loading.md](docs/local-svg-loading.md) for supported encoding,
+exact budgets, atomic replacement behavior and the staged import boundary.

@@ -288,3 +288,34 @@ No previously passing fixture or manual acceptance is removed or broadened.
 **Source limitation:** The synced Library directory remained empty. These
 bounded contracts follow the live DIG-11 criteria and repository D-01 through
 D-09; no unavailable baseline sections or future defaults are claimed reviewed.
+
+## D-11 — Staged local SVG loading and provisional budgets
+
+**DIG-12 implementation, 2026-10-18:** Read user-selected File bytes locally,
+decode strict UTF-8 (optional BOM; explicit other encoding declarations reject),
+parse detached SVG XML, and return plain SourceDocument data only. File extension
+and MIME are hints; validate root namespace/content. Reject empty/read-error,
+encoding, malformed/wrong-content and over-budget input with actionable document
+diagnostics. Reject DTD/DOCTYPE before XML parsing to avoid entity processing.
+No source markup is mounted or evaluated and no image/resource fetch is requested.
+
+Loading is distinct from the successful canonical ImportedCoin transaction.
+Do not fabricate geometry or treat a loaded source as exportable. DIG-13..16
+retain security/artwork preflight, layers, dimensions/transforms and polygons.
+A pure latest-selection-wins transition keeps the last loaded source during reads
+and failures, ignores stale success/failure completions and swaps complete source
+data only after a successful current result. Reset picker value permits same-file
+retry; picker cancellation leaves state intact.
+
+Adopt provisional inclusive budgets of 2 MiB source, 10,000 XML elements, 64
+element levels and 500,000 aggregate SVG path-data characters. Byte checks precede
+decoding/parsing; remaining checks use an iterative detached-DOM walk. These bound
+initial source/traversal/path work but do not prove parser responsiveness or replace
+future command/flattened-point/polygon/mesh budgets. Corpus maxima (1,568 bytes,
+11 elements, depth 6, 48 path characters) give only small-fixture headroom, not
+production performance evidence. Revisit with real artwork/browser measurements.
+See [local-svg-loading.md](local-svg-loading.md) for policy, rationale and tests.
+
+The Library baseline sources remain unavailable. This bounded decision follows
+the live DIG-12 description, existing contracts and D-01/D-10; no unavailable
+baseline text or later security/geometry acceptance is claimed.
