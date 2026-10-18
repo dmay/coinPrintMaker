@@ -1,7 +1,7 @@
 import './setup';
 import { describe, expect, test } from 'vitest';
 import { extractSvg } from '../../spikes/svg-import/extract.mjs';
-import { buildCoin } from '../../spikes/tiered-stl/mesh.mjs';
+import { buildCoin, writeStl } from '../../spikes/tiered-stl/mesh.mjs';
 import type { TriangleMesh } from '../../app/src/core/contracts';
 import { fromClosedRings, loadFixtures, measureFootprint, near, tolerance } from './helpers/fixtures';
 
@@ -40,6 +40,10 @@ describe('authored planar/stack and bounded mesh fixture oracles', () => {
     }
     expect(actual.metrics.components).toBe(1);
     expect(actual.metrics.edgeIncidence).toBe(2);
+    // Retain the old fixture script's validation of actual float32 STL coordinates,
+    // entirely in memory so tests never rewrite historical sample artifacts.
+    const stl = writeStl(actual.mesh);
+    expect(stl.length).toBe(84 + 50 * actual.mesh.faces.length);
     const mesh: TriangleMesh = { vertices: actual.mesh.vertices, triangles: actual.mesh.faces };
     expect(JSON.parse(JSON.stringify(mesh))).toEqual(mesh);
   });

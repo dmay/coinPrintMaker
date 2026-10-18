@@ -14,6 +14,7 @@ declare module '*spikes/svg-import/extract.mjs' {
   };
 }
 declare module '*spikes/tiered-stl/mesh.mjs' {
+  export function writeStl(mesh: { vertices: [number, number, number][]; faces: [number, number, number][] }): Uint8Array;
   export function buildCoin(layers: { footprintMm: number[][][][]; thicknessMm: number; name: string }[]): {
     mesh: { vertices: [number, number, number][]; faces: [number, number, number][] };
     tiers: { bottomZMm: number; topZMm: number }[];
