@@ -1,0 +1,303 @@
+{
+  "schemaVersion": 1,
+  "coordinateConvention": "mm; XY face, +Z up",
+  "slicer": {
+    "status": "not run",
+    "version": null
+  },
+  "samples": [
+    {
+      "name": "sun-medallion",
+      "outcome": "validated",
+      "tiers": [
+        {
+          "name": "Base",
+          "bottomZMm": 0,
+          "topZMm": 1.6
+        },
+        {
+          "name": "Gold field",
+          "bottomZMm": 1.6,
+          "topZMm": 2
+        },
+        {
+          "name": "Sun",
+          "bottomZMm": 2,
+          "topZMm": 2.4
+        }
+      ],
+      "vertices": 488,
+      "triangles": 972,
+      "edges": 1458,
+      "edgeIncidence": 2,
+      "oppositeEdgeDirections": true,
+      "components": 1,
+      "boundsMm": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          2.4
+        ]
+      ],
+      "dimensionsMm": [
+        40,
+        40,
+        2.4
+      ],
+      "volumeMm3": 2375.8691518186865,
+      "expectedVolumeMm3": 2375.869151818685,
+      "analyticalCurveVolumeMm3": 2377.5573202367555,
+      "stlBytes": 48684
+    },
+    {
+      "name": "monogram-o",
+      "outcome": "validated",
+      "tiers": [
+        {
+          "name": "Base",
+          "bottomZMm": 0,
+          "topZMm": 1.6
+        },
+        {
+          "name": "Plaque",
+          "bottomZMm": 1.6,
+          "topZMm": 2
+        },
+        {
+          "name": "Letter O",
+          "bottomZMm": 2,
+          "topZMm": 2.4
+        }
+      ],
+      "vertices": 224,
+      "triangles": 444,
+      "edges": 666,
+      "edgeIncidence": 2,
+      "oppositeEdgeDirections": true,
+      "components": 1,
+      "boundsMm": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          2.4
+        ]
+      ],
+      "dimensionsMm": [
+        40,
+        40,
+        2.4
+      ],
+      "volumeMm3": 2402.8966249380273,
+      "expectedVolumeMm3": 2402.8966249380283,
+      "analyticalCurveVolumeMm3": 2404.219298297468,
+      "stlBytes": 22284
+    },
+    {
+      "name": "twin-stars",
+      "outcome": "validated",
+      "tiers": [
+        {
+          "name": "Base",
+          "bottomZMm": 0,
+          "topZMm": 1.6
+        },
+        {
+          "name": "Blue field",
+          "bottomZMm": 1.6,
+          "topZMm": 2
+        },
+        {
+          "name": "Twin stars",
+          "bottomZMm": 2,
+          "topZMm": 2.4
+        }
+      ],
+      "vertices": 431,
+      "triangles": 858,
+      "edges": 1287,
+      "edgeIncidence": 2,
+      "oppositeEdgeDirections": true,
+      "components": 1,
+      "boundsMm": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          2.4
+        ]
+      ],
+      "dimensionsMm": [
+        40,
+        40,
+        2.4
+      ],
+      "volumeMm3": 2470.5502620470365,
+      "expectedVolumeMm3": 2470.550262047034,
+      "analyticalCurveVolumeMm3": 2472.169706202705,
+      "stlBytes": 42984
+    },
+    {
+      "name": "letter-o-evenodd",
+      "outcome": "validated",
+      "tiers": [
+        {
+          "name": "Base",
+          "bottomZMm": 0,
+          "topZMm": 1.6
+        },
+        {
+          "name": "Letter O",
+          "bottomZMm": 1.6,
+          "topZMm": 2
+        }
+      ],
+      "vertices": 216,
+      "triangles": 428,
+      "edges": 642,
+      "edgeIncidence": 2,
+      "oppositeEdgeDirections": true,
+      "components": 1,
+      "boundsMm": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "dimensionsMm": [
+        40,
+        40,
+        2
+      ],
+      "volumeMm3": 2111.6966249380275,
+      "expectedVolumeMm3": 2111.6966249380284,
+      "analyticalCurveVolumeMm3": 2113.0192982974677,
+      "stlBytes": 21484
+    },
+    {
+      "name": "edge-sharing",
+      "outcome": "validated",
+      "tiers": [
+        {
+          "name": "Base",
+          "bottomZMm": 0,
+          "topZMm": 1.6
+        },
+        {
+          "name": "Shared edge",
+          "bottomZMm": 1.6,
+          "topZMm": 2
+        }
+      ],
+      "vertices": 17,
+      "triangles": 30,
+      "edges": 45,
+      "edgeIncidence": 2,
+      "oppositeEdgeDirections": true,
+      "components": 1,
+      "boundsMm": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "dimensionsMm": [
+        40,
+        40,
+        2
+      ],
+      "volumeMm3": 2720,
+      "expectedVolumeMm3": 2720,
+      "analyticalCurveVolumeMm3": 2720,
+      "stlBytes": 1584
+    },
+    {
+      "name": "overlapping-shapes",
+      "outcome": "validated",
+      "tiers": [
+        {
+          "name": "Base",
+          "bottomZMm": 0,
+          "topZMm": 1.6
+        },
+        {
+          "name": "Overlapping bars",
+          "bottomZMm": 1.6,
+          "topZMm": 2
+        }
+      ],
+      "vertices": 216,
+      "triangles": 428,
+      "edges": 642,
+      "edgeIncidence": 2,
+      "oppositeEdgeDirections": true,
+      "components": 1,
+      "boundsMm": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "dimensionsMm": [
+        40,
+        40,
+        2
+      ],
+      "volumeMm3": 2137.2966249380293,
+      "expectedVolumeMm3": 2137.2966249380283,
+      "analyticalCurveVolumeMm3": 2138.619298297468,
+      "stlBytes": 21484
+    },
+    {
+      "name": "outside-rim",
+      "outcome": "rejected: unsupported upper footprint"
+    },
+    {
+      "name": "over-lower-hole",
+      "outcome": "rejected: unsupported upper footprint"
+    }
+  ]
+}

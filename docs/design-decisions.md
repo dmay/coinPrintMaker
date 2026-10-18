@@ -91,3 +91,46 @@ cases retain their analytical area. Report data excludes timestamps for reproduc
 mesh construction, watertight STL, layered 3MF, OrcaSlicer and physical printing
 remain separate tasks. Outside-rim and over-lower-hole parse successfully here;
 this is intentional and never authorizes exporting their unsupported stacks.
+
+## D-03 — Shared edges and holes in planar booleans
+
+**M0 finding (DIG-8):** Retain polygon-clipping 0.15.7 behind the kernel boundary.
+Exact containment permits identical footprints and shared boundary segments; do
+not shrink/offset artwork. Empty difference against the immediately lower tier
+is required, including its holes. Outside-rim and over-lower-hole fail explicitly.
+The fixture suite covers overlap union, nonzero/evenodd holes, disconnected upper
+islands, identical rings and partial shared boundaries. This is bounded evidence,
+not a universal robustness claim: near-coincident edges, arbitrary intersecting
+rings and extremely small slivers remain production normalization/precision work.
+
+## D-04 — Terrace topology and STL
+
+**M0 finding:** Keep explicit exterior terraces as the proposed production path.
+`spikes/tiered-stl/mesh.mjs` triangulates caps with pinned Three.js's bundled Earcut,
+adds outer/hole walls, welds coordinates and splits T-junction edges. Simply
+concatenating capped extrusions would retain internal faces and is not used.
+Six authored samples produce one shell, two opposite incidences per edge, cyclic
+vertex links, consistent bounds and area-derived volume. Binary STL reparse tests
+verify float32 output. Reproducible metrics: `fixtures/tiered-stl-verification.json`.
+
+**Production policy:** Permit exact shared segments and identical tiers when the
+result passes validation; fail closed on pinches, degenerate or disconnected
+boundaries, invalid support, kernel exceptions and invalid meshes. No silent
+repair. The spike's quadratic all-vertex edge stitcher and 1e-8 mm epsilon are not
+production performance or precision decisions. Production still needs complexity
+limits, robust canonical normalization, tiny-feature/near-contact and arbitrary
+self-intersection checks, additional adversarial fixtures and browser tests.
+Cavities/multiple boundary shells are outside this prototype's accepted contract.
+OrcaSlicer is **not run**; this finding does not close DIG-8 or the M0 gate.
+
+## D-05 — Disconnected base policy
+
+**Decision:** Reject a normalized base with more than one planar region for P0;
+a file represents a single coin. Ask the author to connect base regions or make
+separate files. A base may have through holes, provided the generated mesh passes
+validation. Disconnected raised artwork is allowed when supported by the immediately
+lower footprint and physically connected through the base. The twin-stars fixture
+proves the raised-island case, and explicit tests reject a disconnected base.
+Point-touching geometry cannot substitute for a material connection: cyclic vertex
+link and shell checks reject nonmanifold pinches. Revisit multi-coin input only as
+an explicit scope change.
