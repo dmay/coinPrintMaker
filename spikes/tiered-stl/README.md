@@ -42,25 +42,17 @@ rejected before export. Additional tests exercise identical footprints, through
 holes, repeated partial shared edges, disconnected bases and corrupted meshes.
 See D-03–D-05 in `docs/design-decisions.md` for the production decisions and limits.
 
-## OrcaSlicer acceptance — pending
+## OrcaSlicer acceptance — completed
 
-The operator authorized DIG-9 coding before this last manual check. Record the
-STL and paired 3MF acceptance together in the shared
-[M0 worksheet](../../docs/m0-slicer-validation.md); its session/evidence record
-completes the checklist below. This changes the session sequence, not the gate.
+On 2026-10-18 dmay confirmed all six paired STL samples passed the requested
+dimensions, Z0/tier placement, no unexpected repair, slicing and feature checks
+in **OrcaSlicer 2.4.2 build 8500fcdc**. This includes O counters, shared-edge
+geometry and separate raised stars. The retained evidence is the operator's
+written report and follow-up confirmation in the joint
+[M0 worksheet](../../docs/m0-slicer-validation.md) and DIG-8/DIG-9.
 
-OrcaSlicer is not installed in the execution environment. No slicer version,
-repair status, import dimensions, sliced preview or physical print is claimed.
-DIG-8 stays unfinished until the following evidence is recorded:
-
-1. Record exact OrcaSlicer version and printer/nozzle/process profile.
-2. Import `samples/sun-medallion.stl` as mm; verify 40 × 40 × 2.4 mm and base on Z0.
-3. Import `monogram-o.stl`, `twin-stars.stl` and `edge-sharing.stl`; verify their
-   dimensions above and no unexpected repair/nonmanifold warning.
-4. Slice with a 0.2 mm nominal process. Inspect the base, hole walls, shared-edge
-   riser, separate stars, and transitions at 1.6 and 2.0 mm in the layer preview.
-   Record first-layer settings and observed layer transition behavior.
-5. Retain the result/version and any warnings in this file and DIG-8. A repair,
-   missing feature, unexpected scale or failed slice requires investigation.
-
-STL stores no standardized units or colors. Printed acceptance is a later gate.
+No screenshots or slicer project files are retained. Exact UI commands and
+per-layer print settings were not separately recorded. The agent did not run the
+manual session. These are accepted prototype results, not universal robustness
+or physical-print claims. STL stores no standardized units or colors;
+physical-print acceptance remains a separate later gate.
