@@ -2,7 +2,16 @@
   "name": "coinprint-maker",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test tests/import/*.test.mjs", "spike:svg": "node scripts/check-svg-extraction.mjs" },
-  "dependencies": { "three": "0.186.1", "polygon-clipping": "0.15.7" },
-  "devDependencies": { "jsdom": "26.1.0" }
+  "scripts": {
+    "test": "node --test tests/import/*.test.mjs tests/geometry/*.test.mjs",
+    "spike:svg": "node scripts/check-svg-extraction.mjs",
+    "spike:stl": "node scripts/check-tiered-stl.mjs"
+  },
+  "dependencies": {
+    "three": "0.186.1",
+    "polygon-clipping": "0.15.7"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
 }

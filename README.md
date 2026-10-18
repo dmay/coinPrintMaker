@@ -11,3 +11,9 @@ instructions: [fixtures/README.md](fixtures/README.md).
 M0.2 prototype, reproducible headless checks and measured library decisions:
 [spikes/svg-import/README.md](spikes/svg-import/README.md) and
 [docs/design-decisions.md](docs/design-decisions.md).
+
+## Tiered coin / STL validation
+
+M0.3 prototype, generated STL samples, topology/volume evidence and pending
+OrcaSlicer checklist: [spikes/tiered-stl/README.md](spikes/tiered-stl/README.md).
+Run `npm run spike:stl` to regenerate retained samples and metrics.
