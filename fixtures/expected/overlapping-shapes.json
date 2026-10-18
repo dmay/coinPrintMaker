@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "source": "fixtures/svg/overlapping-shapes.svg",
+  "physicalPageMm": [
+    40,
+    40
+  ],
+  "intendedLayerOrder": [
+    "Base",
+    "Overlapping bars"
+  ],
+  "coordinateConvention": "SVG page-relative mm, +X right, +Y down; bounds=[minX,minY,maxX,maxY]",
+  "layers": [
+    {
+      "id": "base",
+      "name": "Base",
+      "areaMm2": 1256.6370614359173,
+      "boundsMm": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "regions": 1,
+      "holes": 0,
+      "supportedByPrevious": null,
+      "thicknessMm": 1.6,
+      "order": 0,
+      "bottomZMm": 0,
+      "topZMm": 1.6
+    },
+    {
+      "id": "art",
+      "name": "Overlapping bars",
+      "areaMm2": 320,
+      "boundsMm": [
+        8,
+        12,
+        32,
+        28
+      ],
+      "regions": 1,
+      "holes": 0,
+      "supportedByPrevious": true,
+      "thicknessMm": 0.4,
+      "order": 1,
+      "bottomZMm": 1.6,
+      "topZMm": 2.0
+    }
+  ],
+  "importOutcome": "accept",
+  "expectedDiagnostics": [],
+  "geometryOutcome": "valid",
+  "exportAllowedAfterGeometryValidation": true,
+  "analyticalVolumeMm3": 2138.619298297468,
+  "totalHeightMm": 2.0,
+  "realisticSample": false,
+  "physicalPrintCandidate": false,
+  "notes": "Union area = 192 + 192 - 64 = 320 mm\u00b2. Summing object areas is wrong; union is one region.",
+  "provenance": "Original procedural artwork authored for DIG-6; opened and saved by Inkscape CLI.",
+  "manualAcceptance": {
+    "slicer": "not run",
+    "physicalPrint": "not run"
+  },
+  "inkscapeVersion": "Inkscape 1.2.2 (b0a8486541, 2022-12-01)"
+}
