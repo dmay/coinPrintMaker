@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/import/*.test.mjs tests/geometry/*.test.mjs",
+    "test": "node --test tests/import/*.test.mjs tests/geometry/*.test.mjs tests/export/*.test.mjs",
     "spike:svg": "node scripts/check-svg-extraction.mjs",
-    "spike:stl": "node scripts/check-tiered-stl.mjs"
+    "spike:stl": "node scripts/check-tiered-stl.mjs",
+    "spike:3mf": "node scripts/check-layered-3mf.mjs"
   },
   "dependencies": {
     "three": "0.186.1",
