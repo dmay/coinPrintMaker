@@ -1,8 +1,11 @@
 # M0.4 layered 3MF spike (DIG-9)
 
-**Coding/prototype scope implemented; OrcaSlicer acceptance and final D-06/D-07
-decisions pending.** The operator authorized coding before the remaining DIG-8
-manual check, with STL and 3MF to be validated together. M0 is still open.
+**M0 prototype accepted, 2026-10-18.** dmay confirmed all six paired STL/3MF
+samples loaded correctly and sliced without reported defects in OrcaSlicer
+2.4.2 build 8500fcdc. D-06/D-07 are accepted under the operator's scope decision:
+CoinPrint produces a correct generic 3MF and validates initial loading; subsequent
+slicer project handling, UI names/colors and filament assignment are outside
+export acceptance. No untested operation is claimed passed.
 
 Run `npm ci --ignore-scripts`, `npm run spike:3mf`, then `npm test` (Node 24.19.0;
 Python 3 is used only by an independent ZIP/XML test). Generation retains six
@@ -71,12 +74,19 @@ constitute full XSD/OPC conformance certification.
 
 Corresponding STL files are in `../tiered-stl/samples/`. See the joint
 [OrcaSlicer worksheet](../../docs/m0-slicer-validation.md) and
-[decision log](../../docs/design-decisions.md). Generic assembly import,
-multi-shell part selection, elevated-part preservation, color handling,
-manual mapping and re-save behavior all remain unverified in OrcaSlicer.
-If they fail, adapt the package or explicitly replan the gate; do not proceed
-to M1 on the strength of ZIP/XML or Three.js tests alone.
+[decision log](../../docs/design-decisions.md). The operator confirmed generic
+assembly import, separately selectable aligned layers, multi-shell artwork,
+elevated-part preservation, intact holes/features, correct mm scale, no unexpected
+repair and successful slices. OrcaSlicer showed no special part names or colors;
+no multi-filament configuration was present. The cause is not established. Names
+and display-color intent remain in the package and are independently checked.
+Manual mapping and re-save/reopen were not tested and are outside the revised
+acceptance scope. Written operator observations are retained; screenshots/projects
+are not. Automated report status fields remain historical generator output; use
+the worksheet for the completed manual acceptance. Production exports are checked
+again in M4, and physical-print acceptance remains a separate later gate.
 
 Primary format reference: [3MF Core specification](https://github.com/3MFConsortium/spec_core/blob/master/3MF%20Core%20Specification.md),
-chapters 2, 4 and 5. Follow actual recorded OrcaSlicer behavior when finalizing
-D-06/D-07; no exact version or successful manual procedure is claimed here.
+chapters 2, 4 and 5. D-06/D-07 record the observed
+OrcaSlicer limits and accepted package/initial-import boundary. This does not
+claim full XSD/OPC conformance certification or universal consumer compatibility.

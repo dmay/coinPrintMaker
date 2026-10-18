@@ -108,9 +108,13 @@ DIG-7 and later geometry tasks. Hiding the middle tier in the hole case should
 make the center supported by the base; the sample medallion remains supported
 when its middle tier is hidden. Both compressed stacks are 2.0 mm high.
 
-**OrcaSlicer import, slicing, generated STL/3MF, manifold checks and physical
-printing have not been performed.** Per-fixture manual acceptance is `not run`.
-M0's exit gate and the later print-acceptance gates remain open.
+**At fixture creation (DIG-6), downstream acceptance was not run.** Subsequent
+DIG-8/DIG-9 work generated and checked paired STL/3MF samples. On 2026-10-18 dmay
+confirmed all six pairs imported correctly and sliced without defects in
+OrcaSlicer 2.4.2 build 8500fcdc; see the
+[M0 worksheet](../docs/m0-slicer-validation.md) for the written evidence and
+explicit export-only scope decision. This satisfies M0, not later production or
+physical-print acceptance. Original generated verification data is unchanged.
 
 Source baselines: `coinprint-requirements-tech-assessment-mvp-plan.md` §3/§6 and
 `coinprint-technical-design-p0.md` §9, both dated 2026-10-17. No architecture

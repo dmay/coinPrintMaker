@@ -2,8 +2,9 @@
 
 Baseline: project requirements and technical design dated 2026-10-17.
 Evidence tasks: DIG-7 / M0.2, DIG-8 / M0.3 and DIG-9 / M0.4. These findings
-establish bounded prototype contracts; they do not satisfy the M0 end-to-end
-slicer gate. Joint manual acceptance: [M0 worksheet](m0-slicer-validation.md).
+establish bounded prototype contracts. Operator-reported acceptance on
+2026-10-18 closes the M0 gate under the explicit export-only scope revision.
+Joint manual evidence: [M0 worksheet](m0-slicer-validation.md).
 
 ## D-01 — Layer identity, order, base and supported SVG
 
@@ -122,7 +123,9 @@ production performance or precision decisions. Production still needs complexity
 limits, robust canonical normalization, tiny-feature/near-contact and arbitrary
 self-intersection checks, additional adversarial fixtures and browser tests.
 Cavities/multiple boundary shells are outside this prototype's accepted contract.
-OrcaSlicer is **not run**; this finding does not close DIG-8 or the M0 gate.
+On 2026-10-18 dmay confirmed all six STL samples imported at intended mm scale
+and sliced without unexpected repair or defects in OrcaSlicer 2.4.2 build
+8500fcdc. The joint worksheet records this operator-reported evidence.
 
 ## D-05 — Disconnected base policy
 
@@ -138,7 +141,7 @@ an explicit scope change.
 
 ## D-06 — 3MF assembly and aligned selectable parts
 
-**Candidate implemented in DIG-9; OrcaSlicer decision pending.** One Core model
+**Accepted for the M0 prototype contract, 2026-10-18.** One Core model
 part declares millimeters. One build item references a components-only coin
 assembly; its children reference one named mesh object per layer, each capped
 and positioned at its absolute Z interval. No independent build items, per-part
@@ -154,16 +157,24 @@ Pinned Three.js's bundled fflate avoids new dependencies; deterministic STORE
 packages are a spike convenience, not a production performance choice. These
 checks do not prove OrcaSlicer compatibility or full OPC/XSD conformance.
 
-**Open manual gate:** Verify exact import behavior, one object/selectable layer
-parts, elevated parts staying at Z, multi-shell layers, no repair, slice and
-save/reopen in a recorded OrcaSlicer version. If this structure fails, revise
-packaging and retest; investigate nested components for islands if necessary.
-Do not silently flatten layers or move upper parts to the bed. Finalize D-06
-from the joint worksheet, then reverify during M4.
+**Manual evidence:** dmay confirmed all six samples loaded at intended scale,
+with aligned separately selectable layers, preserved absolute elevations,
+holes/islands and no unexpected repair, then sliced without reported defects in
+OrcaSlicer 2.4.2 build 8500fcdc. Twin-stars retains both shells in one logical
+selectable layer. OrcaSlicer did not show special part names; exported names remain
+present in the package. See the joint worksheet for evidence and its limits.
 
-## D-07 — Generic display colors and filament assignment
+**Scope decision:** The operator limits responsibility to a correct generic 3MF
+and correct initial loading. Slicer re-save/reopen, UI label preservation and
+printer configuration are outside acceptance, not tests claimed passed. Retain
+generic packaging; no vendor-specific project metadata or packaging change is
+required by these observations. Verify production output again during M4 at the
+package/initial-import boundary. Full format conformance certification and
+universal consumer compatibility are not claimed.
 
-**Candidate implemented; OrcaSlicer decision pending.** Core base-material
+## D-07 — Generic display-color intent and consumer boundary
+
+**Accepted for the M0 prototype contract, 2026-10-18.** Core base-material
 entries carry unique ordinal/name labels and opaque sRGB `displaycolor` values.
 Each mesh references its material via `pid`/`pindex`. The spike harness explicitly
 sets colors independently of SVG paint. Escaping/Unicode and a consumer color
@@ -171,27 +182,42 @@ round trip pass in ThreeMFLoader. Core specification chapters 4–5 distinguish
 assembly placement and display properties from physical printer configuration:
 [primary format reference](https://github.com/3MFConsortium/spec_core/blob/master/3MF%20Core%20Specification.md).
 
-No printer/extruder presets or automatic filament mapping are promised. Record
-OrcaSlicer's actual pre-assignment color behavior, then exact manual mapping and
-save/reopen results. If colors are ignored, document reliable part-name-based
-assignment; if part identity or placement is lost, fix D-06 first. Final D-07
-and user guidance remain pending the same recorded session as STL acceptance.
+**Observed consumer behavior:** dmay reported no displayed colors and no special
+sub-object names in OrcaSlicer 2.4.2 build 8500fcdc; no multi-filament configuration
+was present. This does not establish the cause. Manual mapping and project
+re-save/reopen were not tested. No successful OrcaSlicer name/color preservation
+or reliable name-based assignment workflow is claimed.
 
-## M0 consolidation and remaining gate
+**Scope decision:** Correct generic package names and color resources/references
+remain CoinPrint requirements. Consumer display, filament/extruder mapping,
+printer presets and downstream project handling are outside export acceptance,
+per the operator's explicit 2026-10-18 decision. Retain best-effort generic color
+intent; do not add vendor-specific metadata to force UI behavior. Future guidance
+must describe this boundary and the observed limitations without promising a
+tested assignment workflow.
+
+## M0 consolidation and remaining risks
 
 | Decision | Current evidence / next action |
 |---|---|
 | D-01 / D-02 | Import adapter and physical-unit contract established on DIG-7 fixtures; production hardening remains M1. |
-| D-03 / D-04 | Shared-edge/holes/terrace topology pass DIG-8 automation; actual STL import/slice remains pending. |
+| D-03 / D-04 | Shared-edge/holes/terrace topology pass DIG-8 automation; all six STL imports/slices accepted by operator in OrcaSlicer 2.4.2 build 8500fcdc. |
 | D-05 | Reject disconnected bases; retain supported raised islands. |
-| D-06 / D-07 | DIG-9 coding/sample evidence prepared; packaging/color conclusions require joint OrcaSlicer validation. |
+| D-06 / D-07 | Generic package and initial loading accepted; observed UI name/color limits recorded. Downstream project handling and filament mapping are outside acceptance. |
 | D-08 | Responsiveness/worker decision deferred to measured production UI work in M3. |
 | D-09 | Root `index.html` / main Pages arrangement retained; reproducible production build remains M1/M5 work. |
 
-The operator explicitly authorized DIG-9 coding while DIG-8's last manual check
-is pending. This replans validation into one paired session, **not a waiver of
-the M0 exit gate**. DIG-8 and DIG-9 remain unfinished until their manual criteria
-are evidenced. M1 is still blocked. Record actual observations in
-`docs/m0-slicer-validation.md`, revise D-06/D-07, link retained evidence in both
-issues, and resolve/replan any failed gate before starting M1. No slicer version,
-successful slice or physical print is claimed by these prototype results.
+The earlier authorization to code DIG-9 before DIG-8 manual acceptance retained
+the M0 gate. That gate is now satisfied by the operator's six paired STL/3MF
+results and exact version confirmation, together with the explicit scope revision
+above. The written [M0 worksheet](m0-slicer-validation.md) is the retained manual
+evidence; screenshots and slicer projects are not retained. Generated automated
+reports are unchanged historical generator output and must not be interpreted as
+the latest manual status. No unrecorded UI click path, per-layer print setting or
+physical print is inferred.
+
+M1 has no remaining M0 acceptance blocker. Production normalization, precision,
+complexity budgets, arbitrary self-intersections and cross-version compatibility
+remain bounded risks assigned to later work. M4 must validate production package
+output and initial loading under this same boundary. Physical-print acceptance
+remains a separate later gate; no later issue is completed by M0 acceptance.
