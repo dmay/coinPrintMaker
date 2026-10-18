@@ -1,0 +1,616 @@
+{
+  "schemaVersion": 1,
+  "three": "0.186.1",
+  "polygonClipping": "0.15.7",
+  "domHarness": "jsdom 26.1.0",
+  "toleranceMm": 0.01,
+  "coordinateConvention": "page-relative mm, +Y up",
+  "results": [
+    {
+      "source": "fixtures/svg/bezier-ellipse.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "circle6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1255.8103905862677
+        },
+        {
+          "id": "art",
+          "name": "Ellipse and curve",
+          "order": 1,
+          "sourceElementIds": [
+            "ellipse9",
+            "path11"
+          ],
+          "boundsMm": [
+            8.006523584295458,
+            14,
+            28,
+            26
+          ],
+          "regions": 2,
+          "holes": 0,
+          "areaMm2": 123.19844185588182
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/edge-sharing.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "rect6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1600
+        },
+        {
+          "id": "art",
+          "name": "Shared edge",
+          "order": 1,
+          "sourceElementIds": [
+            "rect9"
+          ],
+          "boundsMm": [
+            0,
+            10,
+            20,
+            30
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 400
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/letter-o-evenodd.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "circle6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1255.8103905862677
+        },
+        {
+          "id": "letter",
+          "name": "Letter O",
+          "order": 1,
+          "sourceElementIds": [
+            "path9"
+          ],
+          "boundsMm": [
+            11,
+            9,
+            29,
+            31
+          ],
+          "regions": 1,
+          "holes": 1,
+          "areaMm2": 256
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/malformed-xml.svg",
+      "outcome": "rejected"
+    },
+    {
+      "source": "fixtures/svg/monogram-o.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "circle6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1255.8103905862677
+        },
+        {
+          "id": "plaque",
+          "name": "Plaque",
+          "order": 1,
+          "sourceElementIds": [
+            "rect9"
+          ],
+          "boundsMm": [
+            7,
+            6,
+            33,
+            34
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 728
+        },
+        {
+          "id": "letter",
+          "name": "Letter O",
+          "order": 2,
+          "sourceElementIds": [
+            "path12"
+          ],
+          "boundsMm": [
+            11,
+            9,
+            29,
+            31
+          ],
+          "regions": 1,
+          "holes": 1,
+          "areaMm2": 256
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/offset-nested-transforms.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "circle6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1255.810390586268
+        },
+        {
+          "id": "art",
+          "name": "Transformed tile",
+          "order": 1,
+          "sourceElementIds": [
+            "rect9"
+          ],
+          "boundsMm": [
+            4,
+            24,
+            10,
+            30
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 36
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/outside-rim.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "circle6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1255.8103905862677
+        },
+        {
+          "id": "art",
+          "name": "Outside rim",
+          "order": 1,
+          "sourceElementIds": [
+            "rect9"
+          ],
+          "boundsMm": [
+            34,
+            18,
+            42,
+            22
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 32
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/over-lower-hole.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "circle6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1255.8103905862677
+        },
+        {
+          "id": "ring",
+          "name": "Ring",
+          "order": 1,
+          "sourceElementIds": [
+            "path9"
+          ],
+          "boundsMm": [
+            6,
+            6,
+            34,
+            34
+          ],
+          "regions": 1,
+          "holes": 1,
+          "areaMm2": 640
+        },
+        {
+          "id": "art",
+          "name": "Unsupported center",
+          "order": 2,
+          "sourceElementIds": [
+            "rect12"
+          ],
+          "boundsMm": [
+            17,
+            17,
+            23,
+            23
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 36
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/overlapping-shapes.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "circle6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1255.8103905862677
+        },
+        {
+          "id": "art",
+          "name": "Overlapping bars",
+          "order": 1,
+          "sourceElementIds": [
+            "rect9",
+            "rect11"
+          ],
+          "boundsMm": [
+            8,
+            12,
+            32,
+            28
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 320
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/pixel-units.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40.00000000000001,
+        40.00000000000001
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "rect6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40.00000000000001,
+            40.00000000000001
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1600.0000000000007
+        },
+        {
+          "id": "art",
+          "name": "Inset",
+          "order": 1,
+          "sourceElementIds": [
+            "rect9"
+          ],
+          "boundsMm": [
+            10.000000000000002,
+            10,
+            30.000000000000007,
+            30.000000000000007
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 400.0000000000004
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/sun-medallion.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "circle6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1255.8103905862677
+        },
+        {
+          "id": "field",
+          "name": "Gold field",
+          "order": 1,
+          "sourceElementIds": [
+            "circle9"
+          ],
+          "boundsMm": [
+            4.009967003808349,
+            4.002491945008025,
+            36,
+            35.99750805499198
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 803.5798214100068
+        },
+        {
+          "id": "sun",
+          "name": "Sun",
+          "order": 2,
+          "sourceElementIds": [
+            "circle12"
+          ],
+          "boundsMm": [
+            14.009785376443187,
+            14.002446843030864,
+            26,
+            25.997553156969136
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 112.85149579163513
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/twin-stars.svg",
+      "outcome": "accepted",
+      "physicalPageMm": [
+        40,
+        40
+      ],
+      "baseCandidateId": "base",
+      "layers": [
+        {
+          "id": "base",
+          "name": "Base",
+          "order": 0,
+          "sourceElementIds": [
+            "circle6"
+          ],
+          "boundsMm": [
+            0,
+            0,
+            40,
+            40
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1255.8103905862677
+        },
+        {
+          "id": "field",
+          "name": "Blue field",
+          "order": 1,
+          "sourceElementIds": [
+            "circle9"
+          ],
+          "boundsMm": [
+            2.0098413678633307,
+            2.002460510135556,
+            38,
+            37.997539489864444
+          ],
+          "regions": 1,
+          "holes": 0,
+          "areaMm2": 1017.134092772514
+        },
+        {
+          "id": "stars",
+          "name": "Twin stars",
+          "order": 2,
+          "sourceElementIds": [
+            "polygon12",
+            "polygon14"
+          ],
+          "boundsMm": [
+            3,
+            14,
+            34,
+            28
+          ],
+          "regions": 2,
+          "holes": 0,
+          "areaMm2": 136
+        }
+      ]
+    },
+    {
+      "source": "fixtures/svg/unsupported-clip-path.svg",
+      "outcome": "rejected"
+    },
+    {
+      "source": "fixtures/svg/unsupported-embedded-image.svg",
+      "outcome": "rejected"
+    },
+    {
+      "source": "fixtures/svg/unsupported-external-reference.svg",
+      "outcome": "rejected"
+    },
+    {
+      "source": "fixtures/svg/unsupported-gradient.svg",
+      "outcome": "rejected"
+    },
+    {
+      "source": "fixtures/svg/unsupported-live-text.svg",
+      "outcome": "rejected"
+    },
+    {
+      "source": "fixtures/svg/unsupported-mask.svg",
+      "outcome": "rejected"
+    },
+    {
+      "source": "fixtures/svg/unsupported-open-path.svg",
+      "outcome": "rejected"
+    },
+    {
+      "source": "fixtures/svg/unsupported-script.svg",
+      "outcome": "rejected"
+    },
+    {
+      "source": "fixtures/svg/unsupported-stroke-only.svg",
+      "outcome": "rejected"
+    }
+  ]
+}
