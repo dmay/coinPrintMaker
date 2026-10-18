@@ -101,8 +101,7 @@ planar/derived-stack coverage only. An expanded probe of offset-nested-transform
 failed the existing M0 mesher with a degenerate triangle; that input was never
 part of the six-sample mesh acceptance. Production mesher hardening remains later
 work, and this contracts task does not repair or claim mesh acceptance for it.
-These are
-regressions for bounded M0 behavior, not production implementation acceptance.
+The suite records bounded M0 regressions; production acceptance remains later work.
 
 Numerical thresholds are explicit in `tests/unit/helpers/fixtures.ts`:
 
@@ -119,5 +118,7 @@ Y-down fixture bounds are inverted using each fixture's actual page height.
 The registry and DTO tests check plain JSON round trips and the freshness gate;
 TypeScript additionally checks locked-base/failed-result shape constraints.
 `npm test` runs Vitest and the retained Node build/export/adversarial suites.
-The former report-writing fixture tests are replaced by these read-only oracles.
+The former report-writing fixture tests are replaced by these read-only oracles:
+all original import metrics and six-mesh bounds/volume/topology checks remain,
+including in-memory STL float32 validation, without writing samples or reports.
 Explicit `spike:*` commands remain the way to regenerate M0 reports/samples.
