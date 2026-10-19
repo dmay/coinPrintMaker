@@ -25,8 +25,7 @@ apply its eventual empty-footprint policy rather than silently promote a base.
 
 The adapter constructs a detached SVG containing only eligible shape nodes and
 their ancestor groups. Each projected node has an explicit original structural
-path marker. Geometry attributes, original IDs, layer metadata and SVG `transform`
-attributes remain; SVG namespace prefixes are normalized for the pinned loader.
+path marker. Geometry attributes, original IDs and layer metadata remain; SVG namespace prefixes are normalized for the pinned loader.
 Original source text and source paths remain unchanged. Preflight-resolved solid
 fill and fill-rule are written explicitly per shape. Other painting declarations
 are absent: preflight already rejected material strokes and effects and classified
@@ -61,15 +60,18 @@ cubic and ellipse curve records. Compound subpaths remain separate contours with
 their fill rule. It contains no Three.js object, DOM, flattened polygon, physical
 bounds or area, ImportedCoin, mesh, settings or export permission.
 
-`coordinateSpace: 'svg-loader'` means element/ancestor SVG transforms have already
-been applied by SVGLoader. The loader is explicitly configured for 96 DPI and px
-output units. Root viewport/viewBox offset, physical mm conversion, Y inversion,
-transform correctness/restrictions and physical curve tolerance remain DIG-15.
-That stage must not apply those element transforms a second time. DIG-16 still
-owns canonical polygon normalization, holes/union and a complete import result.
-Do not treat these curves as millimeters or bypass those gates. The staged local
-SourceDocument loader and its atomic replacement behavior are unchanged; this
-adapter is a separate production pipeline stage until complete import is wired.
+DIG-15 revises the transform boundary: `coordinateSpace: 'svg-user'` means
+strictly validated element/ancestor transforms have already been applied to the
+plain curve DTOs by the adapter. The detached loader projection omits transforms
+and viewport attributes, and primitive absolute lengths are normalized before
+interpretation. Ellipses now carry center plus two affine axis vectors and retained
+angles/traversal, preserving nonuniform scale, skew and reflection exactly.
+
+Root viewport/viewBox/mm/Y-up mapping is the next `normalizeSvg` stage. Do not
+apply element transforms again or treat extraction coordinates as millimeters.
+See [coordinate normalization](svg-coordinate-normalization.md) and D-14 for the
+revised contract and evidence. DIG-16 still owns polygons and complete import;
+the staged SourceDocument transaction remains unchanged.
 
 ## Verification
 

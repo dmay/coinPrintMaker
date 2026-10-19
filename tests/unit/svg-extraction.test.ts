@@ -110,7 +110,7 @@ describe('pinned loader shape and style contract', () => {
   });
   test('preserves closed compound contours and exact line/quadratic/cubic/ellipse DTOs without canonicalization', () => {
     const result = extracted(wrap(layer('<path id="all" fill-rule="evenodd" d="M0 0L10 0Q12 2 10 4C9 5 8 6 7 5A2 3 0 01 4 2Z M1 1L2 1L1 2Z"/><rect x="2" y="3" width="8" height="5" rx="1"/><circle cx="5" cy="6" r="2"/><ellipse cx="5" cy="6" rx="3" ry="2"/><polygon points="0,0 2,0 0,2"/>')));
-    expect(result.coordinateSpace).toBe('svg-loader');
+    expect(result.coordinateSpace).toBe('svg-user');
     expect(result.layers[0].shapes).toHaveLength(5);
     expect(result.layers[0].shapes[0].contours).toHaveLength(2);
     expect(new Set(result.layers[0].shapes[0].contours.flatMap(c => c.curves.map(c => c.kind)))).toEqual(new Set(['line', 'quadratic', 'cubic', 'ellipse']));

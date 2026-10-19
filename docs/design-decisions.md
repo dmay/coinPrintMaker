@@ -377,3 +377,38 @@ normalization still DIG-15 and canonical polygons/complete import still DIG-16.
 No Three.js/DOM objects escape and extraction cannot authorize export or replace a
 canonical coin. Baseline Library documents remain unavailable; the live issue,
 current contracts and accepted D-01/D-12 supply this bounded implementation.
+
+## D-14 — Deterministic physical viewport and exact affine curve mapping
+
+**DIG-15, 2026-10-18:** Retain D-02's positive viewBox, root mm/cm/in/pt/px and
+96 DPI, complete explicit page or complete 40 mm target-width fallback, centered
+meet/none policy and page-relative single Y inversion. Validate a lone physical
+dimension before discarding it for fallback; invalid declarations never infer.
+Reject other aspect mappings, relative/percent units, singular/nonfinite transforms
+and complex root/nested viewport arrangements explicitly.
+
+**Evidence-driven D-13 revision:** Do not delegate transformations to SVGLoader.
+Its permissive parser can silently discard malformed operations, and its ellipse
+shortcuts are unsafe for rotated/nonuniform or full sheared parameter mappings.
+Keep the pinned detached interpreter/source-node mapping and authoritative styles,
+but omit transforms/viewport from its projection. Numericize primitive local CSS
+units first; compose strict SVG transforms once in pure DTO code. Extraction now
+uses `coordinateSpace: 'svg-user'`. Ellipses store center plus two affine axis
+vectors with unchanged source angles/traversal; apply reflection/Y inversion to
+vectors rather than flipping angle direction a second time.
+
+The pure viewport/normalizer returns intermediate canonical-mm curves and exact
+interpreted-curve bounds, physical page and warning metadata. It does not create
+ImportedCoin or authorize generation/export. DIG-16 must consume the new ellipse
+representation with a physical error bound and own polygon closure/winding/holes,
+union/validity and complete import/UI integration. SVGLoader's existing rounded
+rectangle Bézier approximation remains an explicitly bounded interpreter limitation
+for that tolerance work; no arbitrary-path/print acceptance is inferred here.
+
+Analytical unit/viewport/composition/arc/Bézier/rejection tests pass the existing
+eleven accepted fixture pages, identities and bounds. Native Chrome 153.0.8010.48
+Vite-bundled API checks additionally pass three native SVG transform oracles,
+unit/fallback/aspect cases and fail-closed rejection, with no imported DOM mount,
+script execution, network processing or page errors. See [normalization contract](svg-coordinate-normalization.md) for equations, coverage and limitations.
+M0 fixtures/reports/samples and staged atomic source loading remain unchanged;
+Library baseline sources remain unavailable.

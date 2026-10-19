@@ -6,14 +6,14 @@ export interface ExtractedLayer extends SourceElement {
   readonly name: string;
   readonly sourceOrder: number;
 }
-// SVGLoader-coordinate curves: SVG element transforms are already applied.
+// Root-user-coordinate curves: validated element transforms are already applied.
 // These are NOT mm, flattened rings, canonical polygons or exportable geometry.
 export type SvgPoint = readonly [number, number];
 export type SvgCurve =
   | { readonly kind: 'line'; readonly from: SvgPoint; readonly to: SvgPoint }
   | { readonly kind: 'quadratic'; readonly from: SvgPoint; readonly control: SvgPoint; readonly to: SvgPoint }
   | { readonly kind: 'cubic'; readonly from: SvgPoint; readonly control1: SvgPoint; readonly control2: SvgPoint; readonly to: SvgPoint }
-  | { readonly kind: 'ellipse'; readonly center: SvgPoint; readonly radius: SvgPoint; readonly startAngle: number; readonly endAngle: number; readonly clockwise: boolean; readonly rotation: number };
+  | { readonly kind: 'ellipse'; readonly center: SvgPoint; readonly axisX: SvgPoint; readonly axisY: SvgPoint; readonly startAngle: number; readonly endAngle: number; readonly clockwise: boolean };
 export interface ExtractedShape extends SourceElement {
   readonly id: string;
   readonly layerId: LayerId;
@@ -23,5 +23,5 @@ export interface ExtractedShape extends SourceElement {
   readonly contours: readonly { readonly autoClose: boolean; readonly curves: readonly SvgCurve[] }[];
 }
 export type SvgExtractionResult =
-  | { readonly status: 'extracted'; readonly coordinateSpace: 'svg-loader'; readonly baseCandidateId: LayerId; readonly layers: readonly (ExtractedLayer & { readonly shapes: readonly ExtractedShape[] })[]; readonly diagnostics: readonly Diagnostic[] }
+  | { readonly status: 'extracted'; readonly coordinateSpace: 'svg-user'; readonly baseCandidateId: LayerId; readonly layers: readonly (ExtractedLayer & { readonly shapes: readonly ExtractedShape[] })[]; readonly diagnostics: readonly Diagnostic[] }
   | { readonly status: 'rejected'; readonly diagnostics: readonly Diagnostic[] };
