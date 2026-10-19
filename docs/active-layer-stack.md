@@ -1,5 +1,11 @@
 # Active layer stack and cumulative Z (DIG-17)
 
+DIG-19 now adds the pure [immediate-lower support stage](support-validation.md).
+It resolves current order/visibility, retains unsupported differences for
+diagnostics, and rejects with no active tier payload. Planar support success is
+distinct from mesh/export validity. Earlier references below to pending support
+describe the prior stage boundary.
+
 `core/resolveStack.ts` exposes pure `createDefaultCoinSettings(ImportedCoin)` and
 `resolveStack(ImportedCoin, CoinSettings)` functions. They use plain serializable
 DTOs, with no renderer, UI, DOM, mesh or polygon-kernel dependency. The existing

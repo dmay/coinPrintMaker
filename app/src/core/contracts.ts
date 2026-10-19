@@ -140,3 +140,31 @@ export type StackResolution = ResolvedStack | RejectedStack;
 export type CoinSettingsResult =
   | { readonly status: 'created'; readonly settings: CoinSettings; readonly diagnostics: readonly Diagnostic[] }
   | { readonly status: 'rejected'; readonly diagnostics: readonly Diagnostic[]; readonly settings?: never };
+
+// Planar support is a pre-mesh stage, distinct from GeneratedCoin validity.
+export interface UnsupportedRemainder {
+  readonly upperLayerId: LayerId;
+  readonly lowerLayerId: LayerId;
+  // Diagnostics only: upper-minus-lower, never a clipped replacement tier.
+  readonly footprintMm: FootprintMm;
+}
+export interface SupportedStack {
+  readonly status: 'supported';
+  readonly input: GenerationKey;
+  readonly activeTiers: readonly ActiveTier[];
+  readonly totalHeightMm: number;
+  readonly diagnostics: readonly Diagnostic[];
+  readonly unsupportedRemainders: readonly [];
+}
+export interface RejectedSupport {
+  readonly status: 'rejected';
+  // Absent when settings/source stack resolution fails.
+  readonly input?: GenerationKey;
+  readonly diagnostics: readonly Diagnostic[];
+  // All successfully measured nonempty differences; failed pairs have diagnostics
+  // instead. An empty list therefore does not establish support on rejection.
+  readonly unsupportedRemainders: readonly UnsupportedRemainder[];
+  readonly activeTiers?: never;
+  readonly totalHeightMm?: never;
+}
+export type SupportValidation = SupportedStack | RejectedSupport;

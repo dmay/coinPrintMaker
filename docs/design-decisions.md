@@ -515,3 +515,39 @@ remain actionable diagnostics behind the replaceable boundary.
 No DIG-19 support orchestration, production mesh/export, M3 UI, slicer or physical
 print work follows from this issue. M0 sources/reports/samples remain unchanged;
 missing Library baselines are not represented as inspected.
+
+
+## D-18 — Immediate-lower support and diagnostics-only remainders
+
+**DIG-19:** Resolve the current canonical coin/settings on every support call;
+consecutive enabled tiers define deterministic adjacency and cumulative absolute
+Z. Use the existing checked polygon service for each upper-minus-lower operation
+with one shared support-call budget. Empty checked difference proves planar
+containment; source metrics, area/bbox comparisons or tiny-area allowances do not.
+Preserve every successfully computed unsupported remainder as diagnostics-only
+geometry with both layer IDs and an upper-scoped remedy. Never replace artwork
+with clipped geometry. Failed Boolean pairs retain scoped errors, not invented
+empty remainders; later pairs are attempted in order. No silent output cap.
+
+Retain D-05's single connected base (through holes allowed); raised islands may
+be disconnected when every filled region is supported. Exact identical tiers
+and shared exterior/hole/oblique boundary segments are allowed subject to the
+same polygon validation. Point/line contact alone cannot support outside filled
+material. Add no tolerance: retain 0.005 mm chord, 1e-6 mm grid, 2e-6 mm ambiguous
+contact and redundant-endpoint-only 1e-9 mm closure noise. Nonempty slivers are
+preserved or reject; the source-affine oblique ULP limitation is unchanged.
+
+Support returns a separate supported/rejected DTO. Rejection has no active tiers,
+height or meshes; success carries the import/revision key and planar tiers but
+does not construct a valid GeneratedCoin. Base-only calls still check polygon
+topology. A stage-specific freshness predicate rejects stale keys/error results;
+callers still own revision increments and future mesh/export validation.
+
+45 new independent analytic/adversarial and production-pipeline tests supplement
+all historical coverage. Nine accepted authored inputs pass support; outside-rim
+and over-lower-hole fail with retained remainders. Hiding Ring supports the center
+directly on base at total height 2.0 mm; reorder/show can invalidate support.
+See [support validation](support-validation.md) for exact outcomes and limits.
+No DIG-20 meshing, M3 UI/store, exporter or new manual acceptance follows from
+this issue. M0 sources/reports/samples remain unchanged, and unavailable Library
+baselines are not represented as inspected. Operator merge remains required.

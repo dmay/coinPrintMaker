@@ -1,5 +1,11 @@
 # Canonical domain contracts (DIG-11)
 
+DIG-19 now adds the pure [immediate-lower support stage](support-validation.md).
+It resolves current order/visibility, retains unsupported differences for
+diagnostics, and rejects with no active tier payload. Planar support success is
+distinct from mesh/export validity. Earlier references below to pending support
+describe the prior stage boundary.
+
 Current production integration (DIG-16): the complete local importer now constructs
 validated canonical polygons and atomically replaces ImportedCoin in the inspector.
 See [canonical import and M1 checkpoint](canonical-svg-import.md). Stage-specific

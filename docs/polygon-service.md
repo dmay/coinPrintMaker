@@ -1,5 +1,11 @@
 # Planar Boolean service (DIG-18)
 
+DIG-19 now adds the pure [immediate-lower support stage](support-validation.md).
+It resolves current order/visibility, retains unsupported differences for
+diagnostics, and rejects with no active tier payload. Planar support success is
+distinct from mesh/export validity. Earlier references below to pending support
+describe the prior stage boundary.
+
 `core/polygonService.ts` exposes `createPolygonService(PolygonKernel)` with
 `union(footprints)`, `difference(subject, clip)`, `intersection(subject, clip)`,
 `area(footprint)`, `bounds(footprint)` and `isEmpty(footprint)`. Every call returns
