@@ -15,7 +15,6 @@ main {
 }
 
 section {
-  max-width: 42rem;
   padding: 1.5rem;
   border: 1px solid #cbd0d7;
   border-radius: 0.5rem;
@@ -41,3 +40,10 @@ input {
   color: #505963;
   font-size: 0.9rem;
 }
+
+.inspector { margin-top: 1.5rem; border: 0; padding: 0; }
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+caption { text-align: left; margin-bottom: .75rem; }
+th, td { text-align: left; padding: .65rem; border-bottom: 1px solid #cbd0d7; }
+thead { background: #f0f3f6; }

@@ -1,5 +1,12 @@
 # SVG preflight (DIG-13)
 
+Current production integration (DIG-16): the complete local importer now constructs
+validated canonical polygons and atomically replaces ImportedCoin in the inspector.
+See [canonical import and M1 checkpoint](canonical-svg-import.md). Stage-specific
+boundaries and historical evidence below remain relevant; references to pending
+DIG-16 integration are superseded by that document. Rounded rectangles now use
+exact quarter-ellipse DTOs before affine mapping, per D-15.
+
 `preflightSvg(svgText)` parses bounded detached XML and returns a serializable
 accepted/rejected result with structured diagnostics. Accepted results identify
 eligible source shapes by root-relative element-child paths and report resolved

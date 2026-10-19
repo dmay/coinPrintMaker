@@ -49,6 +49,18 @@ function contoursDto(path: RecordValue): ExtractedShape['contours'] {
   });
 }
 
+/** SVG rect radii default to one another, clamp independently, and a zero axis is square. */
+function rectangleContours(node: Element): ExtractedShape['contours'] {
+  const n = (name: string) => Number(node.getAttribute(name) ?? 0);
+  const x=n('x'),y=n('y'),w=n('width'),h=n('height');
+  const rx=Math.min(node.hasAttribute('rx')?n('rx'):n('ry'),w/2);
+  const ry=Math.min(node.hasAttribute('ry')?n('ry'):n('rx'),h/2);
+  const line=(from:SvgPoint,to:SvgPoint):SvgCurve=>({kind:'line',from,to});
+  if (rx===0 || ry===0) return [{autoClose:true,curves:[line([x,y],[x+w,y]),line([x+w,y],[x+w,y+h]),line([x+w,y+h],[x,y+h]),line([x,y+h],[x,y])]}];
+  const arc=(cx:number,cy:number,startAngle:number):SvgCurve=>({kind:'ellipse',center:[cx,cy],axisX:[rx,0],axisY:[0,ry],startAngle,endAngle:startAngle+Math.PI/2,clockwise:false});
+  return [{autoClose:true,curves:[line([x+rx,y],[x+w-rx,y]),arc(x+w-rx,y+ry,-Math.PI/2),line([x+w,y+ry],[x+w,y+h-ry]),arc(x+w-rx,y+h-ry,0),line([x+w-rx,y+h],[x+rx,y+h]),arc(x+rx,y+h-ry,Math.PI/2),line([x,y+h-ry],[x,y+ry]),arc(x+rx,y+ry,Math.PI)]}];
+}
+
 /** Local, detached layer/shape extraction only; never returns a canonical coin. */
 export function svgLoaderAdapter(svgText: string): SvgExtractionResult {
   const preflight = preflightSvg(svgText);
@@ -146,7 +158,7 @@ export function svgLoaderAdapter(svgText: string): SvgExtractionResult {
       const style = record(data.style);
       if (style.fill !== source.fill || style.fillRule !== source.fillRule) throw new Error('Painting style contract changed');
       let contours: ExtractedShape['contours'];
-      try { contours = contoursDto(path).map(contour => ({ ...contour, curves: contour.curves.map(curve => transformCurve(transforms.get(byPath.get(key!)!)!, curve)) })); } catch { return reject('SVG_SHAPE_INVALID', source); }
+      try { const interpreted = contoursDto(path); contours = (node.localName === 'rect' ? rectangleContours(node) : interpreted).map(contour => ({ ...contour, curves: contour.curves.map(curve => transformCurve(transforms.get(byPath.get(key!)!)!, curve)) })); } catch { return reject('SVG_SHAPE_INVALID', source); }
       shapes.set(key!, { ...source, id: sourceIdentity(byPath.get(key!)!, source.elementPath), layerId: owner.id, sourceOrder: sourceOrders.get(source)!, contours });
     } catch { return reject('SVG_LOADER_MAPPING_INVALID', key === null ? undefined : eligible.get(key)); }
   }

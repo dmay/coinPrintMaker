@@ -1,5 +1,12 @@
 # Named layers and shape extraction (DIG-14)
 
+Current production integration (DIG-16): the complete local importer now constructs
+validated canonical polygons and atomically replaces ImportedCoin in the inspector.
+See [canonical import and M1 checkpoint](canonical-svg-import.md). Stage-specific
+boundaries and historical evidence below remain relevant; references to pending
+DIG-16 integration are superseded by that document. Rounded rectangles now use
+exact quarter-ellipse DTOs before affine mapping, per D-15.
+
 `findInkscapeLayers` discovers actual SVG `g` elements with Inkscape-namespace
 `groupmode="layer"` and a nonblank Inkscape label. Labels remain unchanged Unicode
 display text. Layers retain bottom-to-top document order, source IDs and original

@@ -2,7 +2,7 @@
 
 A browser-only utility for turning layered Inkscape SVG artwork into 3D-printable
 coins. The production UI is being built incrementally; the current page is a
-React/TypeScript application with local SVG file loading and bounded security/artwork preflight. M0 prototypes remain reference implementations.
+React/TypeScript application with complete local canonical SVG import and a minimal layer inspector. M0 prototypes remain reference implementations.
 
 ## Development and publication
 
@@ -40,8 +40,8 @@ Windows and Linux. Runtime scripts/styles are bundled locally; there is no backe
 authentication, CDN runtime or file-processing upload.
 
 SVG authoring subset, preflight diagnostics and verification:
-[docs/svg-preflight.md](docs/svg-preflight.md). Loading is still staged source data;
-layer extraction and validated geometry are under development.
+[docs/svg-preflight.md](docs/svg-preflight.md). The inspector shows validated XY polygons and metrics; support, production meshes
+and exports remain later work. See [canonical import and M1 checkpoint](docs/canonical-svg-import.md).
 
 ## Development fixtures
 
@@ -88,9 +88,10 @@ commands for that purpose. `npm run typecheck` checks app, ES-only core and test
 ## Local SVG loading
 
 Select or replace a local SVG on the current page. Files remain in the browser;
-failed replacements preserve the previous loaded source. Strict UTF-8/XML/SVG
-checks and provisional source/structure limits have actionable errors.
-Loading alone does not validate artwork or create exportable coin geometry;
-those production stages follow in M1/M2.
+failed replacements preserve the previous complete imported coin. Strict UTF-8/XML/SVG,
+painting, layer, transform and canonical polygon checks have actionable errors.
+The inspector reports source names, physical page, XY bounds, dimensions, area,
+regions and holes. Import alone does not validate support or create exportable
+coin meshes; those production stages follow in M2.
 See [docs/local-svg-loading.md](docs/local-svg-loading.md) for supported encoding,
 exact budgets, atomic replacement behavior and the staged import boundary.

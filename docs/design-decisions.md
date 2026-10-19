@@ -412,3 +412,38 @@ unit/fallback/aspect cases and fail-closed rejection, with no imported DOM mount
 script execution, network processing or page errors. See [normalization contract](svg-coordinate-normalization.md) for equations, coverage and limitations.
 M0 fixtures/reports/samples and staged atomic source loading remain unchanged;
 Library baseline sources remain unavailable.
+
+## D-15 — Canonical import, fill rules and M1 checkpoint
+
+**DIG-16, 2026-10-18:** Retain pinned detached SVGLoader parsing with strict
+preflight/source accounting and external affine mapping, explicit D-02 physical
+scaling and replaceable polygon-clipping 0.15.7 union adapter. Own physical
+0.005 mm curve flattening, 0.000001 mm grid, charged complexity caps, simple
+compound-contour winding/parity interpretation, canonical ring/footprint validation
+and complete latest-selection-only ImportedCoin replacement. Separate overlapping
+filled objects union; self-intersecting or crossing/touching compound contours fail
+with corrective diagnostics instead of guessed holes or partial artwork. General
+arrangement/precision hardening remains DIG-18. D-05's single connected base
+remains; empty named upper layers explicitly reject with LAYER_EMPTY.
+
+**Evidence-driven revision to D-14:** pinned SVGLoader rounded rectangles use
+fixed cubic coefficient 0.551915024494, whose error scales with corner radius.
+After validating original loader curves/node mapping, construct exact local
+elliptical quarter-arcs with SVG radius default/clamp/zero semantics, then apply
+the existing affine transforms. This avoids an unbudgeted physical error without
+changing dependencies or broadening supported SVG. Analytic rounded-area and
+affine bound tests supplement dense physical Bézier/affine-ellipse error probes.
+
+The production importer passes all 21 independent authored golden oracles,
+including holes/islands/overlaps and rejection categories. Canonical/UI tests cover
+snap collapse/near gaps, fill winding magnitudes, injected kernel failures and
+complete atomic failures/stale reads. Native Chrome 153.0.8010.48 generated Pages
+picker/inspector smoke passes all fixtures, source escaping, full-stage failures,
+rapid file selection, warning and narrow viewport probes, with no processing
+network requests, source mounting/execution or page errors. Root Pages artifacts
+are synchronized. [Canonical import](canonical-svg-import.md) records exact limits,
+tolerance accounting, parsing/scaling/fill decisions and M1/M2 boundary.
+
+No M2 implementation or new mesh/export/slicer/physical-print acceptance is claimed.
+The M1 implementation handoff remains subject to final-head CI and operator merge;
+the missing original Library baselines are not represented as inspected documents.
