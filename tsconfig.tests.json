@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": { "types": ["node"] },
-  "include": ["app/src/core", "tests/unit"]
+  "include": ["app/src/core", "tests/unit", "app/src/import/svgLoader.d.ts"]
 }

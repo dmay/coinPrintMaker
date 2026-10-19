@@ -4,12 +4,11 @@ import type { PreflightArtwork, SvgPreflightResult } from '../core/svgPreflight'
 import { parseSvgDocument, SVG_NAMESPACE } from './parseSvgDocument';
 import { opacityValue, resolveSvgStyle, solidPaint, styleDefaults } from './svgStyle';
 import type { SvgStyle } from './svgStyle';
+import { isInertSvgElement } from './svgElements';
 
 const shapes = new Set(['path', 'rect', 'circle', 'ellipse', 'polygon']);
-const nonRendering = new Set(['defs', 'metadata', 'title', 'desc', 'symbol', 'linearGradient', 'radialGradient', 'pattern', 'mask', 'clipPath', 'filter', 'marker']);
 const textElements = new Set(['text', 'tspan', 'textPath', 'flowRoot', 'flowPara', 'flowSpan']);
 const resourceProperties = new Set(['fill', 'stroke', 'mask', 'clip-path', 'filter', 'marker', 'marker-start', 'marker-mid', 'marker-end', 'cursor', 'color-profile']);
-const ink = 'http://www.inkscape.org/namespaces/inkscape';
 interface Entry {
   readonly element: Element;
   readonly path: readonly number[];
@@ -77,9 +76,7 @@ export function preflightSvg(svgText: string): SvgPreflightResult {
         if (/url\s*\(/i.test(value)) add(referenceCode(property, value, document), element, path);
       }
     }
-    const editorMetadata = (element.namespaceURI === 'http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd' && name === 'namedview') ||
-      (element.namespaceURI === ink && ['namedview', 'grid', 'page'].includes(name));
-    const inert = entry.inert || editorMetadata || (element.namespaceURI === SVG_NAMESPACE && nonRendering.has(name));
+    const inert = entry.inert || isInertSvgElement(element);
     let style = entry.parentStyle, suppressed = entry.suppressed;
     if (!inert) {
       const resolution = resolveSvgStyle(element, entry.parentStyle);
