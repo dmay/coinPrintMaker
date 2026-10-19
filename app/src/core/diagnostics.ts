@@ -36,7 +36,7 @@ export const diagnosticCatalog = {
   BASE_EMPTY: ['error', 'The base has no filled geometry.', 'Make the first Inkscape layer a nonempty coin base.'],
   LAYER_EMPTY: ['error', 'A printing layer has no filled geometry.', 'Add visible filled artwork to this layer, or remove the empty layer in Inkscape. Hidden artwork remains excluded.'],
   BASE_DISCONNECTED: ['error', 'The base has disconnected regions.', 'Connect the base regions or create separate SVG files.'],
-  SETTINGS_INVALID: ['error', 'Layer settings are invalid.', 'Keep the base enabled and first; use finite positive thicknesses.'],
+  SETTINGS_INVALID: ['error', 'Layer settings are invalid.', 'Match every source layer exactly once; keep the original base first and enabled, positive finite thicknesses, and opaque #RRGGBB colors.'],
   POLYGON_INVALID: ['error', 'Artwork could not be normalized safely.', 'Remove self-intersections and ambiguous or degenerate contours.'],
   SUPPORT_OUTSIDE_LOWER: ['error', 'Artwork extends outside the immediately lower active layer.', 'Resize or move the artwork, or adjust the lower layer to support it.'],
   MESH_INVALID: ['error', 'The generated mesh failed validation.', 'Correct the reported geometry before exporting.'],

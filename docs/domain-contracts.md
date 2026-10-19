@@ -159,3 +159,12 @@ or export permission. DIG-16 must flatten this representation with a physical
 error bound, normalize/union/validate polygons and complete the import transaction.
 See [coordinate normalization](svg-coordinate-normalization.md) for sizing,
 fallback, supported/rejected mappings and the revised extraction boundary.
+
+## Active stack resolution
+
+DIG-17 adds pure separate default-settings creation (1.6 mm base / 0.4 mm artwork)
+and active-tier resolution with identity/base protection, settings validation and
+cumulative absolute Z. Hidden tiers consume no height; consecutive active tiers
+are recomputed after every order/visibility edit. Source canonical XY/holes are
+retained. A resolved stack is not a valid generation or export authorization.
+See [active stack contract and evidence](active-layer-stack.md).

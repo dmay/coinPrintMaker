@@ -95,3 +95,11 @@ regions and holes. Import alone does not validate support or create exportable
 coin meshes; those production stages follow in M2.
 See [docs/local-svg-loading.md](docs/local-svg-loading.md) for supported encoding,
 exact budgets, atomic replacement behavior and the staged import boundary.
+
+## Active layer stack core
+
+Pure default-settings creation and active-stack resolution now preserve imported
+geometry while validating order/visibility/color/thickness and deriving cumulative
+Z intervals. Defaults use 1.6 mm base / 0.4 mm artwork. This core stage adds no
+editor controls or exportable mesh; support validation follows separately.
+See [docs/active-layer-stack.md](docs/active-layer-stack.md).
