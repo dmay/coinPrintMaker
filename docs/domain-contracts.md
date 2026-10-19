@@ -32,6 +32,11 @@ data. Polygon kernel adapters must add/remove explicit closure at their boundary
 Production normalization, chord-error/snap policy and complexity limits belong to
 DIG-16 and subsequent geometry work; this issue does not choose snap tolerances.
 
+The [planar Boolean service](polygon-service.md) validates raw and snapped DTOs,
+provides union/difference/intersection and checked area/bounds/isEmpty, and keeps
+empty intermediate sets distinct from invalid geometry. Empty bounds are null.
+The production importer reuses this service for each physical layer.
+
 ## Source, identity and settings
 
 `ImportedCoin` is immutable successful-import data: original local filename/XML,

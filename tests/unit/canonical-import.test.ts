@@ -3,6 +3,7 @@ import './setup';
 import type { FootprintMm, ImportedCoin, SourceDocument } from '../../app/src/core/contracts';
 import type { SvgCurve } from '../../app/src/core/svgExtraction';
 import { importCoinSvg, readLocalCoin } from '../../app/src/import/importCoinSvg';
+import { polygonClippingKernel } from '../../app/src/import/polygonClippingKernel';
 import { canonicalizeSvg } from '../../app/src/core/canonicalImport';
 import { normalizeSvg } from '../../app/src/import/normalizeSvg';
 import { flattenCurves } from '../../app/src/core/flattenSvg';
@@ -107,8 +108,8 @@ describe('explicit fill interpretation and canonical topology',()=>{
   test('kernel exceptions, malformed output, collapsed output and overlapping regions fail closed',()=>{
     const src=source(wrap(layer(rect))),n=normalizeSvg(src.svgText);
     const outputs:FootprintMm[]=[[],[{outer:[[0,0],[1,1],[2,2]],holes:[]}],[{outer:[[0,0],[10,0],[10,10],[0,10]],holes:[[[20,20],[21,20],[20,21]]]}]];
-    for(const out of outputs){const result=canonicalizeSvg(src,n,{union:()=>out});expect(result.status).toBe('rejected');expect(result).not.toHaveProperty('coin');}
-    const result=canonicalizeSvg(src,n,{union:()=>{throw new Error('kernel failure');}});expect(result.status).toBe('rejected');expect(result.diagnostics.at(-1)?.code).toBe('POLYGON_INVALID');
+    for(const out of outputs){const result=canonicalizeSvg(src,n,{...polygonClippingKernel,union:()=>out});expect(result.status).toBe('rejected');expect(result).not.toHaveProperty('coin');}
+    const result=canonicalizeSvg(src,n,{...polygonClippingKernel,union:()=>{throw new Error('kernel failure');}});expect(result.status).toBe('rejected');expect(result.diagnostics.at(-1)?.code).toBe('POLYGON_INVALID');
   });
 });
 describe('physical approximation and bounded work',()=>{

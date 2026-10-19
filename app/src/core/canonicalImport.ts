@@ -3,8 +3,9 @@ import { createDiagnostic } from './diagnostics';
 import type { Diagnostic, DiagnosticCode, DiagnosticLocation } from './diagnostics';
 import type { SvgNormalizationResult } from './svgNormalization';
 import type { PolygonKernel } from './polygonKernel';
+import { createPolygonService } from './polygonService';
 import { flattenCurves } from './flattenSvg';
-import { assertNoNearObjectContact, assertSeparate, canonicalFootprint, canonicalRing, footprintMetrics, inside, normalizeRing, PolygonBudget, PolygonFailure, signedRingArea } from './polygonGeometry';
+import { assertNoNearObjectContact, assertSeparate, canonicalRing, footprintMetrics, inside, normalizeRing, PolygonBudget, PolygonFailure, signedRingArea } from './polygonGeometry';
 
 export type CoinImportResult =
   | { readonly status: 'imported'; readonly coin: ImportedCoin; readonly diagnostics: readonly Diagnostic[] }
@@ -60,7 +61,9 @@ export function canonicalizeSvg(source: SourceDocument, normalized: SvgNormaliza
         shapes.push(filled);
       }
       location={scope:'layer',layerId:layer.id};
-      const footprintMm=canonicalFootprint(kernel.union(shapes),budget);
+      const union=createPolygonService(kernel).union(shapes,{budget,location});
+      if(union.status==='rejected') return {status:'rejected',diagnostics:[...diagnostics,...union.diagnostics]};
+      const footprintMm=union.value;
       if (!footprintMm.length) return reject(layer.id===normalized.baseCandidateId?'BASE_EMPTY':'LAYER_EMPTY');
       if (layer.id===normalized.baseCandidateId && footprintMm.length!==1) return reject('BASE_DISCONNECTED');
       layers.push({id:layer.id,name:layer.name,sourceOrder:layer.sourceOrder,sourceElements:layer.shapes.map(s=>({elementId:s.elementId,elementPath:s.elementPath})),footprintMm,...footprintMetrics(footprintMm)});

@@ -46,15 +46,15 @@ function contact(a: Point2Mm, b: Point2Mm, c: Point2Mm, d: Point2Mm): boolean {
   if (((x > 0 && y < 0) || (x < 0 && y > 0)) && ((z > 0 && w < 0) || (z < 0 && w > 0))) return true;
   return Math.min(segmentDistance(a,c,d), segmentDistance(b,c,d), segmentDistance(c,a,b), segmentDistance(d,a,b)) <= eps;
 }
-export function normalizeRing(points: readonly Point2Mm[], budget: PolygonBudget): RingMm {
+const snapCoordinate = (v: number) => Math.round(v / POLYGON_POLICY.snapMm) * POLYGON_POLICY.snapMm || 0;
+export function normalizeRing(points: readonly Point2Mm[], budget: PolygonBudget, snapCoordinates = true): RingMm {
   if (points.length > POLYGON_POLICY.maxRingVertices + 1) throw new PolygonFailure('Ring vertex limit exceeded.', true);
   const ring: Point2Mm[] = [];
   let previous: Point2Mm | null = null;
   for (const point of points) {
     budget.vertex();
     if (point.length !== 2 || !point.every(Number.isFinite) || point.some(v => Math.abs(v) > POLYGON_POLICY.maxCoordinateMm)) throw new PolygonFailure('Nonfinite or out-of-range XY coordinate.');
-    const snap = (v: number) => Math.round(v / POLYGON_POLICY.snapMm) * POLYGON_POLICY.snapMm || 0;
-    const p: Point2Mm = [snap(point[0]), snap(point[1])];
+    const p: Point2Mm = snapCoordinates ? [snapCoordinate(point[0]), snapCoordinate(point[1])] : [point[0],point[1]];
     if (ring.length && equalPoint(p,ring[ring.length-1]) && previous && Math.hypot(point[0]-previous[0],point[1]-previous[1]) > POLYGON_POLICY.closureNoiseMm) throw new PolygonFailure('Snapping would collapse a nonzero edge. Enlarge or remove the tiny feature in Inkscape.');
     if (!ring.length || !equalPoint(p, ring[ring.length - 1])) ring.push(p);
     previous=point;
@@ -91,9 +91,21 @@ export function assertNoNearObjectContact(a: readonly Point2Mm[], b: readonly Po
     budget.check();
     const p=a[i],q=a[(i+1)%a.length],r=b[j],s=b[(j+1)%b.length];
     const x=cross(p,q,r),y=cross(p,q,s),z=cross(r,s,p),w=cross(r,s,q);
-    if (x*y<0 && z*w<0) continue;
+    if (x*y<0 && z*w<0) {
+      // A strict crossing can create a tiny residual at either endpoint. Input
+      // snapping must not erase it before output validation gets to see it.
+      const denominator=(q[0]-p[0])*(s[1]-r[1])-(q[1]-p[1])*(s[0]-r[0]);
+      const t=((r[0]-p[0])*(s[1]-r[1])-(r[1]-p[1])*(s[0]-r[0]))/denominator;
+      const u=((r[0]-p[0])*(q[1]-p[1])-(r[1]-p[1])*(q[0]-p[0]))/denominator;
+      const endpointDistance=Math.min(t,1-t)*Math.hypot(q[0]-p[0],q[1]-p[1]);
+      const otherDistance=Math.min(u,1-u)*Math.hypot(s[0]-r[0],s[1]-r[1]);
+      if (!Number.isFinite(endpointDistance) || !Number.isFinite(otherDistance) || Math.min(endpointDistance,otherDistance)<=2*POLYGON_POLICY.snapMm) throw new PolygonFailure('A crossing is too close to a boundary endpoint for the precision grid.');
+      continue;
+    }
+    const onSegment=(point: Point2Mm,a: Point2Mm,b: Point2Mm)=>cross(a,b,point)===0 && point[0]>=Math.min(a[0],b[0]) && point[0]<=Math.max(a[0],b[0]) && point[1]>=Math.min(a[1],b[1]) && point[1]<=Math.max(a[1],b[1]);
+    if(onSegment(p,r,s) || onSegment(q,r,s) || onSegment(r,p,q) || onSegment(s,p,q)) continue;
     const distance=Math.min(segmentDistance(p,r,s),segmentDistance(q,r,s),segmentDistance(r,p,q),segmentDistance(s,p,q));
-    if (distance>POLYGON_POLICY.closureNoiseMm && distance<=2*POLYGON_POLICY.snapMm) throw new PolygonFailure('Separate objects have ambiguous near-contact before snapping. Separate them clearly or union them in Inkscape.');
+    if (distance<=2*POLYGON_POLICY.snapMm) throw new PolygonFailure('Separate objects have ambiguous near-contact before snapping. Separate them clearly or union them in Inkscape.');
   }
 }
 export function assertSeparate(a: RingMm, b: RingMm, budget: PolygonBudget): void {
@@ -119,8 +131,8 @@ export function canonicalRing(ring: RingMm, ccw: boolean): RingMm {
 }
 const compareKeys = (a: string,b: string) => a < b ? -1 : a > b ? 1 : 0;
 const ringKey = (ring: RingMm) => JSON.stringify(ring);
-export function canonicalFootprint(input: FootprintMm, budget: PolygonBudget): FootprintMm {
-  const output = input.map(p => ({ outer: canonicalRing(normalizeRing(p.outer,budget),true), holes: p.holes.map(h => canonicalRing(normalizeRing(h,budget),false)).sort((a,b) => compareKeys(ringKey(a),ringKey(b))) }));
+export function canonicalFootprint(input: FootprintMm, budget: PolygonBudget, snapCoordinates = true): FootprintMm {
+  const output = input.map(p => ({ outer: canonicalRing(normalizeRing(p.outer,budget,snapCoordinates),true), holes: p.holes.map(h => canonicalRing(normalizeRing(h,budget,snapCoordinates),false)).sort((a,b) => compareKeys(ringKey(a),ringKey(b))) }));
   const rings = output.flatMap(p => [p.outer, ...p.holes]);
   for (let i=0;i<rings.length;i++) for (let j=i+1;j<rings.length;j++) assertSeparate(rings[i],rings[j],budget);
   for (const p of output) {
@@ -140,4 +152,22 @@ export function footprintMetrics(footprint: FootprintMm): { areaMm2: number; bou
   }
   if (!(areaMm2 > 0) || ![minX,minY,maxX,maxY,areaMm2].every(Number.isFinite)) throw new PolygonFailure('Empty or invalid filled footprint.');
   return { areaMm2, boundsMm: [minX,minY,maxX,maxY] };
+}
+
+/** Validate raw topology before rounding, then reject erased/reversed corners.
+ * Turn preservation is a conservative guard, not a topology-equivalence proof;
+ * canonicalFootprint also checks global relationships on both sides of the snap. */
+export function guardedCanonicalFootprint(input: FootprintMm, budget: PolygonBudget, snapOutput = true): FootprintMm {
+  const raw=canonicalFootprint(input,budget,false);
+  for (const polygon of raw) for (const ring of [polygon.outer,...polygon.holes]) {
+    const snapped=ring.map(p=>[snapCoordinate(p[0]),snapCoordinate(p[1])] as Point2Mm);
+    for (let i=0;i<ring.length;i++) {
+      budget.check();
+      const j=(i+1)%ring.length,k=(i+2)%ring.length;
+      if (equalPoint(snapped[i],snapped[j]) && !equalPoint(ring[i],ring[j])) throw new PolygonFailure('Precision grid would erase a nonzero Boolean edge.');
+      if (Math.sign(cross(ring[i],ring[j],ring[k]))!==Math.sign(cross(snapped[i],snapped[j],snapped[k]))) throw new PolygonFailure('Precision grid would erase or reverse a Boolean corner.');
+    }
+  }
+  const snapped=canonicalFootprint(raw,budget);
+  return snapOutput ? snapped : raw;
 }
