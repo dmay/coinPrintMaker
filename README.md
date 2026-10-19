@@ -40,8 +40,8 @@ Windows and Linux. Runtime scripts/styles are bundled locally; there is no backe
 authentication, CDN runtime or file-processing upload.
 
 SVG authoring subset, preflight diagnostics and verification:
-[docs/svg-preflight.md](docs/svg-preflight.md). The inspector shows validated XY polygons and metrics; support, production meshes
-and exports remain later work. See [canonical import and M1 checkpoint](docs/canonical-svg-import.md).
+[docs/svg-preflight.md](docs/svg-preflight.md). The inspector shows validated XY polygons and metrics; production meshes
+and exports remain later work. The pure support stage is available separately from the inspector. See [canonical import and M1 checkpoint](docs/canonical-svg-import.md).
 
 ## Development fixtures
 
@@ -101,7 +101,7 @@ exact budgets, atomic replacement behavior and the staged import boundary.
 Pure default-settings creation and active-stack resolution now preserve imported
 geometry while validating order/visibility/color/thickness and deriving cumulative
 Z intervals. Defaults use 1.6 mm base / 0.4 mm artwork. This core stage adds no
-editor controls or exportable mesh; support validation follows separately.
+editor controls or exportable mesh; support validation is a separate core stage.
 See [docs/active-layer-stack.md](docs/active-layer-stack.md).
 
 ## Planar Boolean core
@@ -111,3 +111,12 @@ intersection and area/bounds/isEmpty behind a replaceable adapter. Precision
 failures produce diagnostics and valid empty results retain null bounds.
 See [docs/polygon-service.md](docs/polygon-service.md) for expected boundary,
 hole/island/tangency outcomes and bounded precision evidence.
+
+## Immediate-lower support core
+
+Pure support validation recomputes enabled adjacency, checks each complete
+upper-minus-lower difference, and exposes unsupported remainders with layer
+remedies. Rejections contain no active tiers or exportable mesh; supported
+results remain a pre-mesh stage with import/revision freshness checks.
+See [docs/support-validation.md](docs/support-validation.md) for exact-boundary,
+base/island and precision policy, failure gating and evidence.
