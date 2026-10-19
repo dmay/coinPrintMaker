@@ -103,3 +103,11 @@ geometry while validating order/visibility/color/thickness and deriving cumulati
 Z intervals. Defaults use 1.6 mm base / 0.4 mm artwork. This core stage adds no
 editor controls or exportable mesh; support validation follows separately.
 See [docs/active-layer-stack.md](docs/active-layer-stack.md).
+
+## Planar Boolean core
+
+The shared pure polygon service validates canonical layer unions, difference,
+intersection and area/bounds/isEmpty behind a replaceable adapter. Precision
+failures produce diagnostics and valid empty results retain null bounds.
+See [docs/polygon-service.md](docs/polygon-service.md) for expected boundary,
+hole/island/tangency outcomes and bounded precision evidence.

@@ -105,6 +105,11 @@ islands, identical rings and partial shared boundaries. This is bounded evidence
 not a universal robustness claim: near-coincident edges, arbitrary intersecting
 rings and extremely small slivers remain production normalization/precision work.
 
+**DIG-18 production refinement:** D-17 and the [planar service](polygon-service.md)
+extend the M1 adapter with checked difference/intersection and metrics. Exact
+shared boundaries remain supported; raw/output validation rejects pinches and
+precision ambiguity, including subnoise gaps and crossings near endpoints.
+
 ## D-04 — Terrace topology and STL
 
 **M0 finding:** Keep explicit exterior terraces as the proposed production path.
@@ -479,3 +484,34 @@ identity, Z and XY/holes/regions. See [active layer stack](active-layer-stack.md
 The Library baseline files remain unavailable; scope follows the live issue,
 existing canonical DTOs and repository decisions. M3 controls, meshing/export,
 browser/performance and slicer/physical-print gates remain separate.
+
+## D-17 — Reusable checked planar Booleans
+
+**DIG-18:** Keep polygon-clipping 0.15.7 behind the extended plain-DTO
+PolygonKernel and reuse one core polygon service for import layer union,
+difference/intersection and checked area/bounds/isEmpty. Empty area sets are
+valid intermediates with zero area/null bounds; printing-layer/base and future
+support policies remain callers' responsibilities. No duplicate M1 union path.
+
+Retain M1 grid/chord/contact and complexity limits. Validate raw and snapped
+operands, execute Booleans on raw operands, validate raw output relationships,
+reject snap-erased edges or erased/reversed turns, then validate canonical
+snapped topology. Cross-object closure noise is not allowed to bridge real gaps;
+exact contact is allowed, while positive near-contact and strict crossings near
+an endpoint reject. A nonempty residual is preserved or rejected, never area
+suppressed. These conservative guards are bounded evidence, not exact arithmetic
+or a universal topology-equivalence proof. Both validation passes charge the
+shared budget, which may reject earlier than M1.
+
+65 new analytic/adversarial tests supplement all 394 historical unit cases and
+22 retained Node checks. Independent rational intersection and tiny residual
+oracles caught and prevent pre-Boolean rounding loss. Exact partial oblique
+shared edges, holes/islands, tangencies, subnoise contact, grid/large coordinates,
+all-operation injected failures and a replacement adapter are covered. See the
+[service contract and evidence](polygon-service.md) for outcomes and limitations.
+No kernel replacement is warranted by current bounded fixtures; future failures
+remain actionable diagnostics behind the replaceable boundary.
+
+No DIG-19 support orchestration, production mesh/export, M3 UI, slicer or physical
+print work follows from this issue. M0 sources/reports/samples remain unchanged;
+missing Library baselines are not represented as inspected.

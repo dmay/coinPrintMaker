@@ -1,5 +1,7 @@
 # Canonical SVG import and M1 checkpoint (DIG-16)
 
+DIG-18 now routes each physical layer through the shared [planar Boolean service](polygon-service.md). Its raw/output guards, conservative near-crossing and subnoise-contact rejection, valid empty-set semantics and stricter work accounting supersede the M2-pending Boolean notes below. Source compound-contour restrictions, printing-layer/base policy and the M1 checkpoint remain in force.
+
 `readLocalCoin(File)` reads local UTF-8 bytes and calls `importCoinSvg(SourceDocument)`.
 The complete pipeline is detached XML/preflight → named layer/shape extraction →
 physical curve normalization → canonical polygons. Only `status: 'imported'` has
