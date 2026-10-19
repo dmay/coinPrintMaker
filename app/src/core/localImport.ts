@@ -1,9 +1,9 @@
 import type { SourceDocument } from './contracts';
 import type { Diagnostic } from './diagnostics';
 
-// Loading-stage data only. Artwork/security/geometry validation is still required.
+// Loading/preflight-stage data only. Layer and geometry validation is still required.
 export type LocalSvgResult =
-  | { readonly status: 'loaded'; readonly source: SourceDocument }
+  | { readonly status: 'loaded'; readonly source: SourceDocument; readonly diagnostics: readonly Diagnostic[] }
   | { readonly status: 'rejected'; readonly diagnostics: readonly Diagnostic[] };
 
 export interface LocalImportState {
@@ -26,6 +26,6 @@ export function localImportReducer(state: LocalImportState, action: LocalImportA
   }
   if (action.requestId !== state.requestId || state.pendingFileName === null) return state;
   return action.result.status === 'loaded'
-    ? { ...state, pendingFileName: null, source: action.result.source, diagnostics: [] }
+    ? { ...state, pendingFileName: null, source: action.result.source, diagnostics: action.result.diagnostics }
     : { ...state, pendingFileName: null, diagnostics: action.result.diagnostics };
 }
