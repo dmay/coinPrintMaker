@@ -319,3 +319,37 @@ See [local-svg-loading.md](local-svg-loading.md) for policy, rationale and tests
 The Library baseline sources remain unavailable. This bounded decision follows
 the live DIG-12 description, existing contracts and D-01/D-10; no unavailable
 baseline text or later security/geometry acceptance is claimed.
+
+## D-12 — Bounded SVG preflight and material-aware diagnostics
+
+**DIG-13 implementation, 2026-10-18:** Run detached bounded XML preflight before
+readLocalSvg can replace a staged source. No raw SVG DOM insertion, use expansion,
+remote reference resolution, geometry generation or export authorization occurs.
+Global active-content/reference checks include hidden/inert content. Metadata
+text/RDF descriptive URLs and unused definitions remain inert. Accepted results
+identify eligible shape element paths with resolved fill/fill-rule as plain DTOs;
+later extraction must preserve these exclusions and validate remaining geometry.
+
+Resolve the documented presentation/inline/inherited style subset explicitly,
+including inline importance, currentColor, display:none subtree suppression,
+inherited visibility that descendants can restore, and zero opacity suppression.
+Nonprinting artwork warns; active content, unsafe references, unknown CSS,
+partial opacity and visible unsupported material fail with corrective guidance.
+Reject visible strokes even on filled shapes to prevent dropping their outline.
+Retain D-01's explicit Z/z closure authoring rule: SVG implicit filled closure is
+real, but supporting it is outside this P0 contract. Unused definitions do not
+materialize; href/url use remains an error. This is a bounded validator rather
+than a general-purpose SVG sanitizer or full CSS/path parser.
+
+**Evidence:** app/core/test typechecking, adversarial Vitest coverage and retained
+accepted M0 corpus, rendered warning/error/atomic replacement tests, and a native
+Chrome 153.0.8010.48 Vite-bundled API smoke covering Unicode, XML errors, DTD,
+security, style/visibility and atomic rejection. Native resource probes recorded
+zero requests and no raw SVG/script execution. Budgets apply to direct preflight
+calls; diagnostic output is bounded without losing rejection or all visible errors.
+See [svg-preflight.md](svg-preflight.md) for exact policy, evidence and limits.
+
+No M0 fixtures, reports or sample artifacts are changed. The Library baselines
+remain unavailable. Layer/shape syntax extraction, units/transforms and robust
+polygons remain DIG-14..16; browser performance, broader CSS and cross-browser
+coverage are not claimed by this preflight acceptance.

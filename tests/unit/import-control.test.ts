@@ -25,7 +25,7 @@ async function select(input: HTMLInputElement, selected: File | null) {
   Object.defineProperty(input, 'files', { configurable: true, value: selected ? [selected] : [] });
   await act(async () => input.dispatchEvent(new Event('change', { bubbles: true })));
 }
-const loaded = (name: string): LocalSvgResult => ({ status: 'loaded', source: {
+const loaded = (name: string): LocalSvgResult => ({ status: 'loaded', diagnostics: [], source: {
   importId: name, fileName: name, byteLength: 50, svgText: '<svg><script>unsafe</script></svg>',
 } });
 test('selection, replacement, cancellation, same-file retry and escaped filenames', async () => {
@@ -77,4 +77,18 @@ test('unexpected read rejection clears pending state and preserves the previous 
   expect(container.textContent).not.toContain('Reading');
   expect(container.textContent).toContain('Loaded: first.svg');
   expect(container.querySelector('[role="alert"]')?.textContent).toContain('could not be read');
+});
+
+test('accepted preflight warnings are shown as warnings and never a replacement failure', async () => {
+  const input = await render();
+  vi.mocked(readLocalSvg).mockResolvedValue({ ...loaded('warnings.svg'), diagnostics: [{
+    code: 'ARTWORK_IGNORED', severity: 'warning', message: 'Hidden artwork was excluded.',
+    remediation: 'Show it to include it.', location: { scope: 'document' },
+  }] });
+  await select(input, new File(['source'], 'warnings.svg'));
+  expect(container.textContent).toContain('Loaded: warnings.svg');
+  expect(container.textContent).toContain('SVG loaded with warnings.');
+  expect(container.textContent).toContain('Hidden artwork was excluded.');
+  expect(container.querySelector('[role="alert"]')).toBeNull();
+  expect(container.textContent).not.toContain('failed');
 });

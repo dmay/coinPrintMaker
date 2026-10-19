@@ -83,7 +83,7 @@ describe('local SVG loading boundary', () => {
     const fetch = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Unexpected network request'));
     const text = wrap('<script>throw new Error("executed")</script><image href="https://example.invalid/image.png"/>');
     const result = await readLocalSvg(file(text));
-    expect(result.status).toBe('loaded'); // Artwork/security preflight is the next stage.
+    expect(result.status).toBe('rejected');
     expect(fetch).not.toHaveBeenCalled();
     fetch.mockRestore();
   });
@@ -91,7 +91,7 @@ describe('local SVG loading boundary', () => {
 
 describe('atomic latest-selection replacement', () => {
   const loaded = (name: string): LocalSvgResult => ({
-    status: 'loaded', source: { importId: name, fileName: name, byteLength: 1, svgText: wrap() },
+    status: 'loaded', diagnostics: [], source: { importId: name, fileName: name, byteLength: 1, svgText: wrap() },
   });
   const failure: LocalSvgResult = { status: 'rejected', diagnostics: [{
     code: 'SOURCE_UNREADABLE', severity: 'error', message: 'Unreadable file',
@@ -134,5 +134,5 @@ test('recognizes the XHTML parser-error document used by current Chrome', async 
   const parse = vi.spyOn(DOMParser.prototype, 'parseFromString').mockReturnValueOnce(errorDocument);
   await rejected(file(wrap('<g>')), 'MALFORMED_XML');
   parse.mockRestore();
-  expect((await readLocalSvg(file(wrap('<parsererror/><foreignObject><parsererror xmlns="http://www.w3.org/1999/xhtml"/></foreignObject>')))).status).toBe('loaded');
+  expect((await readLocalSvg(file(wrap('<metadata><parsererror/><parsererror xmlns="http://www.w3.org/1999/xhtml"/></metadata>')))).status).toBe('loaded');
 });

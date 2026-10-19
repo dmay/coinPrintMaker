@@ -2,7 +2,7 @@
 
 A browser-only utility for turning layered Inkscape SVG artwork into 3D-printable
 coins. The production UI is being built incrementally; the current page is a
-React/TypeScript application with local SVG file loading. M0 prototypes remain reference implementations.
+React/TypeScript application with local SVG file loading and bounded security/artwork preflight. M0 prototypes remain reference implementations.
 
 ## Development and publication
 
@@ -38,6 +38,10 @@ production output under that prefix and checks its script/style resources. LF te
 and binary artifact rules in `.gitattributes` keep byte checks reproducible on
 Windows and Linux. Runtime scripts/styles are bundled locally; there is no backend,
 authentication, CDN runtime or file-processing upload.
+
+SVG authoring subset, preflight diagnostics and verification:
+[docs/svg-preflight.md](docs/svg-preflight.md). Loading is still staged source data;
+layer extraction and validated geometry are under development.
 
 ## Development fixtures
 

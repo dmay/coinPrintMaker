@@ -6,6 +6,7 @@ import { readLocalSvg } from '../import/readLocalSvg';
 export function ImportControl() {
   const [state, dispatch] = useReducer(localImportReducer, initialLocalImportState);
   const nextRequestId = useRef(0);
+  const rejected = state.diagnostics.some(diagnostic => diagnostic.severity === 'error');
   return (
     <section aria-labelledby="import-heading">
       <h2 id="import-heading">Load SVG artwork</h2>
@@ -37,14 +38,14 @@ export function ImportControl() {
         {!state.source && state.pendingFileName === null && <p>No SVG loaded.</p>}
       </div>
       {state.diagnostics.length > 0 && (
-        <div role="alert">
-          <p>{state.source ? 'Replacement failed. Your previous SVG is still loaded.' : 'The SVG could not be loaded.'}</p>
+        <div role={rejected ? "alert" : "status"}>
+          <p>{rejected ? (state.source ? 'Replacement failed. Your previous SVG is still loaded.' : 'The SVG could not be loaded.') : 'SVG loaded with warnings.'}</p>
           <ul>{state.diagnostics.map((diagnostic, index) => (
             <li key={index}>{diagnostic.message} {diagnostic.remediation}</li>
           ))}</ul>
         </div>
       )}
-      <p className="import-note">Loading checks file format and size. Artwork validation and coin generation are coming next.</p>
+      <p className="import-note">Loading checks file format, size and supported SVG artwork. Layer extraction and coin generation are coming next.</p>
     </section>
   );
 }

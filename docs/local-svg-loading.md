@@ -11,11 +11,13 @@ app/src/import/readLocalSvg.ts returns either a loaded SourceDocument or rejecte
 document diagnostics. The source is plain JSON data: a new UUID import identity,
 filename, actual byte length and UTF-8 XML text. A UTF-8 BOM is consumed by the
 decoder. Source text is never mounted, used as an image or evaluated. The detached
-XML DOM is discarded after format/budget checks.
+XML DOM is discarded after format/budget/security/artwork preflight checks.
+See [SVG preflight](svg-preflight.md) for the supported subset and diagnostics.
 
 This is a loading stage, not an ImportedCoin or authorization to generate/export.
-Security and unsupported-artwork preflight (DIG-13), Inkscape layer extraction
-(DIG-14), units/transforms (DIG-15) and polygon normalization (DIG-16) must succeed
+Security and unsupported-artwork preflight now runs before loading succeeds.
+Inkscape layer extraction (DIG-14), units/transforms (DIG-15) and polygon
+normalization (DIG-16) must still succeed
 before a future complete import transaction can replace a canonical coin. No
 dummy layers, physical dimensions or geometry are created here. The minimal UI
 explicitly describes this boundary.
@@ -24,7 +26,8 @@ The pure core/localImport.ts transition preserves the previous source object
 while reading and on failure. Each selection gets a monotonically increasing
 request identity. Only the newest selection may commit its result or diagnostics;
 older success/failure completions are ignored, including after the newest failure.
-A successful replacement atomically swaps the whole source and clears errors.
+A successful replacement atomically swaps the whole source and replaces
+diagnostics with its preflight warnings.
 Closing the file picker is a no-op. Resetting its value after selection permits
 retry/reload of the same file. Each successful read has a fresh source UUID.
 
@@ -55,8 +58,9 @@ Empty/whitespace, local read failure, wrong root/namespace, malformed XML and
 over-budget content have actionable diagnostics. DTD/DOCTYPE input is rejected
 before XML parsing to avoid entity/external subset processing; the conservative
 text check also rejects a DOCTYPE string inside a comment. Save a plain SVG
-without a DTD/custom entities to resolve it. This narrow parsing guard is not a
-claim of complete SVG security preflight.
+without a DTD/custom entities to resolve it. Additional security/artwork checks
+run as documented in svg-preflight.md;
+this is not a claim that source SVG is safe to mount.
 
 ## Verification
 
