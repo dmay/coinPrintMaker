@@ -1,5 +1,10 @@
 # Canonical domain contracts (DIG-11)
 
+DIG-20 adds the pure [closed positioned layer-part stage](positioned-layer-meshes.md),
+with fresh support checks, canonical holes/islands, exact absolute Z and checked
+cap coverage. Its parts-built result is separate from unified/generated-coin and
+export validity; DIG-21/22 retain those later gates.
+
 DIG-19 now adds the pure [immediate-lower support stage](support-validation.md).
 It resolves current order/visibility, retains unsupported differences for
 diagnostics, and rejects with no active tier payload. Planar support success is

@@ -39,6 +39,7 @@ export const diagnosticCatalog = {
   SETTINGS_INVALID: ['error', 'Layer settings are invalid.', 'Match every source layer exactly once; keep the original base first and enabled, positive finite thicknesses, and opaque #RRGGBB colors.'],
   POLYGON_INVALID: ['error', 'Artwork could not be normalized safely.', 'Remove self-intersections and ambiguous or degenerate contours.'],
   SUPPORT_OUTSIDE_LOWER: ['error', 'Artwork extends outside the immediately lower active layer.', 'Resize or move the artwork, or adjust the lower layer to support it.'],
+  MESH_LIMIT_EXCEEDED: ['error', 'Mesh construction exceeds a complexity limit.', 'Simplify the artwork or reduce the number of active tiers.'],
   MESH_INVALID: ['error', 'The generated mesh failed validation.', 'Correct the reported geometry before exporting.'],
   GEOMETRY_STALE: ['error', 'Geometry belongs to an earlier source or settings revision.', 'Regenerate the coin using the current source and settings.'],
 } as const satisfies Record<string, readonly ['error' | 'warning', string, string]>;
