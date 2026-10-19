@@ -40,8 +40,8 @@ Windows and Linux. Runtime scripts/styles are bundled locally; there is no backe
 authentication, CDN runtime or file-processing upload.
 
 SVG authoring subset, preflight diagnostics and verification:
-[docs/svg-preflight.md](docs/svg-preflight.md). The inspector shows validated XY polygons and metrics; production meshes
-and exports remain later work. The pure support stage is available separately from the inspector. See [canonical import and M1 checkpoint](docs/canonical-svg-import.md).
+[docs/svg-preflight.md](docs/svg-preflight.md). The inspector shows validated XY polygons and metrics; unified meshes
+and exports remain later work. Pure support and independent layer-part construction are available separately from the inspector. See [canonical import and M1 checkpoint](docs/canonical-svg-import.md).
 
 ## Development fixtures
 
@@ -120,3 +120,13 @@ remedies. Rejections contain no active tiers or exportable mesh; supported
 results remain a pre-mesh stage with import/revision freshness checks.
 See [docs/support-validation.md](docs/support-validation.md) for exact-boundary,
 base/island and precision policy, failure gating and evidence.
+
+## Closed positioned layer-part core
+
+Pure triangulation and tier extrusion build independent closed layer parts with
+holes/islands at exact absolute Z. Stack construction checks current immediate-
+lower support first and preserves stable layer identity; any failure discards all
+partial parts. This stage is available separately from the inspector. Unified
+coin surfaces, complete generated-coin validation and export remain later stages.
+See [docs/positioned-layer-meshes.md](docs/positioned-layer-meshes.md) for cap coverage,
+precision, bounded construction checks and independent analytical evidence.

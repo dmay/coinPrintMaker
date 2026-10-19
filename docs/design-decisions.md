@@ -551,3 +551,46 @@ See [support validation](support-validation.md) for exact outcomes and limits.
 No DIG-20 meshing, M3 UI/store, exporter or new manual acceptance follows from
 this issue. M0 sources/reports/samples remain unchanged, and unavailable Library
 baselines are not represented as inspected. Operator merge remains required.
+
+## D-19 — Pure closed positioned parts with checked cap coverage
+
+**DIG-20:** Add replaceable plain-DTO triangulation and independent tier extrusion.
+Keep pinned pure Earcut in an adapter, canonical source XY and exact cumulative
+absolute Z, all outer/hole walls and both interface caps. Multi-part construction
+always resolves current source/settings and checks immediate-lower support first;
+failure exposes no partial parts. Stable source IDs/name/color remain attached to
+their complete layer meshes, including disconnected raised islands. A separate
+parts-built result/key never claims ValidGeneratedCoin or serialized exportability.
+
+Preserve original boundary subdivisions: reconstruct only exposed cap edges along
+ordered, exactly collinear original ring paths. Reject omitted meaningful corners,
+zero triangles or invalid output; do not copy M0's fuzzy all-vertex stitcher.
+Verified canonical-lattice BigInt predicates distinguish tiny nonzero turns without
+silently snapping input. Exact dyadic predicates also check unchanged emitted
+binary XY, which can differ from ideal lattice geometry by representation ULPs.
+Positive triangle orientation, complete directed original boundary equality,
+opposite paired interior edges and exact area equality establish cap coverage and
+exclude positive-area overlaps/hole filling on both representations. Finite emitted
+normals, closed edge incidence and translated compensated volume supplement these
+bounded construction checks. Expected volume uses actual emitted-coordinate area
+times the exact interval height, with 1e-9 relative accumulation error and no
+absolute tiny-feature deletion threshold. Unrepresentable/overflowing cases reject.
+
+Share existing polygon work limits and new explicit aggregate construction/output
+budgets across all tiers, not separately per island. See
+[positioned layer meshes](positioned-layer-meshes.md) for APIs, exact precision,
+coverage reasoning, limits and independent evidence. Sixty-six new tests include
+analytical concavity/holes/islands, cap-clipping overlap/coverage oracles, actual
+edge/component/vertex-link checks, all-three-edge subdivisions, tiny/large-coordinate
+features, thin elevated Z, malformed adapters, budgets and no-partial/stale failures.
+All nine supported authored inputs pass the current importer/support/part pipeline;
+the two unsupported authored inputs still reject. D-10's transformed tile now has
+a closed art part at XY[4,24]–[10,30], Z[1.6,2], volume14.4mm³. This establishes
+part construction only; unified-surface D-10 coverage remains DIG-21/22.
+
+No M0 fixture/report/sample/spike changes, production UI/scene integration, unified
+coin surface, full arbitrary-mesh validator, exporter or new slicer/physical-print
+acceptance follows. Library baseline documents remain unavailable and are not
+represented as inspected. Root Pages artifacts stay synchronized via the normal
+guarded build. Operator merge remains independent; leave DIG-20 unfinished until
+that merge is verified.
