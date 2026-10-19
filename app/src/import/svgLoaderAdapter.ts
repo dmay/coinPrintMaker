@@ -7,6 +7,9 @@ import { findInkscapeLayers } from './findInkscapeLayers';
 import { parseSvgDocument, SVG_NAMESPACE } from './parseSvgDocument';
 import { preflightSvg } from './preflightSvg';
 import { elementEntries, INKSCAPE_NAMESPACE, isInkscapeLayer, sourceIdentity } from './svgElements';
+import { identity, multiply, parseTransform, transformCurve } from '../core/svgAffine';
+import type { Affine } from '../core/svgAffine';
+import { lengthUserUnits } from '../core/svgViewport';
 import { validShapeData } from './validateShapeData';
 
 const marker = 'data-coinprint-source-path';
@@ -30,8 +33,10 @@ function curveDto(value: unknown): SvgCurve {
   if (c.type === 'QuadraticBezierCurve') return { kind: 'quadratic', from: point(c.v0), control: point(c.v1), to: point(c.v2) };
   if (c.type === 'CubicBezierCurve') return { kind: 'cubic', from: point(c.v0), control1: point(c.v1), control2: point(c.v2), to: point(c.v3) };
   if (c.type === 'EllipseCurve' && typeof c.aClockwise === 'boolean') return {
-    kind: 'ellipse', center: [finite(c.aX), finite(c.aY)], radius: [finite(c.xRadius), finite(c.yRadius)],
-    startAngle: finite(c.aStartAngle), endAngle: finite(c.aEndAngle), clockwise: c.aClockwise, rotation: finite(c.aRotation),
+    kind: 'ellipse', center: [finite(c.aX), finite(c.aY)],
+    axisX: [finite(c.xRadius) * Math.cos(finite(c.aRotation)), finite(c.xRadius) * Math.sin(finite(c.aRotation))],
+    axisY: [-finite(c.yRadius) * Math.sin(finite(c.aRotation)), finite(c.yRadius) * Math.cos(finite(c.aRotation))],
+    startAngle: finite(c.aStartAngle), endAngle: finite(c.aEndAngle), clockwise: c.aClockwise,
   };
   throw new Error('Unsupported curve type');
 }
@@ -63,6 +68,7 @@ export function svgLoaderAdapter(svgText: string): SvgExtractionResult {
   const eligible = new Map(preflight.artwork.map(shape => [pathKey(shape.elementPath), shape]));
   const sourceOrders = new Map(preflight.artwork.map((source, order) => [source, order]));
   const owners = new Map<string, ExtractedLayer>(), required = new Set<Element>([root]);
+  const transforms = new Map<Element, Affine>();
   for (const [key, shape] of eligible) {
     const element = byPath.get(key)!;
     let owner: ExtractedLayer | undefined;
@@ -76,19 +82,39 @@ export function svgLoaderAdapter(svgText: string): SvgExtractionResult {
   }
   if (![...owners.values()].some(owner => owner.id === discovery.layers[0].id)) return reject('BASE_EMPTY');
 
+  // SVGLoader's permissive transform parser and ellipse shortcuts are bypassed.
+  // Validate required ancestor mappings and compose them once in source order.
+  for (const { element, path } of entries) if (required.has(element)) {
+    try {
+      if (element === root && ['transform', 'x', 'y'].some(name => element.hasAttribute(name))) throw new Error('Root transform/x/y arrangements are unsupported. Move transforms into an ordinary group.');
+      if (element !== root && element.localName === 'svg') throw new Error('Nested SVG viewports are unsupported.');
+      transforms.set(element, multiply(element === root ? identity : transforms.get(element.parentElement!)!, parseTransform(element.getAttribute('transform'))));
+    } catch (error) {
+      const diagnostic = createDiagnostic('SVG_TRANSFORM_UNSUPPORTED', { scope: 'element', layerId: null, elementId: element.getAttribute('id'), elementPath: path });
+      return { status: 'rejected', diagnostics: [...diagnostics, { ...diagnostic, message: diagnostic.message + ' ' + (error as Error).message }] };
+    }
+  }
+
   // Project only eligible nodes and ancestor groups. Normalize SVG namespace
   // prefixes and resolved painting styles to avoid SVGLoader's narrower CSS
   // cascade and lack of complete hidden/inert-content filtering. Original IDs,
-  // structural paths, layer ancestry and transform attributes remain explicit.
+  // structural paths and layer ancestry remain explicit; transforms stay outside the loader.
   const projected = parsed.document.implementation.createDocument(SVG_NAMESPACE, 'svg', null);
   const clones = new Map<Element, Element>([[root, projected.documentElement]]);
   for (const { element, path } of entries) {
     if (!required.has(element)) continue;
     const clone = element === root ? projected.documentElement : projected.createElementNS(SVG_NAMESPACE, element.localName);
     clone.setAttribute(marker, pathKey(path));
-    for (const attribute of ['id', 'transform', ...(element === root ? ['width', 'height', 'viewBox', 'preserveAspectRatio'] : []), ...(
+    for (const attribute of ['id', ...(
       eligible.has(pathKey(path)) ? ['d', 'points', 'x', 'y', 'width', 'height', 'rx', 'ry', 'cx', 'cy', 'r'] : []
     )]) if (element.hasAttribute(attribute)) clone.setAttribute(attribute, element.getAttribute(attribute)!);
+    // Numericize physical primitive units before the loader (including whitespace
+    // normalization); unitless values and CSS px both denote local user units.
+    if (eligible.has(pathKey(path)) && !['path', 'polygon'].includes(element.localName)) {
+      try {
+        for (const name of ['x', 'y', 'width', 'height', 'rx', 'ry', 'cx', 'cy', 'r']) if (element.hasAttribute(name)) clone.setAttribute(name, String(lengthUserUnits(element.getAttribute(name)!)));
+      } catch { return reject('SVG_SHAPE_INVALID', eligible.get(pathKey(path))); }
+    }
     if (isInkscapeLayer(element)) {
       clone.setAttributeNS(INKSCAPE_NAMESPACE, 'inkscape:groupmode', 'layer');
       clone.setAttributeNS(INKSCAPE_NAMESPACE, 'inkscape:label', element.getAttributeNS(INKSCAPE_NAMESPACE, 'label')!);
@@ -120,7 +146,7 @@ export function svgLoaderAdapter(svgText: string): SvgExtractionResult {
       const style = record(data.style);
       if (style.fill !== source.fill || style.fillRule !== source.fillRule) throw new Error('Painting style contract changed');
       let contours: ExtractedShape['contours'];
-      try { contours = contoursDto(path); } catch { return reject('SVG_SHAPE_INVALID', source); }
+      try { contours = contoursDto(path).map(contour => ({ ...contour, curves: contour.curves.map(curve => transformCurve(transforms.get(byPath.get(key!)!)!, curve)) })); } catch { return reject('SVG_SHAPE_INVALID', source); }
       shapes.set(key!, { ...source, id: sourceIdentity(byPath.get(key!)!, source.elementPath), layerId: owner.id, sourceOrder: sourceOrders.get(source)!, contours });
     } catch { return reject('SVG_LOADER_MAPPING_INVALID', key === null ? undefined : eligible.get(key)); }
   }
@@ -131,7 +157,7 @@ export function svgLoaderAdapter(svgText: string): SvgExtractionResult {
     grouped.get(shape.layerId)!.push(shape);
   }
   return {
-    status: 'extracted', coordinateSpace: 'svg-loader', baseCandidateId: discovery.layers[0].id,
+    status: 'extracted', coordinateSpace: 'svg-user', baseCandidateId: discovery.layers[0].id,
     layers: discovery.layers.map(layer => ({ ...layer, shapes: grouped.get(layer.id)! })), diagnostics,
   };
 }

@@ -137,6 +137,18 @@ limits and future full-import transaction requirements.
 DIG-14 adds `core/svgExtraction.ts` plain DTOs and the isolated
 `import/svgLoaderAdapter.ts`. They preserve source identities and ancestry while
 returning source-ordered exact curve records in explicitly noncanonical
-SVGLoader coordinates. They do not construct ImportedCoin, resolve physical mm,
+root-user coordinates (the DIG-15 adapter revision applies validated transforms
+outside SVGLoader). They do not construct ImportedCoin or resolve physical mm,
 flatten/union polygons or authorize export. See [layer extraction](svg-layer-extraction.md)
 for projection, completeness, first-layer base and later-stage requirements.
+
+## Intermediate physical curve normalization
+
+DIG-15's `normalizeSvg` returns exact interpreted curves and analytical bounds in
+page-relative Y-up mm, with physical page and explicit/inferred size metadata.
+Ellipses use center and two affine axis vectors; their original angle traversal is
+retained through all transforms. It never returns ImportedCoin, polygons, meshes
+or export permission. DIG-16 must flatten this representation with a physical
+error bound, normalize/union/validate polygons and complete the import transaction.
+See [coordinate normalization](svg-coordinate-normalization.md) for sizing,
+fallback, supported/rejected mappings and the revised extraction boundary.
