@@ -353,3 +353,27 @@ No M0 fixtures, reports or sample artifacts are changed. The Library baselines
 remain unavailable. Layer/shape syntax extraction, units/transforms and robust
 polygons remain DIG-14..16; browser performance, broader CSS and cross-browser
 coverage are not claimed by this preflight acceptance.
+
+## D-13 — Production named-layer and source-shape extraction
+
+**DIG-14:** Retain D-01's named/non-nested actual Inkscape layers, document order,
+first-layer base candidate and duplicate-source-ID rejection. IDs use disjoint
+`source:` and `path:` namespaces; duplicate display labels never merge tiers.
+Preserve empty nonbase tier identity at this intermediate stage; an empty base
+fails without choosing another layer. Canonical empty-footprint policy remains
+DIG-16, not a settings decision here.
+
+Pinned SVGLoader source-node ancestry and inherited style mapping pass the eleven
+accepted fixtures plus adversarial mapping/style tests. A detached eligible-node
+projection makes preflight's resolved visibility/paint authoritative despite
+SVGLoader CSS differences. Every eligible source must map exactly once; missing
+or unsupported mappings reject without partial geometry. Complete supported shape
+syntax is guarded before the permissive loader. See [extraction contract and
+evidence](svg-layer-extraction.md).
+
+The serializable intermediate curves are explicitly in SVGLoader coordinates:
+element transforms already applied, 96 DPI/px configured, root viewport/mm/Y-up
+normalization still DIG-15 and canonical polygons/complete import still DIG-16.
+No Three.js/DOM objects escape and extraction cannot authorize export or replace a
+canonical coin. Baseline Library documents remain unavailable; the live issue,
+current contracts and accepted D-01/D-12 supply this bounded implementation.

@@ -131,3 +131,12 @@ creating an ImportedCoin or validating artwork/geometry. The replacement state
 transition retains the previous source on failure and ignores stale asynchronous
 completions. See [local-svg-loading.md](local-svg-loading.md) for the exact boundary,
 limits and future full-import transaction requirements.
+
+## Intermediate named-layer/shape extraction
+
+DIG-14 adds `core/svgExtraction.ts` plain DTOs and the isolated
+`import/svgLoaderAdapter.ts`. They preserve source identities and ancestry while
+returning source-ordered exact curve records in explicitly noncanonical
+SVGLoader coordinates. They do not construct ImportedCoin, resolve physical mm,
+flatten/union polygons or authorize export. See [layer extraction](svg-layer-extraction.md)
+for projection, completeness, first-layer base and later-stage requirements.
