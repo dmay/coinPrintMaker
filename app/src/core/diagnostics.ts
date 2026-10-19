@@ -34,6 +34,7 @@ export const diagnosticCatalog = {
   SVG_SHAPE_INVALID: ['error', 'A supported shape could not be extracted completely.', 'Correct malformed or empty shape data in Inkscape and save the SVG again.'],
   SVG_LOADER_MAPPING_INVALID: ['error', 'The SVG loader could not account for every source shape.', 'Simplify the artwork and report this file as an importer compatibility issue.'],
   BASE_EMPTY: ['error', 'The base has no filled geometry.', 'Make the first Inkscape layer a nonempty coin base.'],
+  LAYER_EMPTY: ['error', 'A printing layer has no filled geometry.', 'Add visible filled artwork to this layer, or remove the empty layer in Inkscape. Hidden artwork remains excluded.'],
   BASE_DISCONNECTED: ['error', 'The base has disconnected regions.', 'Connect the base regions or create separate SVG files.'],
   SETTINGS_INVALID: ['error', 'Layer settings are invalid.', 'Keep the base enabled and first; use finite positive thicknesses.'],
   POLYGON_INVALID: ['error', 'Artwork could not be normalized safely.', 'Remove self-intersections and ambiguous or degenerate contours.'],

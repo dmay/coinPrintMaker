@@ -1,5 +1,12 @@
 # SVG coordinates and physical size (DIG-15)
 
+Current production integration (DIG-16): the complete local importer now constructs
+validated canonical polygons and atomically replaces ImportedCoin in the inspector.
+See [canonical import and M1 checkpoint](canonical-svg-import.md). Stage-specific
+boundaries and historical evidence below remain relevant; references to pending
+DIG-16 integration are superseded by that document. Rounded rectangles now use
+exact quarter-ellipse DTOs before affine mapping, per D-15.
+
 `import/normalizeSvg.ts` composes detached layer/shape extraction with the pure
 `core/svgViewport.ts` and `core/svgNormalization.ts` stages. Success is an
 intermediate `status: 'normalized', coordinateSpace: 'canonical-mm'` result:

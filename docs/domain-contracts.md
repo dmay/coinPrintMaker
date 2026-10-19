@@ -1,5 +1,12 @@
 # Canonical domain contracts (DIG-11)
 
+Current production integration (DIG-16): the complete local importer now constructs
+validated canonical polygons and atomically replaces ImportedCoin in the inspector.
+See [canonical import and M1 checkpoint](canonical-svg-import.md). Stage-specific
+boundaries and historical evidence below remain relevant; references to pending
+DIG-16 integration are superseded by that document. Rounded rectangles now use
+exact quarter-ellipse DTOs before affine mapping, per D-15.
+
 The serializable contracts are in `app/src/core/contracts.ts`. This boundary has
 no React, Three.js, DOM, file handles, functions, maps, typed arrays or scene
 objects. `tsconfig.core.json` compiles it with ES2022 alone and no ambient

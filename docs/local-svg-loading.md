@@ -1,5 +1,12 @@
 # Local SVG loading (DIG-12)
 
+Current production integration (DIG-16): the complete local importer now constructs
+validated canonical polygons and atomically replaces ImportedCoin in the inspector.
+See [canonical import and M1 checkpoint](canonical-svg-import.md). Stage-specific
+boundaries and historical evidence below remain relevant; references to pending
+DIG-16 integration are superseded by that document. Rounded rectangles now use
+exact quarter-ellipse DTOs before affine mapping, per D-15.
+
 The page selects a local file with a browser file input. The File API reads bytes
 on the device; there is no upload, backend, remote processing or runtime CDN.
 The filename and MIME type are picker hints, not content validation. A valid SVG
