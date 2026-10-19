@@ -447,3 +447,35 @@ tolerance accounting, parsing/scaling/fill decisions and M1/M2 boundary.
 No M2 implementation or new mesh/export/slicer/physical-print acceptance is claimed.
 The M1 implementation handoff remains subject to final-head CI and operator merge;
 the missing original Library baselines are not represented as inspected documents.
+
+## D-16 — Pure active stack and separate initial settings
+
+**DIG-17:** Resolve the existing immutable canonical ImportedCoin plus matching
+CoinSettings without UI/render state or a second polygon kernel. Require exact
+source/settings layer identity, original base first/enabled, finite positive
+thickness and opaque sRGB color on every entry, including disabled artwork.
+Preserve the existing nonempty printing-layer and single-region base policies.
+Default settings start at revision 0 with 1.6 mm base / 0.4 mm artwork, all enabled,
+and neutral #808080 display color independent of SVG paint/filament. This is a
+reversible initial color choice, not a palette or filament-mapping decision.
+
+Consecutive enabled tiers define active adjacency; base starts at Z0 and all Z
+intervals are cumulative/absolute. Hide/reorder/show recomputes from source and
+settings without mutating source, settings or earlier results. Reject cumulative
+overflow or a positive thickness too small to increase its current floating-point
+Z; add no new precision grid/minimum thickness policy. Success carries its import/
+revision key, active tiers and total height, with no mesh/export-valid status.
+
+Source errors block resolution. Minimal source identity/nonempty/finite-ring/base
+checks supplement canonical import without revalidating or changing its topology,
+normalization or budgets. Broader polygon work remains DIG-18 and immediate-lower
+support remains DIG-19. In particular outside-rim/over-lower-hole resolve a stack
+but remain unsupported geometry until that later validation. No M0 mesher change
+or new offset-nested-transforms mesh acceptance follows from this work.
+
+Independent analytic/adversarial stack tests and all eleven accepted authored
+fixtures exercise production import → defaults → resolution against golden
+identity, Z and XY/holes/regions. See [active layer stack](active-layer-stack.md).
+The Library baseline files remain unavailable; scope follows the live issue,
+existing canonical DTOs and repository decisions. M3 controls, meshing/export,
+browser/performance and slicer/physical-print gates remain separate.

@@ -120,3 +120,23 @@ export interface InvalidGeneratedCoin extends GenerationResult {
   readonly metrics?: never;
 }
 export type GeneratedCoin = ValidGeneratedCoin | InvalidGeneratedCoin;
+
+// Stack resolution establishes settings and Z only, never mesh/export validity.
+export interface ResolvedStack {
+  readonly status: 'resolved';
+  readonly input: GenerationKey;
+  readonly activeTiers: readonly ActiveTier[];
+  readonly totalHeightMm: number;
+  readonly diagnostics: readonly Diagnostic[];
+}
+export interface RejectedStack {
+  readonly status: 'rejected';
+  readonly diagnostics: readonly Diagnostic[];
+  readonly input?: never;
+  readonly activeTiers?: never;
+  readonly totalHeightMm?: never;
+}
+export type StackResolution = ResolvedStack | RejectedStack;
+export type CoinSettingsResult =
+  | { readonly status: 'created'; readonly settings: CoinSettings; readonly diagnostics: readonly Diagnostic[] }
+  | { readonly status: 'rejected'; readonly diagnostics: readonly Diagnostic[]; readonly settings?: never };
