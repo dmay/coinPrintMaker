@@ -39,7 +39,7 @@ export function AppShell({ store: providedStore }: { readonly store?: EditorStor
               <DiagnosticList diagnostics={diagnostics} />
             </section>}
           </div>
-          <LayerPanel coin={state.importState.coin} />
+          <LayerPanel store={store} />
         </div>
       </EditorErrorBoundary>
     </main>

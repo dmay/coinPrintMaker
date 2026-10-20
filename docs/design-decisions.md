@@ -713,3 +713,22 @@ Numeric text stays local to DIG-25 controls. No Worker or scene is added; D-08
 profiling/Worker decision remains DIG-27. Export selectors describe checked
 geometry only; M4 buttons stay disabled and emitted-coordinate checks remain
 required. No XY/Z, precision/support or manual acceptance policy changes.
+
+## D-24 — Stable layer rows with explicit local numeric commits
+
+**DIG-25:** Keep the existing immutable store as the only committed editor owner.
+Layer rows are keyed by import identity and source layer ID, preserving drafts,
+selection and settings through reorder. A native opaque color picker uses the
+existing proven display-only reuse path. Numeric drafts stay text until Enter or
+blur validates a complete finite positive decimal; malformed text stays visible
+with committed values unchanged, and Escape restores the latest committed value.
+No prefix parsing, clamp, implicit geometry setting or new minimum thickness.
+
+Raised tiers use pointer capture with handle-only touch scrolling suppression,
+edge autoscroll and a single drop commit; cancellation is a no-op. Native labeled
+move buttons provide keyboard/single-pointer alternatives with retained-row focus
+and position announcements. Base order/visibility stay locked. Current height/Z
+come only from a checked current generation; all order/visibility/thickness edits
+reuse the existing complete support/mesh pipeline. See [layer controls](layer-controls.md)
+for exact edit behavior, validation and scope. No drag dependency, scene, Worker,
+exporter, geometry tolerance or M0 acceptance policy changes.
