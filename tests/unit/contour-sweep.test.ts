@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import type { Point2Mm, RingMm } from '../../app/src/core/contracts';
-import { assertSeparate, normalizeRing, PolygonBudget, POLYGON_POLICY, segmentDistance } from '../../app/src/core/polygonGeometry';
+import { assertSeparate, normalizeRing, PolygonBudget, POLYGON_POLICY, segmentDistance, signedRingArea } from '../../app/src/core/polygonGeometry';
 
 const ring=(p:Point2Mm[])=>p as unknown as RingMm;
 const orient=(a:Point2Mm,b:Point2Mm,c:Point2Mm)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
@@ -34,4 +34,24 @@ test('dense X-overlap scans remain bounded even when Y bounds are disjoint',()=>
   const a=ring(Array.from({length:2100},(_,i):Point2Mm=>[0,i]));
   const b=ring([[0,10000],[0,10001],[0,10002]]);
   expect(()=>assertSeparate(a,b,new PolygonBudget())).toThrow('Contour comparison limit exceeded');
+});
+
+test('short bridge keeps both endpoints without false near-contact in either winding',()=>{
+  const points:Point2Mm[]=[[0,0],[10,0],[10,10],[0,10],[.000001,.000001]];
+  for(const p of [points,[...points].reverse()]) {
+    const result=normalizeRing(p,new PolygonBudget());
+    expect(result).toHaveLength(5);
+    expect(Math.abs(signedRingArea(result))).toBeCloseTo(100-.000005,10);
+    expect(result).toContainEqual([.000001,.000001]);
+    expect(result).toContainEqual([0,0]);
+  }
+});
+test('short bridges do not exempt actual crossings or nonlocal near-contact',()=>{
+  const crossing:Point2Mm[]=[[0,0],[10,0],[10,10],[0,10],[0.000001,-.000001]];
+  expect(()=>normalizeRing(crossing,new PolygonBudget())).toThrow('self-intersects');
+  const touching:Point2Mm[]=[[0,0],[10,0],[10,10],[0,10],[.000001,0]];
+  expect(()=>normalizeRing(touching,new PolygonBudget())).toThrow();
+  // Two long edges separated by a narrow channel still reject.
+  const channel:Point2Mm[]=[[0,0],[10,0],[10,10],[5,10],[5,1],[4.999999,1],[4.999999,10],[0,10]];
+  expect(()=>normalizeRing(channel,new PolygonBudget())).toThrow('self-intersects');
 });
