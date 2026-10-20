@@ -6,8 +6,8 @@ export function DiagnosticList({ diagnostics, coin }: { readonly diagnostics: re
   return <ul className="diagnostic-list">{diagnostics.map((diagnostic, index) => {
     const location = diagnostic.location;
     return <li key={index}>
-    <strong>{diagnostic.code}</strong>
-    {location.scope !== 'document' ? ` (layer ${location.layerName || coin?.layers.find(layer => layer.id === location.layerId)?.name || location.layerId || 'unknown'})` : ''}
+    <strong>{diagnostic.severity === 'error' ? 'Error' : 'Warning'} · {diagnostic.code}</strong>
+    {location.scope !== 'document' ? ` (layer ${`${location.layerName || coin?.layers.find(layer => layer.id === location.layerId)?.name || 'unknown'}${location.layerId ? `, ID: ${location.layerId}` : ''}`})` : ''}
     {location.scope === 'element' && `, element ${location.elementLabel || location.elementId || location.elementPath.join('.')}`}
     {' — '}{diagnostic.message} {diagnostic.remediation}
   </li>;

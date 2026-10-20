@@ -118,3 +118,29 @@ input[aria-invalid="true"] { border: 2px solid #a12d20; }
   .coin-canvas { height: 300px; }
   .view-controls { padding: .75rem; }
 }
+
+/* Measurements and text diagnostics remain independent of Canvas availability. */
+.dimension-summary, .diagnostics-panel { margin-top: 1rem; background: white; border: 1px solid #c8d3d9; border-radius: 10px; overflow-wrap: anywhere; }
+.panel-body { padding: 1rem 1.2rem; font-size: .85rem; }
+.coin-measurements { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem 1rem; margin: .8rem 0; font-size: .9rem; }
+.coin-measurements dd { font-weight: 650; }
+.tier-measurements summary { min-height: 44px; cursor: pointer; padding: .6rem 0; font-weight: 600; }
+.tier-measurements p { font-size: .75rem; margin-bottom: .5rem; }
+.table-scroll { max-height: 18rem; overflow: auto; border: 1px solid #dce3e7; }
+.tier-measurements table { width: 100%; border-collapse: collapse; font-size: .75rem; }
+.tier-measurements th, .tier-measurements td { padding: .5rem; text-align: left; border-bottom: 1px solid #dce3e7; vertical-align: top; }
+.tier-measurements thead th { background: #edf1f3; }
+.tier-measurements small { display: block; font-weight: 400; }
+.diagnostics-panel .diagnostic-list { padding-left: 1.5rem; }
+.diagnostics-panel li { padding: .6rem; border: 1px solid #dbc584; border-left: 4px solid #a47b24; border-radius: 4px; background: #fff7e4; }
+.diagnostics-panel li.diagnostic-error { background: #fff2f0; border-color: #d69e94; border-left-color: #a53728; }
+.diagnostics-panel li p { margin-top: .4rem; }
+.diagnostics-panel li button { margin-top: .5rem; font-size: .8rem; max-width: 100%; overflow-wrap: anywhere; }
+.diagnostic-pages { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: .8rem; }
+.eligibility-note { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid #dce3e7; }
+.export-controls { max-width: 320px; }
+@media (max-width: 400px) {
+  .panel-body { padding: .8rem; }
+  .coin-measurements { grid-template-columns: minmax(0, 1fr); }
+  .tier-measurements th, .tier-measurements td { padding: .35rem; }
+}

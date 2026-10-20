@@ -157,3 +157,14 @@ coarse progress and recoverable failure diagnostics. Color-only edits reuse chec
 geometry. See [background generation and profiling](docs/background-generation.md)
 for the measured D-08 decision, protocol, ownership and reproducible developer
 harness. SVG parsing/import remains a separate atomic main-thread operation.
+
+## Current measurements and diagnostics
+
+Checked current width/depth/height in mm, volume in mm³ and per-layer cumulative
+Z appear below the preview, including when WebGL is unavailable. Pending, stale
+and invalid geometry has no current measurements. Errors/warnings identify
+stable layers and corrective actions; diagnostic buttons select layers only.
+Failed replacement imports are kept separate from the retained checked coin.
+STL/3MF exporters remain unavailable and disabled even for valid geometry.
+See [current diagnostics](docs/current-diagnostics.md) and the
+[pre-merge M3 checkpoint](docs/m3-editor-checkpoint.md) for evidence and limits.
