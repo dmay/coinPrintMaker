@@ -270,6 +270,20 @@ these exclusions. [Background generation](background-generation.md) documents
 the harness, final verification and native limits. Historical M2 timings only
 motivated this new measurement and are not reused as M3 acceptance evidence.
 
+Final clean `5013d68` Worker runtime (same browser/device/DPR, viewport
+1280×720) completed 50 action rows with zero main-thread long tasks/window errors;
+frame gaps were 18.0–19.6 ms and queued input delays 0.1/1.9/3.9/6.9 ms. Total
+sun regeneration remained 557.0–588.5 ms: offloading preserves validation rather
+than claiming it became instantaneous. The 2,090,000-byte input took 234.5–237.0 ms
+total with ~18.1 ms frame gaps; 8,191/8,192-point candidates rejected within
+27.5–44.1/28.0 ms with prior source preserved. Native Worker fault/retry and a
+real file chooser plus Enter edit passed the stated current-key/dimension gates.
+The IAB/harness preview fallback prevented native GPU/orbit acceptance, while
+text remained usable; differing viewport and synthetic-vs-native inputs limit
+comparison. [Final samples/build hashes](evidence/dig27-worker.json) and the
+[detailed native limitations](background-generation.md#final-native-comparison-and-acceptance)
+record the evidence without cross-browser/physical-device claims.
+
 Protocol version 1 echoes token/source/settings keys; current errors fail closed
 with recoverable text outside Canvas. Fresh Float64/Uint32 transport copies
 preserve exact domain coordinates and ownership. Supersession terminates active
