@@ -1,5 +1,10 @@
 # Revision-safe editor state and generation (DIG-24)
 
+DIG-27 supersedes the historical main-thread executor notes below: production
+generation now uses the [measured Worker boundary](background-generation.md).
+The same coordinator/freshness/color proofs remain. SVG import remains separate;
+Worker failures/progress and shell cleanup are covered by the linked contract.
+
 `state/editorStore.ts` creates one Zustand 5.0.15 vanilla store per editor mount.
 React subscribes through `useStore`; rendering is never an input to the engine.
 The store owns the complete import transaction, source revision, committed

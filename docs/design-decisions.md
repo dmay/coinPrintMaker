@@ -209,7 +209,7 @@ tested assignment workflow.
 | D-03 / D-04 | Shared-edge/holes/terrace topology pass DIG-8 automation; all six STL imports/slices accepted by operator in OrcaSlicer 2.4.2 build 8500fcdc. |
 | D-05 | Reject disconnected bases; retain supported raised islands. |
 | D-06 / D-07 | Generic package and initial loading accepted; observed UI name/color limits recorded. Downstream project handling and filament mapping are outside acceptance. |
-| D-08 | Responsiveness/worker decision deferred to measured production UI work in M3. |
+| D-08 | M0 deferred responsiveness; DIG-27 measured production UI blocking and selected a Worker (see D-08). |
 | D-09 | Root `index.html` / main Pages arrangement retained; reproducible production build remains M1/M5 work. |
 
 The earlier authorization to code DIG-9 before DIG-8 manual acceptance retained
@@ -226,6 +226,56 @@ complexity budgets, arbitrary self-intersections and cross-version compatibility
 remain bounded risks assigned to later work. M4 must validate production package
 output and initial loading under this same boundary. Physical-print acceptance
 remains a separate later gate; no later issue is completed by M0 acceptance.
+
+## D-08 — Measured production generation requires a Worker
+
+**DIG-27, 2026-10-20:** Offload the existing pure `generateCoin` pipeline to a
+module Worker. The actual generated M3 editor exceeded the 150–250 ms decision
+threshold repeatedly and delayed scheduled input delivery by up to 489 ms.
+Promise/task yielding did not offload this synchronous work. DOM-based SVG
+import and atomic candidate replacement remain on main; no geometry precision,
+limit, validity or export policy changes.
+
+Native in-app Chromium reported Chrome 155.0.0.0 on Windows 11 Pro 10.0.26200,
+MSI Aegis ZS2 desktop / AMD Ryzen 9 9900X (12 cores/24 threads), 33,345,101,824
+physical RAM bytes. Browser reported 24 cores/32 GB, 679×1044 CSS px and DPR 1.5.
+The unchanged baseline was main `60f9865ad1bb5a0deb47e575ad24b1f79eb0608e`,
+tree `b1992ed09a8d941a5d167b2a1ce1fcd9343422c5`, served under
+`http://127.0.0.1:4175/coinPrintMaker/`. Three runs per action:
+
+| Fixture | Source bytes | Canonical XY vertices | Unified vertices / triangles | Import total ms | Base-thickness regeneration ms |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| sun-medallion | 1,413 | 486 | 972 / 1,940 | 539.1–692.6 | 555.8–587.3 |
+| twin-stars | 1,568 | 408 | 816 / 1,628 | 411.9–461.0 | 396.0–459.1 |
+| monogram-o | 1,473 | 211 | 422 / 840 | 187.4–220.0 | 186.8–188.1 |
+| offset-nested-transforms | 1,505 | 203 | 406 / 808 | 187.1–188.9 | 172.0–188.1 |
+| generated regular polygon | 15,737 | 800 | 1,600 / 3,196 | 652.1–684.2 | 651.6–684.1 |
+| padded offset-nested | 2,090,000 | 203 | 406 / 808 | 203.2–220.2 | 187.0–203.7 |
+
+Pending-to-ready intervals isolate generation wall time including coordinator
+ownership: sun 516.0–666.6 ms on imports / 532.1–571.3 ms on edits; twin
+399.1–438.3 / 374.0–449.7; monogram 176.0–198.6 / 173.0–179.8; offset
+169.5–176.7 / 164.8–168.7; 800-point polygon 630.4–658.8 / 642.4–659.7.
+Representative main-thread long tasks were 164–652 ms with frame gaps up to
+650 ms. Four Enter edits scheduled 30 ms apart had later deliveries delayed
+489.0, 467.1 and 438.1 ms. The eventual checked key matched current revision 4.
+
+The baseline used native browser APIs/production code with synthetic input/File
+events; it was not a physical input/picker study. The 8,192-point source rejected
+at the existing flattened-ring guard in 27.0–44.3 ms, preserving the earlier
+800-point coin. Its following baseline edit rows are excluded, as is the rapid
+row wall timer which raced future inputs. The committed
+[baseline samples](evidence/dig27-baseline.json) retain per-run values, keys and
+these exclusions. [Background generation](background-generation.md) documents
+the harness, final verification and native limits. Historical M2 timings only
+motivated this new measurement and are not reused as M3 acceptance evidence.
+
+Protocol version 1 echoes token/source/settings keys; current errors fail closed
+with recoverable text outside Canvas. Fresh Float64/Uint32 transport copies
+preserve exact domain coordinates and ownership. Supersession terminates active
+CPU work; color-only metadata updates retain compatible checked/in-flight meshes
+with zero additional clipping/tessellation. Relative Vite Worker assets preserve
+main/root Pages hosting. No M4 serializer, slicer or physical-print gate changes.
 
 ## D-09 — Editable source and main-root Pages publication
 

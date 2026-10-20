@@ -149,3 +149,11 @@ settings colors remain separate from source SVG paint. Pending or invalid geomet
 is cleared. If WebGL fails, dimensions/diagnostics and layer editing remain usable.
 See [coin preview](docs/coin-preview.md) for renderer ownership, camera conventions,
 validation evidence and limits. Export buttons remain disabled until M4.
+
+## Background geometry processing
+
+Checked generation now runs in a local Web Worker with current-revision gating,
+coarse progress and recoverable failure diagnostics. Color-only edits reuse checked
+geometry. See [background generation and profiling](docs/background-generation.md)
+for the measured D-08 decision, protocol, ownership and reproducible developer
+harness. SVG parsing/import remains a separate atomic main-thread operation.

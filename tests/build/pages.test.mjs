@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
+import { runInNewContext } from 'node:vm';
 import { once } from 'node:events';
 import { mkdtemp, mkdir, readFile, readdir, rm, writeFile, symlink } from 'node:fs/promises';
 import os from 'node:os';
@@ -119,6 +120,37 @@ test('the real production build serves relative assets below /coinPrintMaker/', 
     assert.equal(response.status, 200);
     assert.ok((await response.text()).length > 0);
   }
+  // Resolve the worker exactly as the built main module does, relative to its
+  // own URL. A root-absolute /assets URL would fail this Pages subpath check.
+  const mainUrl = new URL(assets.find(asset => asset.endsWith('.js')), base);
+  const mainCode = await (await fetch(mainUrl)).text();
+  const workerName = mainCode.match(/generation\.worker-[A-Za-z0-9_-]+\.js/)?.[0];
+  assert.ok(workerName, 'main module references the built worker');
+  const workerUrl = new URL(workerName, mainUrl);
+  assert.ok(workerUrl.pathname.startsWith('/coinPrintMaker/assets/'));
+  const workerResponse = await fetch(workerUrl);
+  assert.equal(workerResponse.status, 200);
+  const workerCode = await workerResponse.text();
+  // Run the actual production worker bundle with standard ECMAScript globals
+  // only: no DOMParser, document, window, SVGLoader, React or WebGL host APIs.
+  const replies = [], sandbox = { postMessage: (message, transfers = []) => replies.push({ message, transfers }) };
+  runInNewContext(workerCode, sandbox, { timeout: 1000 });
+  const importId = 'pages-worker', footprintMm = [{ outer: [[0, 0], [10, 0], [10, 10], [0, 10]], holes: [] }];
+  sandbox.onmessage({ data: { version: 1, type: 'generate', token: 2, sourceRevision: 1, importId, settingsRevision: 0,
+    coin: { schemaVersion: 1, source: { importId, fileName: 'test.svg', byteLength: 0, svgText: '' }, physicalPageMm: [10, 10], sizeOrigin: 'explicit', baseLayerId: 'base', diagnostics: [],
+      layers: [{ id: 'base', name: 'Base', sourceOrder: 0, sourceElements: [], footprintMm, boundsMm: [0, 0, 10, 10], areaMm2: 100 }] },
+    settings: { importId, revision: 0, layers: [{ layerId: 'base', role: 'base', enabled: true, thicknessMm: 1.6, color: '#808080' }] },
+  } });
+  assert.deepEqual(replies.map(reply => reply.message.type), ['progress', 'progress', 'result']);
+  const { message, transfers } = replies.at(-1);
+  assert.equal(message.result.status, 'valid');
+  assert.equal(message.result.input.importId, importId);
+  assert.equal(message.result.input.settingsRevision, 0);
+  assert.equal(message.result.dimensionsMm.join(','), '10,10,1.6');
+  assert.equal(message.result.unifiedMesh.positions.BYTES_PER_ELEMENT, 8);
+  assert.equal(message.result.unifiedMesh.indices.BYTES_PER_ELEMENT, 4);
+  assert.equal(transfers.length, 4);
+  assert.equal(message.result.metrics.volumeMm3, 160);
   assert.equal((await fetch(new URL('.nojekyll', base))).status, 200);
   assert.equal((await fetch(new URL('/assets/absent.js', base))).status, 404);
 });

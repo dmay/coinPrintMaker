@@ -1,29 +1,23 @@
 import { createStore } from 'zustand/vanilla';
-import type { CoinSettings, GeneratedCoin, ImportedCoin, LayerSettings, ValidGeneratedCoin } from '../core/contracts';
+import type { CoinSettings, GeneratedCoin, LayerSettings, ValidGeneratedCoin } from '../core/contracts';
 import type { CoinImportResult } from '../core/canonicalImport';
 import { coinImportReducer, initialCoinImportState } from '../core/coinImportState';
 import type { CoinImportState } from '../core/coinImportState';
 import { createDiagnostic } from '../core/diagnostics';
 import { isCurrentValidGeneration } from '../core/generation';
 import { createDefaultCoinSettings, resolveStack } from '../core/resolveStack';
-import { generateCoin } from '../core/generateCoin';
+import { createGenerationTransport, GenerationWorkerFailure } from '../worker/generationTransport';
+import type { GenerationRequest, GenerationPhase, GenerationTransport } from '../worker/protocol';
+export type { GenerationRequest } from '../worker/protocol';
 import { readLocalCoin } from '../import/importCoinSvg';
-import { polygonClippingKernel } from '../import/polygonClippingKernel';
-import { earcutTriangulationKernel } from '../import/earcutTriangulationKernel';
 
-/** Serializable request boundary, also suitable for a future Worker transport. */
-export interface GenerationRequest {
-  readonly token: number;
-  readonly sourceRevision: number;
-  readonly coin: ImportedCoin;
-  readonly settings: CoinSettings;
-}
 export interface EditorState {
   readonly importState: CoinImportState;
   readonly sourceRevision: number;
   readonly settings: CoinSettings | null;
   readonly generationToken: number;
   readonly generationStatus: 'idle' | 'pending' | 'ready' | 'invalid';
+  readonly generationPhase: GenerationPhase | null;
   readonly result: GeneratedCoin | null;
   readonly previousValid: ValidGeneratedCoin | null;
   readonly selectedLayerId: string | null;
@@ -37,11 +31,13 @@ export interface EditorActions {
   setEnabled(layerId: string, enabled: boolean): void;
   reorderArtwork(layerIds: readonly string[]): void;
   selectLayer(layerId: string | null): void;
+  retryGeneration(): void;
 }
 export type EditorStoreState = EditorState & EditorActions;
 export interface EditorDependencies {
   readonly execute?: (request: GenerationRequest) => GeneratedCoin | Promise<GeneratedCoin>;
   readonly read?: typeof readLocalCoin;
+  readonly transport?: GenerationTransport;
 }
 
 function freeze<T>(value: T): T {
@@ -76,13 +72,6 @@ function recolor(result: ValidGeneratedCoin, settings: CoinSettings): ValidGener
     parts: result.parts.map(part => ({ ...part, color: colors.get(part.layerId)! })),
   });
 }
-async function executeOnMainThread(request: GenerationRequest): Promise<GeneratedCoin> {
-  // Yield so the pending state can be painted. Computation still blocks this
-  // thread; profiling and the Worker decision belong to DIG-27.
-  await new Promise<void>(resolve => setTimeout(resolve, 0));
-  return generateCoin(request.coin, request.settings, polygonClippingKernel, earcutTriangulationKernel);
-}
-
 export function selectCurrentGeneration(state: EditorState): ValidGeneratedCoin | null {
   return state.importState.pendingFileName === null && state.generationStatus === 'ready' && state.settings
     && isCurrentValidGeneration(state.result, key(state.settings)) ? state.result : null;
@@ -95,10 +84,15 @@ export function selectStalePreview(state: EditorState): ValidGeneratedCoin | nul
 }
 
 export function createEditorStore(dependencies: EditorDependencies = {}) {
-  const execute = dependencies.execute ?? executeOnMainThread;
+  const transport = dependencies.execute ? null : dependencies.transport ?? createGenerationTransport();
+  const execute = dependencies.execute ?? ((request: GenerationRequest) => transport!.execute(request, phase => {
+    if (active === request) store.setState({ generationPhase: phase });
+  }));
+  let disposed = false;
   let active: GenerationRequest | null = null;
   const store = createStore<EditorStoreState>()((set, get) => {
     function complete(request: GenerationRequest, candidate: GeneratedCoin) {
+      if (disposed) return;
       const state = get(), source = state.importState.coin, settings = state.settings;
       if (active !== request || state.generationToken !== request.token || state.sourceRevision !== request.sourceRevision
         || source !== request.coin || !settings || !sameGeometrySettings(request.settings, settings)
@@ -110,22 +104,28 @@ export function createEditorStore(dependencies: EditorDependencies = {}) {
       const result: GeneratedCoin = valid ? recolor(owned(candidate), settings)
         : candidate.status === 'invalid' ? owned(candidate)
         : owned({ schemaVersion: 1, status: 'invalid', diagnostics: [createDiagnostic('MESH_INVALID', { scope: 'document' })] });
-      set({ result, previousValid: null, generationStatus: result.status === 'valid' ? 'ready' : 'invalid' });
+      set({ result, previousValid: null, generationPhase: null, generationStatus: result.status === 'valid' ? 'ready' : 'invalid' });
     }
     function generate() {
       const state = get(), coin = state.importState.coin, settings = state.settings;
-      if (!coin || !settings || state.importState.pendingFileName !== null) return;
+      if (disposed || !coin || !settings || state.importState.pendingFileName !== null) return;
       const token = next(state.generationToken);
       const request: GenerationRequest = freeze({ token, sourceRevision: state.sourceRevision, coin, settings });
+      transport?.cancel();
       active = request;
       const previousValid = selectCurrentGeneration(state) ?? state.previousValid;
-      set({ generationToken: token, generationStatus: 'pending', result: null, previousValid });
+      set({ generationToken: token, generationStatus: 'pending', generationPhase: 'starting', result: null, previousValid });
       // Defer invoking injected transports too: synchronous throws and rejected
       // promises both follow the same latest-request failure path.
-      void Promise.resolve().then(() => execute(request)).then(
+      void Promise.resolve().then(() => {
+        if (active !== request || disposed) throw new Error('Superseded request.');
+        return execute(request);
+      }).then(
         result => complete(request, result),
-        () => complete(request, { schemaVersion: 1, status: 'invalid', input: key(request.settings),
-          diagnostics: [createDiagnostic('MESH_INVALID', { scope: 'document' })] }),
+        error => complete(request, { schemaVersion: 1, status: 'invalid',
+          ...(request.coin.source.importId === request.settings.importId && request.settings.importId.trim()
+            && Number.isSafeInteger(request.settings.revision) && request.settings.revision >= 0 ? { input: key(request.settings) } : {}),
+          diagnostics: [createDiagnostic(error instanceof GenerationWorkerFailure ? 'GENERATION_WORKER_FAILED' : 'MESH_INVALID', { scope: 'document' })] }),
       );
     }
     function commit(layers: CoinSettings['layers'], colorOnly = false) {
@@ -152,18 +152,19 @@ export function createEditorStore(dependencies: EditorDependencies = {}) {
     }
     return {
       importState: initialCoinImportState, sourceRevision: 0, settings: null,
-      generationToken: 0, generationStatus: 'idle', result: null, previousValid: null, selectedLayerId: null,
+      generationToken: 0, generationStatus: 'idle', generationPhase: null, result: null, previousValid: null, selectedLayerId: null,
       beginImport(fileName) {
         const state = get(), requestId = next(state.importState.requestId);
         active = null;
-        set({ importState: coinImportReducer(state.importState, { type: 'start', requestId, fileName }),
+        transport?.cancel();
+        set({ generationPhase: null, importState: coinImportReducer(state.importState, { type: 'start', requestId, fileName }),
           generationToken: next(state.generationToken),
           previousValid: selectCurrentGeneration(state) ?? state.previousValid });
         return requestId;
       },
       finishImport(requestId, candidate) {
         const state = get();
-        if (requestId !== state.importState.requestId || state.importState.pendingFileName === null) return;
+        if (disposed || requestId !== state.importState.requestId || state.importState.pendingFileName === null) return;
         let result = candidate;
         let settings: CoinSettings | null = null;
         if (candidate.status === 'imported') {
@@ -179,7 +180,7 @@ export function createEditorStore(dependencies: EditorDependencies = {}) {
         if (result.status === 'imported') {
           active = null;
           set({ importState, settings, sourceRevision: next(state.sourceRevision),
-            result: null, previousValid: null, generationStatus: 'idle', selectedLayerId: null });
+            result: null, previousValid: null, generationStatus: 'idle', generationPhase: null, selectedLayerId: null });
           generate();
         } else {
           // Rejected candidates change diagnostics only. Keep the old source,
@@ -207,11 +208,21 @@ export function createEditorStore(dependencies: EditorDependencies = {}) {
         if (layers.every((layer, i) => layer === settings.layers[i])) return;
         commit(layers);
       },
+      retryGeneration() {
+        const status = get().generationStatus;
+        if (status === 'invalid' || (status === 'pending' && active === null)) generate();
+      },
       selectLayer(layerId) {
         if (layerId === null || get().importState.coin?.layers.some(layer => layer.id === layerId)) set({ selectedLayerId: layerId });
       },
     };
   });
-  return store;
+  return Object.assign(store, {
+    activate() {
+      const wasDisposed = disposed; disposed = false;
+      if (wasDisposed && store.getState().generationStatus === 'pending') store.getState().retryGeneration();
+    },
+    dispose() { disposed = true; active = null; transport?.dispose(); },
+  });
 }
 export type EditorStore = ReturnType<typeof createEditorStore>;

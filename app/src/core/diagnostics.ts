@@ -41,6 +41,7 @@ export const diagnosticCatalog = {
   SUPPORT_OUTSIDE_LOWER: ['error', 'Artwork extends outside the immediately lower active layer.', 'Resize or move the artwork, or adjust the lower layer to support it.'],
   MESH_LIMIT_EXCEEDED: ['error', 'Mesh construction exceeds a complexity limit.', 'Simplify the artwork or reduce the number of active tiers.'],
   MESH_INVALID: ['error', 'The generated mesh failed validation.', 'Correct the reported geometry before exporting.'],
+  GENERATION_WORKER_FAILED: ['error', 'Coin processing could not finish in its background worker.', 'Retry generation. If it fails again, reload the page or select the SVG again.'],
   GEOMETRY_STALE: ['error', 'Geometry belongs to an earlier source or settings revision.', 'Regenerate the coin using the current source and settings.'],
 } as const satisfies Record<string, readonly ['error' | 'warning', string, string]>;
 
