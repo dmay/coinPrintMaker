@@ -47,7 +47,7 @@ test('shell shows checked width/depth/cumulative height/volume and Z, clears met
   expect(container.querySelector('.diagnostics-panel')?.textContent).toContain('Action:');
   await act(async () => [...container.querySelectorAll('button')].find(b=>b.textContent === 'Retry generation')!.click()); await h.finish(2);
   expect(measurement().textContent).toContain('Volume200 mm³');
-  expect([...container.querySelectorAll<HTMLButtonElement>('.export-controls button')].every(b=>b.disabled)).toBe(true);
+  expect([...container.querySelectorAll<HTMLButtonElement>('.export-controls button')].map(b=>b.disabled)).toEqual([false,true]);
 });
 
 test('candidate failure and retained measurements remain distinct in the full shell', async () => {
