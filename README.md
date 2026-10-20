@@ -2,7 +2,7 @@
 
 A browser-only utility for turning layered Inkscape SVG artwork into 3D-printable
 coins. The production UI is being built incrementally; the current page is a
-React/TypeScript application with complete local canonical SVG import and a minimal layer inspector. M0 prototypes remain reference implementations.
+responsive React/TypeScript editor shell with complete local canonical SVG import and a read-only layer panel. The 3D preview and export controls are explicit placeholders; successful import does not claim generated geometry. See [editor shell](docs/editor-shell.md). M0 prototypes remain reference implementations.
 
 ## Development and publication
 
@@ -92,7 +92,7 @@ failed replacements preserve the previous complete imported coin. Strict UTF-8/X
 painting, layer, transform and canonical polygon checks have actionable errors.
 The inspector reports source names, physical page, XY bounds, dimensions, area,
 regions and holes. Import alone does not validate support or create exportable
-coin meshes; those production stages follow in M2.
+coin meshes; checked production generation is available as a separate headless API and is not yet wired to the editor.
 See [docs/local-svg-loading.md](docs/local-svg-loading.md) for supported encoding,
 exact budgets, atomic replacement behavior and the staged import boundary.
 

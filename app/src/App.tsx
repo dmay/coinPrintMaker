@@ -1,10 +1,5 @@
-import { ImportControl } from './components/ImportControl';
+import { AppShell } from './components/AppShell';
 
 export function App() {
-  return (
-    <main>
-      <h1>Coin Print Maker</h1>
-      <ImportControl />
-    </main>
-  );
+  return <AppShell />;
 }

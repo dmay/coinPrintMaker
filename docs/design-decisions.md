@@ -665,3 +665,26 @@ references and native bundled observations. Observed 168-633 ms flags D-08/DIG-2
 profiling; no editor/Worker work starts. DIG-22/M2 remain unfinished until operator
 merge verification. No universal geometry/performance, new export/slicer or
 physical-print claim; absent Library baselines are not represented as read.
+
+## D-22 — Bounded editor shell before revision and scene integration
+
+**DIG-23:** AppShell owns only the existing complete-candidate latest-wins local
+import transaction through a small React hook; the pure reducer/import/geometry
+contracts remain unchanged. Presentational toolbar, preview and read-only layer
+panel keep named source metrics and failed replacement diagnostics separate from
+the retained source. Error recovery leaves parent-owned imported data intact and
+local file selection accessible.
+
+Successful import explicitly means 2D imported, not checked or rendered geometry.
+Future preview states accept a full GeneratedCoin/current key and use the existing
+freshness predicate before claiming a checked current result. No fake coin image,
+generation coordinator, settings store or Worker is introduced. Both exports stay
+disabled. DIG-24 replaces local ownership with revision-safe coordination, DIG-25
+adds editing, DIG-26 adds the scene and DIG-27 profiles before a Worker decision.
+This reversible boundary avoids choosing those later implementations in shell work.
+
+The 320 px desktop panel stacks at narrow widths with labeled native controls,
+visible focus, touch targets and units. [Shell contract](editor-shell.md) records
+state reachability, tests, recovery and later boundaries. Live DIG-22/M2 confirms
+the preceding headless gate was operator-merged; historical merge-pending prose
+is not a current blocker. Unavailable Library baselines are not claimed read.

@@ -3,7 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, expect, test, vi } from 'vitest';
 import type { CoinImportResult } from '../../app/src/core/canonicalImport';
-import { ImportControl } from '../../app/src/components/ImportControl';
+import { AppShell as ImportControl } from '../../app/src/components/AppShell';
 import { readLocalCoin } from '../../app/src/import/importCoinSvg';
 
 vi.mock('../../app/src/import/importCoinSvg', () => ({ readLocalCoin: vi.fn() }));
