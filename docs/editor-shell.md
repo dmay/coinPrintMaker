@@ -1,5 +1,9 @@
 # Responsive editor shell (DIG-23)
 
+DIG-24 now replaces the local hook with one revision-safe Zustand store and wires
+production generation into the shell. [Reactive generation](reactive-generation.md)
+supersedes ownership and reachability notes below, which record the DIG-23 boundary.
+Interactive rendering and actual layer controls remain DIG-25/DIG-26.
 The one-page editor composes AppShell, Toolbar, PreviewViewport and LayerPanel.
 At desktop widths the read-only layer panel is 320 px; at 700 px and below the
 preview and layers stack in document order. The toolbar wraps first at 900 px.
