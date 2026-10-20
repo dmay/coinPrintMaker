@@ -762,3 +762,21 @@ Preview-local initialization/context failure unmounts only the canvas and offers
 retry; textual dimensions/diagnostics and import/layer workflows remain available.
 See [coin preview](coin-preview.md) for evidence and limits. No engine, export,
 Worker, geometry/color truth or manual acceptance policy changes.
+
+## D-26 — Bounded contour sweep and same-winding nonzero unions
+
+**DIG-42:** The original Teto upload contains a 4,014-vertex outline; enumerating
+all segment pairs exhausts the existing 2,000,000-step document budget despite
+its simple topology. Use an X-bound sweep with tolerance-expanded Y filtering
+before existing contact predicates. Charge each X-overlap scan to preserve dense
+input rejection. Keep all existing policy constants and failure-atomic gates.
+
+The next exposed rejection was `path2`: its individually simple compound contours
+all have the same winding sign but overlap. Under nonzero fill these represent
+a union, so feed individual rings to the existing checked Boolean union. Validate
+raw cross-contour precision before snapping. Preserve the nested-hole path for
+other winding configurations and continue rejecting mixed-winding/evenodd
+crossings. This is a limited evidence-driven extension of the import subset;
+it does not implement arbitrary SVG paint order or accept self-intersecting rings.
+See [canonical SVG import](canonical-svg-import.md#dig-42-detailed-teto-artwork)
+for the retained source, acceptance evidence and limits.

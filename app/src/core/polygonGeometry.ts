@@ -46,6 +46,25 @@ function contact(a: Point2Mm, b: Point2Mm, c: Point2Mm, d: Point2Mm): boolean {
   if (((x > 0 && y < 0) || (x < 0 && y > 0)) && ((z > 0 && w < 0) || (z < 0 && w > 0))) return true;
   return Math.min(segmentDistance(a,c,d), segmentDistance(b,c,d), segmentDistance(c,a,b), segmentDistance(d,a,b)) <= eps;
 }
+/** Sweep segment bounds before exact contact tests. Expanded bounds preserve the
+ * existing near-contact tolerance. Charge every X-overlap scan, including
+ * Y-disjoint pairs, so dense adversarial arrangements remain bounded. */
+function* segmentCandidates(a: readonly Point2Mm[], b: readonly Point2Mm[] | null, budget: PolygonBudget): Generator<readonly [number, number]> {
+  const segments = (ring: readonly Point2Mm[], group: number) => ring.map((p, index) => {
+    const q = ring[(index + 1) % ring.length];
+    return { index, group, minX: Math.min(p[0],q[0]), maxX: Math.max(p[0],q[0]), minY: Math.min(p[1],q[1]), maxY: Math.max(p[1],q[1]) };
+  });
+  const entries = [...segments(a,0), ...(b ? segments(b,1) : [])].sort((p,q) => p.minX-q.minX || p.group-q.group || p.index-q.index);
+  const eps = 2 * POLYGON_POLICY.snapMm;
+  for (let i=0;i<entries.length;i++) for (let j=i+1;j<entries.length;j++) {
+    const p=entries[i], q=entries[j];
+    if (q.minX > p.maxX + eps) break;
+    budget.check();
+    if (b && p.group===q.group) continue;
+    if (p.maxY + eps < q.minY || q.maxY + eps < p.minY) continue;
+    yield p.group===0 ? [p.index,q.index] : [q.index,p.index];
+  }
+}
 const snapCoordinate = (v: number) => Math.round(v / POLYGON_POLICY.snapMm) * POLYGON_POLICY.snapMm || 0;
 export function normalizeRing(points: readonly Point2Mm[], budget: PolygonBudget, snapCoordinates = true): RingMm {
   if (points.length > POLYGON_POLICY.maxRingVertices + 1) throw new PolygonFailure('Ring vertex limit exceeded.', true);
@@ -77,9 +96,8 @@ export function normalizeRing(points: readonly Point2Mm[], budget: PolygonBudget
     }
   }
   if (ring.length < 3 || Math.abs(signedRingArea(ring)) <= POLYGON_POLICY.snapMm ** 2) throw new PolygonFailure('Contour collapsed or has zero area.');
-  for (let i = 0; i < ring.length; i++) for (let j = i + 1; j < ring.length; j++) {
-    budget.check();
-    if (j === i + 1 || (i === 0 && j === ring.length - 1)) continue;
+  for (const [i,j] of segmentCandidates(ring,null,budget)) {
+    if ((i+1)%ring.length===j || (j+1)%ring.length===i) continue;
     if (contact(ring[i], ring[(i+1)%ring.length], ring[j], ring[(j+1)%ring.length])) throw new PolygonFailure('Contour self-intersects or has near-contact.');
   }
   return ring as unknown as RingMm;
@@ -87,8 +105,7 @@ export function normalizeRing(points: readonly Point2Mm[], budget: PolygonBudget
 /** Before snapping/union: allow actual intersections/shared edges across objects,
  * but never let the snap grid bridge a tiny gap or erase a narrow overlap. */
 export function assertNoNearObjectContact(a: readonly Point2Mm[], b: readonly Point2Mm[], budget: PolygonBudget): void {
-  for (let i=0;i<a.length;i++) for(let j=0;j<b.length;j++) {
-    budget.check();
+  for (const [i,j] of segmentCandidates(a,b,budget)) {
     const p=a[i],q=a[(i+1)%a.length],r=b[j],s=b[(j+1)%b.length];
     const x=cross(p,q,r),y=cross(p,q,s),z=cross(r,s,p),w=cross(r,s,q);
     if (x*y<0 && z*w<0) {
@@ -109,8 +126,7 @@ export function assertNoNearObjectContact(a: readonly Point2Mm[], b: readonly Po
   }
 }
 export function assertSeparate(a: RingMm, b: RingMm, budget: PolygonBudget): void {
-  for (let i = 0; i < a.length; i++) for (let j = 0; j < b.length; j++) {
-    budget.check();
+  for (const [i,j] of segmentCandidates(a,b,budget)) {
     if (contact(a[i],a[(i+1)%a.length],b[j],b[(j+1)%b.length])) throw new PolygonFailure('Compound contours cross, touch or have near-contact. Use separate filled objects for overlapping artwork, or resolve the compound path in Inkscape.');
   }
 }

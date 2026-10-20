@@ -56,6 +56,14 @@ export function canonicalizeSvg(source: SourceDocument, normalized: SvgNormaliza
         for (const previous of previousShapes) for (const a of previous) for (const b of raw) assertNoNearObjectContact(a,b,budget);
         previousShapes.push(raw);
         if (!rings.length) throw new PolygonFailure('Source shape has no contours.');
+        // Nonzero contours with one winding sign describe a union of filled
+        // regions, even where contours overlap. Keep them as separate Boolean
+        // operands so the kernel resolves crossings without inventing holes.
+        if (shape.fillRule==='nonzero' && rings.every(r=>Math.sign(signedRingArea(r))===Math.sign(signedRingArea(rings[0])))) {
+          for (let i=0;i<raw.length;i++) for (let j=i+1;j<raw.length;j++) assertNoNearObjectContact(raw[i],raw[j],budget);
+          shapes.push(...rings.map(r=>[{outer:canonicalRing(r,true),holes:[]}]));
+          continue;
+        }
         const filled=filledContours(rings,shape.fillRule,budget);
         if (!filled.length) throw new PolygonFailure('Source shape has no filled region.');
         shapes.push(filled);
