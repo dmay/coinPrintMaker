@@ -7,6 +7,7 @@ import { AppShell as ImportControl } from '../../app/src/components/AppShell';
 import { readLocalCoin } from '../../app/src/import/importCoinSvg';
 
 vi.mock('../../app/src/import/importCoinSvg', () => ({ readLocalCoin: vi.fn() }));
+vi.mock('../../app/src/preview/CoinPreview', () => ({ CoinPreview: () => null }));
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const container = document.createElement('div');
 document.body.append(container);
