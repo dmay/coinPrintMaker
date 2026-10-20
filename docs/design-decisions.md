@@ -270,7 +270,7 @@ these exclusions. [Background generation](background-generation.md) documents
 the harness, final verification and native limits. Historical M2 timings only
 motivated this new measurement and are not reused as M3 acceptance evidence.
 
-Final clean `5013d68` Worker runtime (same browser/device/DPR, viewport
+Pre-rebase clean `5013d68` Worker runtime (same browser/device/DPR, viewport
 1280×720) completed 50 action rows with zero main-thread long tasks/window errors;
 frame gaps were 18.0–19.6 ms and queued input delays 0.1/1.9/3.9/6.9 ms. Total
 sun regeneration remained 557.0–588.5 ms: offloading preserves validation rather
@@ -281,8 +281,18 @@ real file chooser plus Enter edit passed the stated current-key/dimension gates.
 The IAB/harness preview fallback prevented native GPU/orbit acceptance, while
 text remained usable; differing viewport and synthetic-vs-native inputs limit
 comparison. [Final samples/build hashes](evidence/dig27-worker.json) and the
-[detailed native limitations](background-generation.md#final-native-comparison-and-acceptance)
+[detailed native limitations](background-generation.md#original-native-comparison-before-rebase)
 record the evidence without cross-browser/physical-device claims.
+
+After rebasing onto current main `adbf9c3` (preserving DIG-40/41/42), a separate
+clean `b0be2fb` native smoke/profile completed all 50 rows with zero main-thread
+long tasks/window errors and rapid input delays up to 4.8 ms. Its checked token81
+matched current source28/revision4. Upstream contour fixes move 8,191/8,192-point
+rejection to MESH_LIMIT_EXCEEDED in generation; no limits were raised here.
+[Separate rebased samples](evidence/dig27-rebased-worker.json) and
+[compatibility limits](background-generation.md#rebased-current-base-smoke)
+distinguish the amended runtime from historical 5013d68 evidence. Fresh full
+verification passes 771 Vitest +22 Node and generated Pages checks.
 
 Protocol version 1 echoes token/source/settings keys; current errors fail closed
 with recoverable text outside Canvas. Fresh Float64/Uint32 transport copies
