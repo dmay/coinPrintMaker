@@ -11,6 +11,7 @@ import { LayerPanel } from './LayerPanel';
 import { PreviewViewport } from './PreviewViewport';
 import type { PreviewState } from './PreviewViewport';
 import { Toolbar } from './Toolbar';
+import { exportCurrentStl } from '../state/exportStl';
 
 function editorPreview(state: EditorState): PreviewState {
   const imported = state.importState;
@@ -28,10 +29,12 @@ export function AppShell({ store: providedStore }: { readonly store?: EditorStor
   const [store] = useState(() => providedStore ?? createEditorStore());
   useEffect(() => { store.activate(); return () => store.dispose(); }, [store]);
   const state = useStore(store);
+  const [exportError, setExportError] = useState<string | null>(null);
   const view = selectGeometryPresentation(state);
   return <div className="app-shell">
     <a className="skip-link" href="#editor">Skip to editor</a>
-    <Toolbar onSelect={state.selectFile} exportNote={view.exportNote} />
+    <Toolbar onSelect={state.selectFile} exportNote={view.exportNote} canExportStl={view.current !== null}
+      onExportStl={() => setExportError(exportCurrentStl(store))} exportError={exportError} />
     <main id="editor" tabIndex={-1}>
       <EditorErrorBoundary resetKey={state.importState.requestId}>
         <div className="editor-layout">

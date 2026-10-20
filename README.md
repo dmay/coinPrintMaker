@@ -2,7 +2,11 @@
 
 A browser-only utility for turning layered Inkscape SVG artwork into 3D-printable
 coins. The production UI is being built incrementally; the current page is a
-responsive React/TypeScript editor with complete local canonical SVG import, revision-safe reactive checked generation and a read-only layer panel. The interactive 3D scene and export controls remain placeholders; successful import alone does not claim valid geometry. See [editor shell](docs/editor-shell.md). M0 prototypes remain reference implementations.
+responsive React/TypeScript editor with local canonical SVG import, revision-safe
+checked generation, editable layers, interactive 3D preview and validated binary
+STL download. Successful import alone does not claim valid geometry. 3MF remains
+unavailable. See [binary STL export](docs/binary-stl-export.md). M0 prototypes
+remain reference implementations.
 
 ## Development and publication
 
@@ -148,7 +152,8 @@ Fit coin, Reset view, Top view and Side view controls. Selection adds an outline
 settings colors remain separate from source SVG paint. Pending or invalid geometry
 is cleared. If WebGL fails, dimensions/diagnostics and layer editing remain usable.
 See [coin preview](docs/coin-preview.md) for renderer ownership, camera conventions,
-validation evidence and limits. Export buttons remain disabled until M4.
+validation evidence and limits. STL export uses the current checked domain mesh;
+it remains usable when WebGL is unavailable. 3MF remains disabled.
 
 ## Background geometry processing
 
@@ -165,6 +170,7 @@ Z appear below the preview, including when WebGL is unavailable. Pending, stale
 and invalid geometry has no current measurements. Errors/warnings identify
 stable layers and corrective actions; diagnostic buttons select layers only.
 Failed replacement imports are kept separate from the retained checked coin.
-STL/3MF exporters remain unavailable and disabled even for valid geometry.
+STL is enabled only for current checked geometry and independently validates
+float32 output before local download; 3MF remains unavailable and disabled.
 See [current diagnostics](docs/current-diagnostics.md) and the
 [pre-merge M3 checkpoint](docs/m3-editor-checkpoint.md) for evidence and limits.

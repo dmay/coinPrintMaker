@@ -892,3 +892,23 @@ depth, cumulative height in mm, checked mesh volume in mm³, and a bounded-heigh
 scrollable table of active-layer Z intervals. Both exporters remain unavailable
 and disabled even when engine geometry is valid. See [current diagnostics and
 evidence](current-diagnostics.md) and [pre-merge M3 checkpoint](m3-editor-checkpoint.md).
+
+## D-29 — Validate float32 STL at the serialization boundary
+
+**DIG-29:** Serialize only the exact current detached checked unified mesh, with
+its absolute domain coordinates and outward triangle order. Float32 storage has
+less precision than the geometry engine, so independently validate emitted
+coordinates using existing bounded topology/exact intersection predicates and
+compare checked bounds/volume/shells with the source snapshot. Rounding allowances
+are owned by STL only: `1e-6 + abs(source) * 2e-7` mm per bounds coordinate and
+`1e-6` relative volume. Generation/domain acceptance and tolerances are unchanged.
+Overflow, collapse, changed orientation or topology reject; never transform,
+repair, drop triangles, export previous geometry or obtain mesh data from Three.js.
+
+Keep Blob/Object URL/filename/anchor/error ownership in a browser-only boundary.
+The synchronous action rechecks current identity before side effects. Revoke on
+the next task after a normal click, immediately on setup/click/scheduler failure,
+and do not depend on a mounted component for cleanup. UI text explains that STL
+is geometry-only and unitless, with millimeter coordinate convention. Browser
+action success cannot establish an OS save. See [binary STL export](binary-stl-export.md)
+for automated coverage and distinct instrumented/native evidence tracks.
