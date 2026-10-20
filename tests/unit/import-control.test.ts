@@ -103,7 +103,8 @@ test('inspector renders canonical metadata and XY metrics as escaped text', asyn
   await select(input,new File(['source'],'metrics.svg'));
   const inspector=container.querySelector('.inspector')!;
   expect(inspector.textContent).toContain('40 × 30 mm');
-  expect(inspector.textContent).toContain('コイン <script> layer (base, locked)');
+  expect(inspector.textContent).toContain('コイン <script> layer');
+  expect(inspector.textContent).toContain('Base · locked · always visible');
   expect(inspector.textContent).toContain('1, 2, 11, 12');
   expect(inspector.textContent).toContain('10 × 10');
   expect(inspector.textContent).toContain('100');
