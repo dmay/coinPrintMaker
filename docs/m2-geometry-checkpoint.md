@@ -15,7 +15,7 @@ than a circular commit-SHA assertion inside its own tree.
 | Immediate active support | [DIG-19](https://linear.app/diggy-01/issue/DIG-19) | [#15](https://github.com/dmay/coinPrintMaker/pull/15), merged |
 | Positioned parts | [DIG-20](https://linear.app/diggy-01/issue/DIG-20) | [#16](https://github.com/dmay/coinPrintMaker/pull/16), merged |
 | Unified exterior | [DIG-21](https://linear.app/diggy-01/issue/DIG-21) | [#17](https://github.com/dmay/coinPrintMaker/pull/17), merged |
-| Checked headless generation | [DIG-22](https://linear.app/diggy-01/issue/DIG-22) | Current feature PR; link recorded after creation; operator merge pending |
+| Checked headless generation | [DIG-22](https://linear.app/diggy-01/issue/DIG-22) | [#18](https://github.com/dmay/coinPrintMaker/pull/18), operator merge pending |
 
 Started from clean main/origin/main
 `ffa26a1f2a40821e86f3c8cdd985b238e73a30d1`, tree
