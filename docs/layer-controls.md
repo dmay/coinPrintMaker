@@ -81,3 +81,10 @@ picker, touch-device or cross-browser observations are inferred from it.
 Final-head CI is recorded in the issue/PR handoff. This work
 makes no cross-browser, physical touch hardware, scene, slicer or print claim.
 Unavailable original Library baselines are not represented as inspected.
+
+DIG-26 native integration amendment: the browser's fill + Enter path exposed a
+stale draft-closure read in the existing thickness control (Tab/blur committed).
+Enter and blur now parse event.currentTarget.value using the same complete-token
+validator and store action. Two targeted cases cover element-value delivery before
+a draft render, actual regenerated height, one revision and no duplicate blur
+commit. The change adds no setting or geometry policy.

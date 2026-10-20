@@ -105,3 +105,16 @@ input[aria-invalid="true"] { border: 2px solid #a12d20; }
 .layer-row details { font-size: .75rem; margin-top: .5rem; }
 .layer-row summary { min-height: 44px; padding-top: .6rem; cursor: pointer; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.view-controls { display: flex; flex-wrap: wrap; gap: .5rem; padding: .75rem 1.2rem; }
+.view-controls button { font-size: .8rem; }
+.coin-canvas { height: 420px; width: 100%; background: #f1f5f7; touch-action: none; }
+.coin-canvas[data-current="false"] { height: 0; overflow: hidden; }
+.coin-canvas canvas { display: block; }
+.preview-summary, .preview-fallback { padding: 1rem 1.2rem; }
+.preview-summary p, .preview-fallback p { font-size: .85rem; color: #586b76; }
+.preview-fallback button { margin-top: .75rem; }
+.orbit-help { padding: .5rem 1.2rem; font-size: .75rem; color: #586b76; }
+@media (max-width: 700px) {
+  .coin-canvas { height: 300px; }
+  .view-controls { padding: .75rem; }
+}

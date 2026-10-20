@@ -15,6 +15,8 @@
     "test:legacy": "node --test tests/import/*.test.mjs tests/geometry/*.test.mjs tests/export/*.test.mjs tests/build/*.test.mjs"
   },
   "dependencies": {
+    "@react-three/drei": "10.7.9",
+    "@react-three/fiber": "9.8.2",
     "polygon-clipping": "0.15.7",
     "react": "19.3.1",
     "react-dom": "19.3.1",
@@ -22,10 +24,12 @@
     "zustand": "5.0.15"
   },
   "devDependencies": {
+    "@react-three/test-renderer": "9.1.1",
     "@types/jsdom": "30.0.0",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
     "@vitejs/plugin-react": "6.1.2",
     "jsdom": "26.1.0",
     "typescript": "7.0.2",

@@ -32,7 +32,7 @@ export function AppShell({ store: providedStore }: { readonly store?: EditorStor
       <EditorErrorBoundary resetKey={state.importState.requestId}>
         <div className="editor-layout">
           <div className="preview-column">
-            <PreviewViewport state={editorPreview(state)} />
+            <PreviewViewport state={editorPreview(state)} selectedLayerId={state.selectedLayerId} />
             <ImportStatus state={state.importState} />
             {diagnostics.length > 0 && <section className="notice" aria-label="Geometry diagnostics" role={state.generationStatus === 'invalid' ? 'alert' : 'status'}>
               <p>{state.generationStatus === 'invalid' ? 'Current geometry is invalid. Export is unavailable.' : 'Geometry warnings'}</p>

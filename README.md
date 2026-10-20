@@ -140,3 +140,12 @@ edits. This pure API is separate from the current inspector. Editor/preview/expo
 remain later work. See [headless generation](docs/headless-generation.md) and the
 [M2 checkpoint](docs/m2-geometry-checkpoint.md) for tests/native evidence, precision
 and work limits, and the independent operator-merge boundary.
+
+## Interactive Z-up preview
+
+Current checked layer parts appear in a Z-up 3D view with orbit/pan/zoom and
+Fit coin, Reset view, Top view and Side view controls. Selection adds an outline;
+settings colors remain separate from source SVG paint. Pending or invalid geometry
+is cleared. If WebGL fails, dimensions/diagnostics and layer editing remain usable.
+See [coin preview](docs/coin-preview.md) for renderer ownership, camera conventions,
+validation evidence and limits. Export buttons remain disabled until M4.
