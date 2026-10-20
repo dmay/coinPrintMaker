@@ -41,7 +41,7 @@ authentication, CDN runtime or file-processing upload.
 
 SVG authoring subset, preflight diagnostics and verification:
 [docs/svg-preflight.md](docs/svg-preflight.md). The inspector shows validated XY polygons and metrics; unified meshes
-and exports remain later work. Pure support and independent layer-part construction are available separately from the inspector. See [canonical import and M1 checkpoint](docs/canonical-svg-import.md).
+and exports remain separate from the inspector. Pure support, independent layer-part construction and [unified external surface construction](docs/unified-coin-surface.md) are available as headless stages. See [canonical import and M1 checkpoint](docs/canonical-svg-import.md).
 
 ## Development fixtures
 

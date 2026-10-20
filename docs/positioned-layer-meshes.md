@@ -1,5 +1,10 @@
 # Closed positioned layer parts (DIG-20)
 
+DIG-21 adds the pure [unified external coin surface](unified-coin-surface.md),
+with exact contour subdivision, terrace boundary checks and bounded connected
+manifold construction. This stage remains distinct from DIG-22 generation/export
+validity. Later references below to pending unified construction are historical.
+
 The pure construction path is current `ImportedCoin` + `CoinSettings` →
 `buildLayerParts(coin, settings, polygonKernel, triangulator)` → independent
 closed per-layer meshes. It calls `validateSupport` afresh on every call before

@@ -594,3 +594,42 @@ acceptance follows. Library baseline documents remain unavailable and are not
 represented as inspected. Root Pages artifacts stay synchronized via the normal
 guarded build. Operator merge remains independent; leave DIG-20 unfinished until
 that merge is verified.
+
+## D-20 — Exact unified exterior with indexed boundary subdivision
+
+**DIG-21:** Construct base bottom, lower-minus-next terraces, final top and
+original boundary walls, rather than concatenating independently capped parts.
+Fresh source/settings support is mandatory and the replaceable pure builder
+returns `unified-built`, never export-valid GeneratedCoin. Preserve exact absolute
+Z, source XY and identities. Refine original/terrace contours through indexed
+BigInt supporting-line buckets of existing endpoints before cap/wall construction.
+Require exact lower-minus-upper terrace boundary cancellation on canonical-grid
+and emitted binary lattices; reject unequal binary grid-key collisions and splits
+that would require moving a point. Weld exact XYZ only, identifying signed zero.
+
+The authored twin-stars terrace exposed a narrow DIG-20 cap-restoration gap:
+Earcut can expose a collinear long edge spanning two holes with a reverse bridge.
+Replace same-ring-only recovery with indexed exact existing-endpoint subdivision
+of exposed edges. Opposite bridge segments then cancel. Positive orientation,
+complete original directed boundary coverage, paired internal edges and exact
+area on both representations remain mandatory. Minimal two-hole shoulders and
+authored twin-stars unified/part checks pass without new geometry or filtering.
+
+Bound construction through shared polygon/input/output/work budgets; cumulative
+surface plus stitched allocations are charged. Exact buckets avoid M0's fuzzy
+global all-vertex scan, but heavily collinear buckets can exhaust the shared work
+cap. Runtime checks require finite nonzero faces, no duplicate triangle identity,
+opposite paired edges, cyclic connected vertex links, one connected boundary and
+compensated volume matching emitted area-height sum within relative 1e-9.
+These checks support constructed surfaces; general validation/generateCoin and
+serialized-coordinate acceptance remain DIG-22 and later.
+
+Retain D-04 cavity/pinch/disconnected failure policy and the existing polygon
+service's stricter requirement for separated terrace polygons. A supported L lower
+with a corner-filling 3×3 upper square leaves a point-touching terrace and rejects;
+no implicit split/offset/repair is introduced. Off-grid, binary-unrepresentable or
+snap-altered boundaries also fail explicitly. See [unified coin surface](unified-coin-surface.md) for APIs, exact limits, analytical coverage and remaining
+boundaries. All nine supported authored inputs, including D-10's transformed tile,
+now pass production unified construction; unsupported inputs still reject. No
+historical fixture/M0 changes, UI integration, exporter or new manual acceptance
+is claimed. Unavailable Library baseline documents are not represented as read.

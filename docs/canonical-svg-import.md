@@ -1,5 +1,10 @@
 # Canonical SVG import and M1 checkpoint (DIG-16)
 
+DIG-21 adds the pure [unified external coin surface](unified-coin-surface.md),
+with exact contour subdivision, terrace boundary checks and bounded connected
+manifold construction. This stage remains distinct from DIG-22 generation/export
+validity. Later references below to pending unified construction are historical.
+
 DIG-20 adds the pure [closed positioned layer-part stage](positioned-layer-meshes.md),
 with fresh support checks, canonical holes/islands, exact absolute Z and checked
 cap coverage. Its parts-built result is separate from unified/generated-coin and
