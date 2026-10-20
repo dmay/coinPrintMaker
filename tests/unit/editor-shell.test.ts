@@ -11,6 +11,9 @@ import { PreviewViewport } from '../../app/src/components/PreviewViewport';
 import type { PreviewState } from '../../app/src/components/PreviewViewport';
 import { readLocalCoin } from '../../app/src/import/importCoinSvg';
 import { generateCoin } from '../../app/src/core/generateCoin';
+import { createEditorStore } from '../../app/src/state/editorStore';
+import type { GenerationRequest } from '../../app/src/state/editorStore';
+import type { GeneratedCoin } from '../../app/src/core/contracts';
 import { createDefaultCoinSettings } from '../../app/src/core/resolveStack';
 import { polygonClippingKernel } from '../../app/src/import/polygonClippingKernel';
 import { earcutTriangulationKernel } from '../../app/src/import/earcutTriangulationKernel';
@@ -57,11 +60,12 @@ test('shell has labeled local input, skip destination, empty panel and gated exp
   expect(container.querySelector('canvas,svg,img')).toBeNull();
 });
 
-test('imported is explicitly unchecked; newest failed candidate beats older success and keeps old source/warnings', async () => {
+test('imported starts generation; newest failed candidate beats older success and keeps old source/warnings', async () => {
   await render();
   vi.mocked(readLocalCoin).mockResolvedValueOnce(imported);
   await select('retained.svg');
-  expect(container.querySelector('[data-state="imported"]')?.textContent).toContain('3D geometry has not been generated');
+  await act(async () => { await new Promise(resolve => setTimeout(resolve, 10)); });
+  expect(container.querySelector('[data-state="ready"]')?.textContent).toContain('Geometry checked');
   let finishOld!: (result: CoinImportResult) => void;
   vi.mocked(readLocalCoin).mockReturnValueOnce(new Promise(resolve => { finishOld = resolve; }));
   await select('slow.svg');
@@ -140,4 +144,26 @@ test('render failure keeps import access and source ownership; reset and new sel
   await act(async () => container.querySelector('button')!.click());
   expect(container.textContent).toContain('replacement.svg');
   expect(container.querySelector('[role="alert"]')).toBeNull();
+});
+
+
+test('store integration visibly gates former checked geometry while pending and shows current invalid diagnostics', async () => {
+  const jobs: { request: GenerationRequest; finish: (result: GeneratedCoin) => void }[] = [];
+  const store = createEditorStore({ execute: request => new Promise(resolve => jobs.push({ request, finish: resolve })) });
+  await render(createElement(AppShell, { store }));
+  await act(async () => {
+    const id = store.getState().beginImport('retained.svg');
+    store.getState().finishImport(id, imported);
+  });
+  expect(container.querySelector('[data-state="generating"]')?.textContent).toContain('No current preview is ready');
+  await act(async () => jobs[0].finish(generateCoin(jobs[0].request.coin, jobs[0].request.settings, polygonClippingKernel, earcutTriangulationKernel)));
+  expect(container.querySelector('[data-state="ready"]')?.textContent).toContain('10 × 10 × 1.6 mm');
+  await act(async () => store.getState().setThickness('base', 0));
+  expect(container.querySelector('[data-state="generating"]')?.textContent).toContain('Previous checked geometry is stale');
+  expect([...container.querySelectorAll<HTMLButtonElement>('.export-controls button')].every(button => button.disabled)).toBe(true);
+  await act(async () => jobs[1].finish(generateCoin(jobs[1].request.coin, jobs[1].request.settings, polygonClippingKernel, earcutTriangulationKernel)));
+  expect(container.querySelector('[data-state="invalid"]')?.textContent).toContain('Coin geometry needs attention');
+  expect(container.querySelector('[aria-label="Geometry diagnostics"]')?.textContent).toContain('SETTINGS_INVALID');
+  expect(container.textContent).not.toContain('Geometry checked');
+  expect(container.textContent).not.toContain('Previous checked geometry is stale');
 });

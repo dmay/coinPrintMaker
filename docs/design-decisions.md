@@ -688,3 +688,28 @@ visible focus, touch targets and units. [Shell contract](editor-shell.md) record
 state reachability, tests, recovery and later boundaries. Live DIG-22/M2 confirms
 the preceding headless gate was operator-merged; historical merge-pending prose
 is not a current blocker. Unavailable Library baselines are not claimed read.
+## D-23 — Immutable revision-safe editor ownership and proven display reuse
+
+**DIG-24:** One factory-created Zustand 5.0.15 vanilla store owns imports,
+committed settings, revisions/tokens, generation/diagnostics and selection.
+Structured-clone/deep-freeze ownership boundaries preserve canonical source and
+returned checked snapshots independently of caller data. Complete candidate plus
+default settings commits atomically; failed imports retain checked data and restart
+canceled pending work under a new token. Stale success and failure are discarded.
+
+Source revision, monotonic token, exact source reference and ordered geometry
+settings must match an active request. Valid response freshness is checked against
+the submitted revision before display metadata projection. Colors alone can
+reuse frozen checked meshes after exact source/ID/role/order/enabled/thickness
+proof and valid settings checks; current tier/part colors and revision advance
+without clipping or tessellation. Geometry edits always run complete validation.
+Canonical imported footprints are retained stable 2D work; no raw Boolean cache
+is added. Reimport replaces all source/candidate identities. Pending previous
+geometry is explicitly stale and never current/export eligible; failure clears it.
+
+[Reactive generation](reactive-generation.md) records the protocol, race/call-count
+and ownership coverage, main-thread yielding limitation and later boundaries.
+Numeric text stays local to DIG-25 controls. No Worker or scene is added; D-08
+profiling/Worker decision remains DIG-27. Export selectors describe checked
+geometry only; M4 buttons stay disabled and emitted-coordinate checks remain
+required. No XY/Z, precision/support or manual acceptance policy changes.

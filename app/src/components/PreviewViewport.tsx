@@ -4,9 +4,9 @@ import { isCurrentValidGeneration } from '../core/generation';
 // Presentation states only; no geometry is created or inferred from an import.
 export type PreviewState =
   | { readonly status: 'empty' }
-  | { readonly status: 'importing'; readonly fileName: string }
+  | { readonly status: 'importing'; readonly fileName: string; readonly stalePreview?: boolean }
   | { readonly status: 'imported' }
-  | { readonly status: 'generating' }
+  | { readonly status: 'generating'; readonly stalePreview?: boolean }
   | { readonly status: 'ready'; readonly result: GeneratedCoin; readonly current: GenerationKey }
   | { readonly status: 'invalid'; readonly reason: 'import' | 'generation'; readonly retainedSource: boolean };
 
@@ -20,7 +20,7 @@ export function PreviewViewport({ state }: { readonly state: PreviewState }) {
       break;
     case 'importing':
       title = 'Checking SVG artwork';
-      description = `Reading ${state.fileName} and checking layers, size and filled outlines. No new preview is ready.`;
+      description = `Reading ${state.fileName} and checking layers, size and filled outlines. No new preview is ready.${state.stalePreview ? ' Previous checked geometry is stale while the replacement is pending and cannot be exported.' : ''}`;
       break;
     case 'imported':
       title = 'Artwork imported';
@@ -28,12 +28,12 @@ export function PreviewViewport({ state }: { readonly state: PreviewState }) {
       break;
     case 'generating':
       title = 'Generating coin';
-      description = 'Checking current geometry. No current preview is ready.';
+      description = 'Checking current geometry. No current preview is ready.' + (state.stalePreview ? ' Previous checked geometry is stale while generation is pending and cannot be exported.' : '');
       break;
     case 'ready':
       if (isCurrentValidGeneration(state.result, state.current)) {
         title = 'Geometry checked';
-        description = 'Current geometry passed validation. Interactive 3D display is not available yet.';
+        description = `Current geometry passed validation: ${state.result.dimensionsMm.map(value => value.toLocaleString(undefined, { maximumFractionDigits: 4 })).join(' × ')} mm. Interactive 3D display is not available yet.`;
       } else {
         status = 'invalid';
         title = 'No current checked geometry';
