@@ -31,3 +31,14 @@ export class MeshConstructionBudget {
     if ((this.work += count) > MESH_CONSTRUCTION_POLICY.maxWork) throw new MeshConstructionFailure('Mesh construction work limit exceeded.', true);
   }
 }
+
+/** Additional final-validation work, aggregate across every retained part and the
+ * unified exterior. Construction and retained geometry caps remain unchanged. */
+export const MESH_VALIDATION_WORK_LIMIT = 8_000_000;
+export class MeshValidationBudget extends MeshConstructionBudget {
+  private validationWork = 0;
+  get workUsed():number { return this.validationWork; }
+  override check(count=1):void {
+    if((this.validationWork+=count)>MESH_VALIDATION_WORK_LIMIT)throw new MeshConstructionFailure('Mesh validation work limit exceeded.',true);
+  }
+}

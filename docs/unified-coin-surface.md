@@ -1,5 +1,10 @@
 # Unified external coin surface (DIG-21)
 
+DIG-22 adds complete [checked headless generation](headless-generation.md) and the
+[M2 checkpoint](m2-geometry-checkpoint.md). Pending-generation notes below record
+prior stage boundaries; construction remains distinct from final current-revision
+validation. M2 operator merge is still pending.
+
 `buildUnifiedMesh(current ImportedCoin, current CoinSettings, PolygonKernel,
 TriangulationKernel)` resolves current settings and validates immediate-lower
 support afresh, then constructs the complete external surface. The replaceable

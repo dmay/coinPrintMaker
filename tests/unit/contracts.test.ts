@@ -55,6 +55,7 @@ describe('serializable domain boundary', () => {
     const result: ValidGeneratedCoin = {
       schemaVersion: 1, status: 'valid', input: { importId: 'import-1', settingsRevision: 0 },
       diagnostics: [], activeTiers: [], unifiedMesh: mesh, parts: [],
+      dimensionsMm: [40,20,1.6], analyticalVolumeMm3: 640, colorBoundaryHeightsMm: [],
       metrics: { boundsMm: [[0, 0, 0], [40, 20, 1.6]], volumeMm3: 640, shellCount: 1 },
     };
     plainJson(result);

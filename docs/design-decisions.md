@@ -633,3 +633,35 @@ boundaries. All nine supported authored inputs, including D-10's transformed til
 now pass production unified construction; unsupported inputs still reject. No
 historical fixture/M0 changes, UI integration, exporter or new manual acceptance
 is claimed. Unavailable Library baseline documents are not represented as read.
+
+## D-21 — Final checked headless snapshots and exact source-surface coverage
+
+**DIG-22:** generateCoin constructs current checked snapshots after fresh support,
+replaceable positioned/unified builders and independent actual-coordinate checks.
+Shared topology validates exact welds/incidences/links and each component's local
+outward volume. Exact dyadic triangle tests include adjacency, coplanar overlaps
+and arbitrary finite Z. At most 64 exact containment rays retry degeneracies;
+unresolved ambiguity fails closed. No fuzzy geometry repair.
+
+Positive cap/wall chains must equal original current tier boundaries on oriented
+planes/slabs. Complete boundary equality proves full coverage/holes/terraces and
+rejects same-bounds/same-volume semantic errors while allowing different diagonal
+triangulations. Expected volume uses emitted polygon area and representable tier
+interval, distinct from ideal curved oracles. Numerical volume relative 1e-9,
+bounds 1e-9 mm +1e-12 relative; exact semantic checks still enforce source position.
+
+Final aggregate validation gets its own explicit 8m-work cap; construction's 2m,
+polygon and 100k-vertex/200k-triangle caps remain unchanged. Success is detached,
+current and serializable with dimensions/volume/all internal candidate color
+boundaries. Failure strips all exportable payload; invalid identity/revision gets
+no fabricated key. Consumers still enforce revision freshness; serializer
+coordinate checks remain later work. D-03-D-05 retain checked shared edges,
+connected base/unified exterior, supported raised islands, through holes and
+pinch/cavity/internal-boundary rejection. Point-touch terraces/binary mismatches
+remain explicit limitations.
+
+[M2 checkpoint](m2-geometry-checkpoint.md) maps criteria/tests, all six issue/PR
+references and native bundled observations. Observed 168-633 ms flags D-08/DIG-27
+profiling; no editor/Worker work starts. DIG-22/M2 remain unfinished until operator
+merge verification. No universal geometry/performance, new export/slicer or
+physical-print claim; absent Library baselines are not represented as read.
