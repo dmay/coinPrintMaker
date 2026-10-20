@@ -2,7 +2,8 @@ import type { Point2Mm, PolygonMm, Triangle } from './contracts';
 import type { Diagnostic } from './diagnostics';
 import { createDiagnostic } from './diagnostics';
 import { guardedCanonicalFootprint, PolygonFailure } from './polygonGeometry';
-import { binaryPoint, gridArea2, gridCross, gridOnSegment, gridPoint } from './meshGrid';
+import { binaryPoint, gridArea2, gridCross, gridPoint } from './meshGrid';
+import { boundaryEdgePaths } from './conformUnifiedBoundaries';
 import type { GridPoint } from './meshGrid';
 import { MESH_CONSTRUCTION_POLICY, MeshConstructionBudget, MeshConstructionFailure } from './meshConstructionPolicy';
 import type { TriangulationKernel } from './triangulationKernel';
@@ -71,31 +72,24 @@ export function triangulateRegion(polygon: PolygonMm, kernel: TriangulationKerne
       if(turn===0n) throw new MeshConstructionFailure('Triangulator returned a zero-area triangle.');
       return turn>0n ? [a,b,c] : [a,c,b];
     });
-    const edges=edgesOf(triangles,budget), next=new Map<number,number>();
-    for(const ring of boundaries) for(let i=0;i<ring.length;i++) next.set(ring[i],ring[(i+1)%ring.length]);
-    const splits=new Map<string,number[]>();
-    for(const edge of edges.values()) if(edge.count===1) {
-      const path=[edge.a]; let current=edge.a;
-      while(current!==edge.b) {
-        budget.check(); current=next.get(current)!;
-        if(current===undefined || current===edge.a || !gridOnSegment(grid[current],grid[edge.a],grid[edge.b])) throw new MeshConstructionFailure('Exposed cap edge is not an ordered original boundary segment.');
-        path.push(current);
-      }
-      if(path.length>2) splits.set(`${edge.a}:${edge.b}`,path);
-    }
-    // Restore only exposed ring-edge subdivisions. No all-vertex search, fuzzy
-    // stitching, new point, changed contour or nonzero-area triangle deletion.
+    const edges=edgesOf(triangles,budget);
+    const segments: (readonly [number,number])[]=boundaries.flatMap(r=>r.map((a,i)=>[a,r[(i+1)%r.length]] as const));
+    for(const edge of edges.values()) if(edge.count===1)segments.push([edge.a,edge.b]);
+    const splits=boundaryEdgePaths(vertices,segments,budget);
+    // Restore exposed edge subdivisions, including collinear cross-hole bridge
+    // endpoints. Only exact existing endpoints on indexed supporting lines are
+    // candidates. Final oriented boundary/coverage checks still prove the cap.
     const restored: Triangle[]=[];
     for(const triangle of triangles) {
       let pieces: Triangle[]=[triangle];
       for(let i=0;i<3;i++) {
         const a=triangle[i],b=triangle[(i+1)%3],path=splits.get(`${a}:${b}`);
-        if(!path) continue;
+        if(!path || edges.get(edgeKey(a,b))!.count!==1) continue;
         const replacement: Triangle[]=[];
         for(const piece of pieces) {
           budget.check(); const e=piece.findIndex((v,j)=>v===a && piece[(j+1)%3]===b);
           if(e<0) replacement.push(piece);
-          else for(let j=0;j+1<path.length;j++) replacement.push([path[j],path[j+1],piece[(e+2)%3]]);
+          else for(let j=0;j+1<path.length;j++){budget.check();replacement.push([path[j],path[j+1],piece[(e+2)%3]]);}
         }
         pieces=replacement;
       }

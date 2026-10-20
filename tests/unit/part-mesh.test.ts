@@ -148,6 +148,15 @@ describe('independent caps and closed positioned parts',()=>{
     const polygon:PolygonMm={outer:[[0,0],[5,0],[10,0],[10,5],[10,10],[5,10],[0,10],[0,5]],holes:[[[2,2],[2,5],[2,8],[5,8],[8,8],[8,5],[8,2],[5,2]]]};
     verifyCap(polygon);const t=tier([polygon]);verifyPart(part(t),t);
   });
+  test('two hole shoulders restore cross-ring collinear Earcut bridges without changing coverage',()=>{
+    const polygon:PolygonMm={outer:box().outer,holes:[[[2,4],[4,4],[3,2]],[[6,4],[8,4],[7,2]]]};
+    const vertices=[polygon.outer,...polygon.holes].flat(),raw=earcutTriangulationKernel.triangulate(vertices,[4,7]);
+    const edges=new Map<string,{a:number;b:number;count:number}>();
+    for(const t of raw)for(let i=0;i<3;i++){const a=t[i],b=t[(i+1)%3],key=a<b?`${a}:${b}`:`${b}:${a}`,e=edges.get(key);if(e)e.count++;else edges.set(key,{a,b,count:1});}
+    // Prove this exercises a bridge between rings, not the original single-ring path.
+    expect([...edges.values()].some(e=>e.count===1&&e.a>=4&&e.b>=4&&Math.floor((e.a-4)/3)!==Math.floor((e.b-4)/3))).toBe(true);
+    near(verifyCap(polygon).areaMm2,96,1e-12);const t=tier([polygon]);verifyPart(part(t),t);
+  });
   test.each([0,999999])('tiny nonzero triangle at XY offset %s retains 8e-12 mm² rather than an EPS deletion',offset=>{
     const polygon:PolygonMm={outer:[[offset,offset],[offset+.000004,offset],[offset,offset+.000004]],holes:[]};
     const t=tier([polygon]);const p=part(t);verifyPart(p,t);expect(p.mesh.triangles).toHaveLength(8);near(p.metrics.volumeMm3,8e-12*1.6,1e-15);
@@ -232,7 +241,9 @@ describe('untrusted triangulator and bounded failure-atomic construction',()=>{
     if(kind==='input')budget.input(p.maxInputVertices-4);
     if(kind==='vertices')budget.output(p.maxOutputVertices-8,0);
     if(kind==='triangles')budget.output(0,p.maxOutputTriangles-12);
-    if(kind==='work')budget.check(p.maxWork-100);
+    // Exact supporting-line indexing adds charged comparisons; allow one box,
+    // then prove the same shared allowance cannot build a second box.
+    if(kind==='work')budget.check(p.maxWork-200);
     const first=buildPartMesh(tier([box()]),earcutTriangulationKernel,{budget});expect(first.status).toBe('built');
     const second=buildPartMesh(tier([box()]),earcutTriangulationKernel,{budget});expect(second.status).toBe('rejected');expect(second).not.toHaveProperty('part');
     if(second.status==='rejected')expect(second.diagnostics[0].code).toBe('MESH_LIMIT_EXCEEDED');
