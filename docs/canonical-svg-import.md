@@ -1,5 +1,10 @@
 # Canonical SVG import and M1 checkpoint (DIG-16)
 
+DIG-22 adds complete [checked headless generation](headless-generation.md) and the
+[M2 checkpoint](m2-geometry-checkpoint.md). Pending-generation notes below record
+prior stage boundaries; construction remains distinct from final current-revision
+validation. M2 operator merge is still pending.
+
 DIG-21 adds the pure [unified external coin surface](unified-coin-surface.md),
 with exact contour subdivision, terrace boundary checks and bounded connected
 manifold construction. This stage remains distinct from DIG-22 generation/export

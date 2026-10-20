@@ -130,3 +130,13 @@ partial parts. This stage is available separately from the inspector. Unified
 coin surfaces, complete generated-coin validation and export remain later stages.
 See [docs/positioned-layer-meshes.md](docs/positioned-layer-meshes.md) for cap coverage,
 precision, bounded construction checks and independent analytical evidence.
+
+## Checked headless generation core
+
+`generateCoin` returns independently checked current parts/unified exterior,
+metrics, dimensions, analytical volume and internal active-tier boundary heights.
+All failures strip geometry; revision freshness rejects old valid results after
+edits. This pure API is separate from the current inspector. Editor/preview/export
+remain later work. See [headless generation](docs/headless-generation.md) and the
+[M2 checkpoint](docs/m2-geometry-checkpoint.md) for tests/native evidence, precision
+and work limits, and the independent operator-merge boundary.

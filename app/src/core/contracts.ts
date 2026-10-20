@@ -101,23 +101,33 @@ export interface GeneratedPart {
 }
 interface GenerationResult {
   readonly schemaVersion: 1;
-  readonly input: GenerationKey;
   readonly diagnostics: readonly Diagnostic[];
 }
 export interface ValidGeneratedCoin extends GenerationResult {
   readonly status: 'valid';
+  readonly input: GenerationKey;
   readonly activeTiers: readonly ActiveTier[];
   readonly unifiedMesh: TriangleMesh;
   readonly parts: readonly GeneratedPart[];
   readonly metrics: MeshMetrics;
+  readonly dimensionsMm: Point3Mm;
+  // Exact emitted polygon area x representable cumulative tier interval.
+  readonly analyticalVolumeMm3: number;
+  // Internal active-layer interfaces; includes equal-color neighbors.
+  readonly colorBoundaryHeightsMm: readonly number[];
 }
 export interface InvalidGeneratedCoin extends GenerationResult {
   readonly status: 'invalid';
+  // Absent if source/settings cannot establish an honest finite revision key.
+  readonly input?: GenerationKey;
   // Failed generation cannot carry exportable geometry.
   readonly activeTiers?: never;
   readonly unifiedMesh?: never;
   readonly parts?: never;
   readonly metrics?: never;
+  readonly dimensionsMm?: never;
+  readonly analyticalVolumeMm3?: never;
+  readonly colorBoundaryHeightsMm?: never;
 }
 export type GeneratedCoin = ValidGeneratedCoin | InvalidGeneratedCoin;
 
