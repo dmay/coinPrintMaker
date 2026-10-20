@@ -7,6 +7,11 @@ import { AppShell as ImportControl } from '../../app/src/components/AppShell';
 import { readLocalCoin } from '../../app/src/import/importCoinSvg';
 
 vi.mock('../../app/src/import/importCoinSvg', () => ({ readLocalCoin: vi.fn() }));
+vi.mock('../../app/src/worker/generationTransport', async importOriginal => {
+  const actual = await importOriginal<typeof import('../../app/src/worker/generationTransport')>();
+  const { InProcessWorker } = await import('./helpers/inProcessWorker');
+  return { ...actual, createGenerationTransport: () => actual.createGenerationTransport(() => new InProcessWorker()) };
+});
 vi.mock('../../app/src/preview/CoinPreview', () => ({ CoinPreview: () => null }));
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const container = document.createElement('div');

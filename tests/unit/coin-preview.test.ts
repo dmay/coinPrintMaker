@@ -7,6 +7,7 @@ import { AppShell } from '../../app/src/components/AppShell';
 import { PreviewViewport } from '../../app/src/components/PreviewViewport';
 import { createEditorStore, selectCurrentGeneration } from '../../app/src/state/editorStore';
 import { generateCoin } from '../../app/src/core/generateCoin';
+import { GenerationWorkerFailure } from '../../app/src/worker/generationTransport';
 import type { ImportedCoin } from '../../app/src/core/contracts';
 import { polygonClippingKernel } from '../../app/src/import/polygonClippingKernel';
 import { earcutTriangulationKernel } from '../../app/src/import/earcutTriangulationKernel';
@@ -100,4 +101,33 @@ test('pending and invalid states send no stale mesh to retained renderer and kee
   await render(createElement(PreviewViewport, { state: { status: 'invalid', reason: 'generation', retainedSource: true } }));
   expect(lastScene().result).toBeNull();
   expect(container.textContent).not.toContain('10 × 10');
+});
+
+test('background failure and retry stay usable with a failed preview and cannot expose old checked measurements', async () => {
+  mock.fail = true; vi.spyOn(console, 'error').mockImplementation(() => {});
+  let fail = false;
+  const store = createEditorStore({ execute: request => {
+    if (fail) throw new GenerationWorkerFailure();
+    return generateCoin(request.coin, request.settings, polygonClippingKernel, earcutTriangulationKernel);
+  } });
+  await render(createElement(AppShell, { store }));
+  await act(async () => { const id = store.getState().beginImport('source.svg'); store.getState().finishImport(id, { status: 'imported', coin, diagnostics: [] }); });
+  fail = true;
+  await act(async () => store.getState().setThickness('base', 2.7));
+  expect(container.textContent).toContain('3D preview is unavailable');
+  const diagnostics = container.querySelector('[aria-label="Geometry diagnostics"]')!;
+  expect(diagnostics.textContent).toContain('GENERATION_WORKER_FAILED');
+  expect(diagnostics.textContent).toContain('Current geometry is invalid');
+  expect(container.querySelector('.preview-summary')).toBeNull();
+  expect(container.querySelector('.tier-interval')?.textContent).toContain('unavailable');
+  expect(selectCurrentGeneration(store.getState())).toBeNull();
+  expect([...container.querySelectorAll('button')].filter(button => button.textContent?.startsWith('Export')).every(button => button.disabled)).toBe(true);
+  const revision = store.getState().settings!.revision, token = store.getState().generationToken;
+  fail = false;
+  await act(async () => [...container.querySelectorAll('button')].find(button => button.textContent === 'Retry generation')!.click());
+  expect(store.getState().settings!.revision).toBe(revision);
+  expect(store.getState().generationToken).toBeGreaterThan(token);
+  expect(selectCurrentGeneration(store.getState())?.input.settingsRevision).toBe(revision);
+  expect(container.textContent).toContain('10 × 10 × 2.7 mm');
+  expect(container.textContent).toContain('3D preview is unavailable');
 });

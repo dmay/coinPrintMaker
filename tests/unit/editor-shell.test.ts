@@ -18,6 +18,11 @@ import { createDefaultCoinSettings } from '../../app/src/core/resolveStack';
 import { polygonClippingKernel } from '../../app/src/import/polygonClippingKernel';
 import { earcutTriangulationKernel } from '../../app/src/import/earcutTriangulationKernel';
 
+vi.mock('../../app/src/worker/generationTransport', async importOriginal => {
+  const actual = await importOriginal<typeof import('../../app/src/worker/generationTransport')>();
+  const { InProcessWorker } = await import('./helpers/inProcessWorker');
+  return { ...actual, createGenerationTransport: () => actual.createGenerationTransport(() => new InProcessWorker()) };
+});
 vi.mock('../../app/src/preview/CoinPreview', () => ({ CoinPreview: () => null }));
 vi.mock('../../app/src/import/importCoinSvg', () => ({ readLocalCoin: vi.fn() }));
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStore } from 'zustand';
 import { createEditorStore, selectCurrentGeneration, selectStalePreview } from '../state/editorStore';
 import type { EditorState, EditorStore } from '../state/editorStore';
@@ -23,6 +23,7 @@ function editorPreview(state: EditorState): PreviewState {
 
 export function AppShell({ store: providedStore }: { readonly store?: EditorStore }) {
   const [store] = useState(() => providedStore ?? createEditorStore());
+  useEffect(() => { store.activate(); return () => store.dispose(); }, [store]);
   const state = useStore(store);
   const diagnostics = state.result?.diagnostics ?? [];
   return <div className="app-shell">
@@ -32,11 +33,12 @@ export function AppShell({ store: providedStore }: { readonly store?: EditorStor
       <EditorErrorBoundary resetKey={state.importState.requestId}>
         <div className="editor-layout">
           <div className="preview-column">
-            <PreviewViewport state={editorPreview(state)} selectedLayerId={state.selectedLayerId} />
+            <PreviewViewport state={editorPreview(state)} selectedLayerId={state.selectedLayerId} generationPhase={state.generationPhase} />
             <ImportStatus state={state.importState} />
             {diagnostics.length > 0 && <section className="notice" aria-label="Geometry diagnostics" role={state.generationStatus === 'invalid' ? 'alert' : 'status'}>
               <p>{state.generationStatus === 'invalid' ? 'Current geometry is invalid. Export is unavailable.' : 'Geometry warnings'}</p>
               <DiagnosticList diagnostics={diagnostics} coin={state.importState.coin} />
+              {diagnostics.some(d => d.code === 'GENERATION_WORKER_FAILED') && <button type="button" onClick={state.retryGeneration}>Retry generation</button>}
             </section>}
           </div>
           <LayerPanel store={store} />

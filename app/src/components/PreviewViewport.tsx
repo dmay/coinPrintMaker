@@ -1,3 +1,4 @@
+import type { GenerationPhase } from '../worker/protocol';
 import type { GeneratedCoin, GenerationKey } from '../core/contracts';
 import { isCurrentValidGeneration } from '../core/generation';
 import { CoinPreview } from '../preview/CoinPreview';
@@ -10,7 +11,7 @@ export type PreviewState =
   | { readonly status: 'ready'; readonly result: GeneratedCoin; readonly current: GenerationKey }
   | { readonly status: 'invalid'; readonly reason: 'import' | 'generation'; readonly retainedSource: boolean };
 
-export function PreviewViewport({ state, selectedLayerId = null }: { readonly state: PreviewState; readonly selectedLayerId?: string | null }) {
+export function PreviewViewport({ state, selectedLayerId = null, generationPhase = null }: { readonly state: PreviewState; readonly selectedLayerId?: string | null; readonly generationPhase?: GenerationPhase | null }) {
   let title: string, description: string;
   let status: string = state.status;
   const checked = state.status === 'ready' && isCurrentValidGeneration(state.result, state.current) ? state.result : null;
@@ -29,7 +30,7 @@ export function PreviewViewport({ state, selectedLayerId = null }: { readonly st
       break;
     case 'generating':
       title = 'Generating coin';
-      description = 'Checking current geometry. No current preview is ready.' + (state.stalePreview ? ' Previous checked geometry is stale while generation is pending and cannot be exported.' : '');
+      description = (generationPhase === 'starting' ? 'Starting background processing.' : generationPhase === 'receiving' ? 'Receiving checked geometry.' : 'Checking current geometry in the background.') + ' No current preview is ready.' + (state.stalePreview ? ' Previous checked geometry is stale while generation is pending and cannot be exported.' : '');
       break;
     case 'ready':
       if (checked) {
