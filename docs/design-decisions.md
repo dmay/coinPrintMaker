@@ -874,3 +874,21 @@ The original upload is retained at `fixtures/regressions/gumi-coin.svg`. Regress
 coverage checks deterministic whole-file import and isolated `path10` import,
 plus an analytical tiny bevel, reversed winding, actual crossings/touches and a
 narrow channel. These are import checks, not slicer or physical-print acceptance.
+
+## D-28 — Current-state measurements and scoped diagnostic presentation
+
+**DIG-28:** Derive presentation from existing current-generation freshness gates.
+Only checked current domain snapshots supply dimensions, volume and active-tier
+Z. Keyless invalid results remain valid failure shapes. Retained geometry during
+pending is explicitly stale and supplies no current measurements/export
+eligibility; successful source replacement and invalid completion clear it.
+A rejected import candidate has separate diagnostics and cannot invalidate or
+rename a retained checked coin. No geometry/Worker/serializer policy changes.
+
+Render eight diagnostics per page with total severity counts, Error/Warning text,
+stable layer identities, corrective actions and actual immediate-lower support
+context. A diagnostic action only selects an existing stable layer. Show width,
+depth, cumulative height in mm, checked mesh volume in mm³, and a bounded-height
+scrollable table of active-layer Z intervals. Both exporters remain unavailable
+and disabled even when engine geometry is valid. See [current diagnostics and
+evidence](current-diagnostics.md) and [pre-merge M3 checkpoint](m3-editor-checkpoint.md).

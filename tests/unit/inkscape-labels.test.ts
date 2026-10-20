@@ -19,7 +19,7 @@ test('preflight reports labels using namespace URI, with ID and path fallbacks',
   expect(errors).toHaveLength(3);
   expect(errors[0].location).toMatchObject({elementId:'path1',elementLabel:'Coin <script>',layerId:'source:layer1',layerName:'Base'});
   const html = display(errors);
-  expect(html).toContain('(layer Base), element Coin &lt;script&gt;');
+  expect(html).toContain('(layer Base, ID: source:layer1), element Coin &lt;script&gt;');
   expect(html).toContain('element path2');
   expect(html).toContain('element 0.2');
   expect(html).not.toContain('element path1');
@@ -60,7 +60,7 @@ test('geometry diagnostics resolve current layer names without changing location
   const diagnostic = {code:'MESH_INVALID',severity:'error',message:'Invalid mesh.',remediation:'Repair it.',
     location:{scope:'mesh',layerId:'source:layer1'}} as const;
   const html = renderToStaticMarkup(createElement(DiagnosticList, {diagnostics:[diagnostic],coin:result.coin}));
-  expect(html).toContain('(layer Base)');
-  expect(html).not.toContain('source:layer1');
+  expect(html).toContain('(layer Base, ID: source:layer1)');
+  expect(html).toContain('ID: source:layer1');
   expect(diagnostic.location.layerId).toBe('source:layer1');
 });

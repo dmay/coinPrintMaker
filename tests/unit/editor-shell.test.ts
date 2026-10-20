@@ -85,7 +85,8 @@ test('imported starts generation; newest failed candidate beats older success an
   expect(container.querySelector('.layer-panel')?.textContent).toContain('Retained artwork warning.');
   expect(container.textContent).toContain('retained.svg');
   expect(container.textContent).not.toContain('stale.svg');
-  expect(container.querySelector('[data-state="invalid"]')?.textContent).toContain('previous SVG remains');
+  expect(container.querySelector('[data-state="ready"]')?.textContent).toContain('Geometry checked');
+  expect(container.querySelector('.dimension-summary')?.textContent).toContain('retained loaded SVG');
   expect([...container.querySelectorAll<HTMLButtonElement>('.export-controls button')].every(b => b.disabled)).toBe(true);
 });
 
