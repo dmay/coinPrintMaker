@@ -151,3 +151,18 @@ test.each(['mouse', 'touch'])('captured %s drag commits on release only, keeps b
   await pointer('pointerdown', 150); await pointer('pointermove', 400); await pointer('pointercancel', 400); await pointer('pointerup', 400);
   expect(store.getState().settings!.revision).toBe(1);
 });
+
+test.each(['Enter', 'blur'])('commit reads the current field value on %s even before a draft render arrives', async trigger => {
+  const { store, execute } = await setup();
+  const input = control<HTMLInputElement>('Thickness for Top (mm)');
+  // Native/integration input delivery can make the element current before the
+  // rendered draft closure. Commit must use the event field, not stale state.
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, '2');
+  if (trigger === 'Enter') await key(input, 'Enter'); else await blur(input);
+  expect(store.getState().settings!.layers[2].thicknessMm).toBe(2);
+  expect(store.getState().settings!.revision).toBe(1);
+  expect(selectCurrentGeneration(store.getState())?.dimensionsMm[2]).toBe(4);
+  await blur(input);
+  expect(store.getState().settings!.revision).toBe(1);
+  expect(execute).toHaveBeenCalledTimes(2);
+});

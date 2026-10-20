@@ -732,3 +732,33 @@ come only from a checked current generation; all order/visibility/thickness edit
 reuse the existing complete support/mesh pipeline. See [layer controls](layer-controls.md)
 for exact edit behavior, validation and scope. No drag dependency, scene, Worker,
 exporter, geometry tolerance or M0 acceptance policy changes.
+
+## D-25 — Checked Z-up display with isolated renderer ownership
+
+**DIG-26:** Keep the existing Zustand store as the sole owner of immutable
+source, settings, revision-safe generation, colors and selected layer ID.
+PreviewViewport checks current validity before passing generated parts to the
+scene. Renderer buffers are detached Float32/index display copies; never use them
+for metrics, geometry decisions, validation or serialization. No mesh centering,
+rotation, XY transform, repeated Y inversion or Z scaling is introduced.
+
+Use pinned Fiber 9.8.2 and Drei 10.7.9 with existing React 19.3.1 / Three 0.186.1;
+their declared peer ranges support these versions. Drei OrbitControls handles
+orbit/pan/zoom around a Z-up camera. Local view commands target checked bounds:
+reset is oblique, side looks from -Y (+X right/+Z up), top looks down +Z
+(+X right/+Y up) with the control's 1e-6-radian pole clamp. Fit keeps the orbit
+direction and recenters; aspect-aware bounding-sphere framing covers resize.
+These camera choices are presentation only and do not alter exported XY/+Z.
+
+Each part's checked opaque sRGB #RRGGBB metadata drives its shaded material.
+Lighting changes appearance, not stored color intent or filament mapping.
+Selection toggles separate depth-tested edge lines without changing colors,
+settings revisions or generated data. Pending/importing/invalid results clear all
+part resources and current measurements; no stale mesh is retained. Keep the
+canvas/renderer and controls mounted across those transitions and valid updates.
+Custom geometry/material/edge allocations are effect-owned and explicitly disposed
+on replacement/unmount; Drei owns control disposal and Fiber owns renderer teardown.
+Preview-local initialization/context failure unmounts only the canvas and offers
+retry; textual dimensions/diagnostics and import/layer workflows remain available.
+See [coin preview](coin-preview.md) for evidence and limits. No engine, export,
+Worker, geometry/color truth or manual acceptance policy changes.

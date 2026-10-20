@@ -27,8 +27,8 @@ export function LayerRow({ layer, settings, selected, disabled, tier, selectRef,
   const [colorError, setColorError] = useState(false);
   const text = editing ? draft : String(settings.thicknessMm);
   const invalid = thicknessValue(text) === null;
-  function commit() {
-    const value = thicknessValue(text);
+  function commit(rawText: string) {
+    const value = thicknessValue(rawText);
     if (value === null) return;
     onThickness(value);
     setDraft(String(value));
@@ -44,8 +44,8 @@ export function LayerRow({ layer, settings, selected, disabled, tier, selectRef,
         }} />
       </label>
       <label htmlFor={`${id}-thickness`}>Thickness (mm)
-        <input id={`${id}-thickness`} type="text" inputMode="decimal" value={text} disabled={disabled} aria-label={`Thickness for ${layer.name} (mm)`} aria-invalid={invalid} aria-describedby={`${id}-thickness-note`} onChange={event => { setDraft(event.currentTarget.value); setEditing(true); }} onBlur={commit} onKeyDown={event => {
-          if (event.key === 'Enter') { event.preventDefault(); commit(); }
+        <input id={`${id}-thickness`} type="text" inputMode="decimal" value={text} disabled={disabled} aria-label={`Thickness for ${layer.name} (mm)`} aria-invalid={invalid} aria-describedby={`${id}-thickness-note`} onChange={event => { setDraft(event.currentTarget.value); setEditing(true); }} onBlur={event => commit(event.currentTarget.value)} onKeyDown={event => {
+          if (event.key === 'Enter') { event.preventDefault(); commit(event.currentTarget.value); }
           if (event.key === 'Escape') { event.preventDefault(); setDraft(String(settings.thicknessMm)); setEditing(false); }
         }} />
       </label>

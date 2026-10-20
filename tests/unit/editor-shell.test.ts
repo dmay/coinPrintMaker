@@ -18,6 +18,7 @@ import { createDefaultCoinSettings } from '../../app/src/core/resolveStack';
 import { polygonClippingKernel } from '../../app/src/import/polygonClippingKernel';
 import { earcutTriangulationKernel } from '../../app/src/import/earcutTriangulationKernel';
 
+vi.mock('../../app/src/preview/CoinPreview', () => ({ CoinPreview: () => null }));
 vi.mock('../../app/src/import/importCoinSvg', () => ({ readLocalCoin: vi.fn() }));
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const container = document.createElement('div');
@@ -92,7 +93,7 @@ test('first import rejection has no source or pretend preview', async () => {
   expect(container.querySelector('canvas,svg,img')).toBeNull();
 });
 
-test('future preview variants require a checked current result and never mount geometry', async () => {
+test('preview states pass only checked current geometry to the separately tested scene', async () => {
   const settings = createDefaultCoinSettings(coin);
   if (settings.status !== 'created') throw new Error('Invalid test defaults');
   const result = generateCoin(coin, settings.settings, polygonClippingKernel, earcutTriangulationKernel);

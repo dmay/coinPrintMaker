@@ -1,7 +1,7 @@
 import type { GeneratedCoin, GenerationKey } from '../core/contracts';
 import { isCurrentValidGeneration } from '../core/generation';
+import { CoinPreview } from '../preview/CoinPreview';
 
-// Presentation states only; no geometry is created or inferred from an import.
 export type PreviewState =
   | { readonly status: 'empty' }
   | { readonly status: 'importing'; readonly fileName: string; readonly stalePreview?: boolean }
@@ -10,9 +10,10 @@ export type PreviewState =
   | { readonly status: 'ready'; readonly result: GeneratedCoin; readonly current: GenerationKey }
   | { readonly status: 'invalid'; readonly reason: 'import' | 'generation'; readonly retainedSource: boolean };
 
-export function PreviewViewport({ state }: { readonly state: PreviewState }) {
+export function PreviewViewport({ state, selectedLayerId = null }: { readonly state: PreviewState; readonly selectedLayerId?: string | null }) {
   let title: string, description: string;
   let status: string = state.status;
+  const checked = state.status === 'ready' && isCurrentValidGeneration(state.result, state.current) ? state.result : null;
   switch (state.status) {
     case 'empty':
       title = 'Start with your artwork';
@@ -24,16 +25,16 @@ export function PreviewViewport({ state }: { readonly state: PreviewState }) {
       break;
     case 'imported':
       title = 'Artwork imported';
-      description = 'Your 2D layers are available in the panel. 3D geometry has not been generated; the interactive preview is coming next.';
+      description = 'Your 2D layers are available in the panel. 3D geometry has not been generated.';
       break;
     case 'generating':
       title = 'Generating coin';
       description = 'Checking current geometry. No current preview is ready.' + (state.stalePreview ? ' Previous checked geometry is stale while generation is pending and cannot be exported.' : '');
       break;
     case 'ready':
-      if (isCurrentValidGeneration(state.result, state.current)) {
+      if (checked) {
         title = 'Geometry checked';
-        description = `Current geometry passed validation: ${state.result.dimensionsMm.map(value => value.toLocaleString(undefined, { maximumFractionDigits: 4 })).join(' × ')} mm. Interactive 3D display is not available yet.`;
+        description = `Current geometry passed validation: ${checked.dimensionsMm.map(value => value.toLocaleString(undefined, { maximumFractionDigits: 4 })).join(' × ')} mm.`;
       } else {
         status = 'invalid';
         title = 'No current checked geometry';
@@ -48,10 +49,11 @@ export function PreviewViewport({ state }: { readonly state: PreviewState }) {
   }
   return <section className="preview-viewport" aria-labelledby="preview-heading" aria-busy={status === 'importing' || status === 'generating'} data-state={status}>
     <div className="panel-heading"><h2 id="preview-heading">Preview</h2><span>Dimensions in mm</span></div>
-    <div className="preview-placeholder" role="status" aria-live="polite">
-      <div className="preview-symbol" aria-hidden="true">◎</div>
+    <CoinPreview result={checked} selectedLayerId={selectedLayerId} />
+    <div className={checked ? 'preview-summary' : 'preview-placeholder'} role="status" aria-live="polite">
+      {!checked && <div className="preview-symbol" aria-hidden="true">◎</div>}
       <h3>{title}</h3><p>{description}</p>
     </div>
-    <p className="preview-caption">Import checks 2D artwork. Support and 3D validation are separate steps.</p>
+    <p className="preview-caption">Preview shading and selection outlines are display aids. Dimensions and layer colors come from checked geometry. Export formats remain unavailable.</p>
   </section>;
 }
