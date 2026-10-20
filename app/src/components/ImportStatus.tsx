@@ -1,13 +1,17 @@
+import type { ImportedCoin } from '../core/contracts';
 import type { CoinImportState } from '../core/coinImportState';
 import type { Diagnostic } from '../core/diagnostics';
 
-export function DiagnosticList({ diagnostics }: { readonly diagnostics: readonly Diagnostic[] }) {
-  return <ul className="diagnostic-list">{diagnostics.map((diagnostic, index) => <li key={index}>
+export function DiagnosticList({ diagnostics, coin }: { readonly diagnostics: readonly Diagnostic[]; readonly coin?: ImportedCoin | null }) {
+  return <ul className="diagnostic-list">{diagnostics.map((diagnostic, index) => {
+    const location = diagnostic.location;
+    return <li key={index}>
     <strong>{diagnostic.code}</strong>
-    {diagnostic.location.scope === 'layer' || diagnostic.location.scope === 'element' ? ` (layer ${diagnostic.location.layerId ?? 'unknown'})` : ''}
-    {diagnostic.location.scope === 'element' && `, element ${diagnostic.location.elementId ?? diagnostic.location.elementPath.join('.')}`}
+    {location.scope !== 'document' ? ` (layer ${location.layerName || coin?.layers.find(layer => layer.id === location.layerId)?.name || location.layerId || 'unknown'})` : ''}
+    {location.scope === 'element' && `, element ${location.elementLabel || location.elementId || location.elementPath.join('.')}`}
     {' — '}{diagnostic.message} {diagnostic.remediation}
-  </li>)}</ul>;
+  </li>;
+  })}</ul>;
 }
 
 export function ImportStatus({ state }: { readonly state: CoinImportState }) {

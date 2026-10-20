@@ -178,7 +178,7 @@ describe('unsupported and malformed mappings fail with actionable diagnostics', 
     const text = wrap(layer(rect, 'base', `transform="${transform}"`));
     rejected(text, 'SVG_TRANSFORM_UNSUPPORTED');
     const result = normalizeSvg(text);
-    expect(result.diagnostics.at(-1)?.location).toEqual({ scope: 'element', layerId: null, elementId: 'base', elementPath: [0] });
+    expect(result.diagnostics.at(-1)?.location).toEqual({ scope: 'element', layerId: 'source:base', layerName: 'base', elementLabel: 'base', elementId: 'base', elementPath: [0] });
     expect(result.diagnostics.at(-1)?.remediation.length).toBeGreaterThan(0);
   });
   test('root transforms fail explicitly instead of being applied in the wrong viewport order', () => rejected(wrap(layer(rect), 'width="40mm" height="40mm" viewBox="0 0 40 40" transform="translate(1 2)"'), 'SVG_TRANSFORM_UNSUPPORTED'));

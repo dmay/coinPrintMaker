@@ -36,7 +36,7 @@ export function AppShell({ store: providedStore }: { readonly store?: EditorStor
             <ImportStatus state={state.importState} />
             {diagnostics.length > 0 && <section className="notice" aria-label="Geometry diagnostics" role={state.generationStatus === 'invalid' ? 'alert' : 'status'}>
               <p>{state.generationStatus === 'invalid' ? 'Current geometry is invalid. Export is unavailable.' : 'Geometry warnings'}</p>
-              <DiagnosticList diagnostics={diagnostics} />
+              <DiagnosticList diagnostics={diagnostics} coin={state.importState.coin} />
             </section>}
           </div>
           <LayerPanel store={store} />

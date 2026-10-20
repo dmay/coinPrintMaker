@@ -45,11 +45,11 @@ export const diagnosticCatalog = {
 } as const satisfies Record<string, readonly ['error' | 'warning', string, string]>;
 
 export type DiagnosticCode = keyof typeof diagnosticCatalog;
-export type DiagnosticLocation =
+export type DiagnosticLocation = (
   | { readonly scope: 'document'; readonly line?: number; readonly column?: number }
   | { readonly scope: 'layer'; readonly layerId: string }
   | { readonly scope: 'element'; readonly layerId: string | null; readonly elementId: string | null; readonly elementPath: readonly number[] }
-  | { readonly scope: 'mesh'; readonly layerId: string | null; readonly triangleIndex?: number };
+  | { readonly scope: 'mesh'; readonly layerId: string | null; readonly triangleIndex?: number }) & { readonly layerName?: string; readonly elementLabel?: string };
 
 export interface Diagnostic {
   readonly code: DiagnosticCode;
