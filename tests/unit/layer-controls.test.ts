@@ -10,6 +10,7 @@ import { generateCoin } from '../../app/src/core/generateCoin';
 import { polygonClippingKernel } from '../../app/src/import/polygonClippingKernel';
 import { earcutTriangulationKernel } from '../../app/src/import/earcutTriangulationKernel';
 
+vi.mock('../../app/src/preview/CoinPreview', () => ({ CoinPreview: () => null }));
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const container = document.createElement('div'); document.body.append(container);
 let root: ReturnType<typeof createRoot>;
