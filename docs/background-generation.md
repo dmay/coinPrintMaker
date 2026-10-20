@@ -79,8 +79,9 @@ not a naturally occurring browser failure.
 Fixtures: the four authored SVGs are unchanged. Generated 600/800/8191/8192-point
 regular polygons use radius 18 mm on a 40 mm page, six-decimal source coordinates
 and one named base. The near-source-cap fixture pads offset-nested-transforms with
-an inert comment to exactly 2,090,000 bytes (99.66% of 2 MiB). The 8192-point
-candidate rejects at an existing complexity gate; retained prior geometry is not
+an inert comment to exactly 2,090,000 bytes (99.66% of 2 MiB). The original 8192-point
+candidate rejected at an existing import complexity gate (the rebased failure
+stage differs as recorded below); retained prior geometry is not
 misreported as its successful result, and its subsequent baseline edits are
 excluded. These probes exercise source-size and bounded-complexity behavior;
 they do not prove universal worst-case latency at every independent cap.
@@ -100,7 +101,7 @@ Worker below `/coinPrintMaker/assets/`, then executes that actual bundle with on
 standard ECMAScript globals in a DOM-free VM. This proves adapter compatibility
 and relative asset publication, separately from native browser observations.
 
-Full local verification passes 756 Vitest and 22 retained Node tests, three
+Initial local verification passed 756 Vitest and 22 retained Node tests, three
 typecheck targets, build:pages and check:pages. The main bundle retains its
 existing >500 kB advisory. There is no new exporter, changed geometry policy,
 slicer/print acceptance or later milestone work. Original Library baselines were
@@ -110,7 +111,7 @@ document control was unavailable. Those absent files are not represented as read
 Measured results and native limitations are recorded in D-08 and the committed
 evidence summary. DIG-27 remains In Progress until operator merge.
 
-## Final native comparison and acceptance
+## Original native comparison before rebase
 
 The final generated app was profiled on clean implementation commit
 `5013d685f3a0aa6613bdbad8677bb11041b8f366`, tree
@@ -119,7 +120,7 @@ The final generated app was profiled on clean implementation commit
 `6dc0fa23e261671cdedcc182fd7a188b6a03a08d852f4495ffbaeb46dc018419`);
 `generation.worker-BBJGLBPc.js` is 82,177 bytes (SHA-256
 `c044a178ca1562b2ee2f1fb17eb7c9c5b0e3aabb713b9d3d44cad792bae43735`).
-Later documentation commits do not change these runtime assets.
+The later current-base rebase changes these assets; its separate smoke is recorded below.
 
 Fifty completed action rows recorded 285 state snapshots, 3,828 animation frames,
 4,292 timer samples, zero main-thread long tasks and zero window errors. Measured
@@ -170,3 +171,41 @@ contained only the Three.Clock warning. This does not diagnose a production GPU
 defect or prove native orbit/GPU frame rate, touch hardware or cross-browser
 acceptance. Main-thread callback responsiveness and independent diagnostics are
 established; component/scene tests cover the documented rendering handlers.
+
+## Rebased current-base smoke
+
+Main advanced independently during this task to
+`adbf9c37bc066e80afdacd2a91594e406696d8e0` with DIG-40/41/42 importer and source-label
+fixes. After reviewing D-26/D-27 and those diffs, the feature was rebased. Conflict
+resolution retained label-aware DiagnosticList plus Worker retry and regenerated
+Pages assets; no upstream core/import fix was replaced. The only core/import
+difference from current main is the additive Worker-failure diagnostic.
+
+The root agent ran a separate fresh native smoke/profile on clean rebased
+`b0be2fb5894dae922149e4832613d408a9926405`, tree
+`f225d932cc1b0d9383d476bd9e8c0e76acfa84c7`, with main
+`index-J4VOk4wW.js` and Worker `generation.worker-TshlSad9.js`. The
+[separate samples and hashes](evidence/dig27-rebased-worker.json) preserve this
+checkpoint independently of the original 5013d68 evidence.
+
+All 50 action rows completed, with 309 state snapshots, 3,006 frames, 3,371 timer
+samples, zero main-thread long tasks and zero window errors. Final checked key
+matched source revision 28/settings revision 4, token 81 and 3.1 mm height.
+Scheduled rapid input delays were 0.1/0.8/2.8/4.8 ms. Under the upstream contour
+fixes, 8,191/8,192-point source candidates now pass import and reject in checked
+generation with MESH_LIMIT_EXCEEDED (1,275.8–1,308.9 / 1,196.5–1,387.4 ms total).
+They do not retain a valid mesh; this changed failure stage is inherited from
+current main, not a raised limit in DIG-27.
+
+The rebased fault probe again exposed GENERATION_WORKER_FAILED with current
+geometry/export/Z unavailable, and Retry generation initiated background work.
+The complete retry-to-checked observation belongs to the frozen predecessor;
+rebased automated lifecycle tests verify full recovery. The root IAB preview
+fallback/console limitation remains unchanged. These smoke observations do not
+claim native GPU/orbit, touch hardware or cross-browser acceptance.
+
+Fresh current-base checks pass 771 Vitest + 22 retained Node cases, three
+typechecks, build:pages/check:pages and whitespace checks. The emitted main/Worker
+sizes are approximately 1,279.32 / 82.82 kB. Final PR head, CI and synthetic merge
+parents/tree are recorded in the PR/Linear handoff, avoiding circular commit IDs
+inside their own tree. DIG-27 stays In Progress pending operator merge.
