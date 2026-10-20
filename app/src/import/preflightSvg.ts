@@ -4,7 +4,7 @@ import type { PreflightArtwork, SvgPreflightResult } from '../core/svgPreflight'
 import { parseSvgDocument, SVG_NAMESPACE } from './parseSvgDocument';
 import { opacityValue, resolveSvgStyle, solidPaint, styleDefaults } from './svgStyle';
 import type { SvgStyle } from './svgStyle';
-import { isInertSvgElement } from './svgElements';
+import { elementLabel, elementLocation, isInertSvgElement } from './svgElements';
 
 const shapes = new Set(['path', 'rect', 'circle', 'ellipse', 'polygon']);
 const textElements = new Set(['text', 'tspan', 'textPath', 'flowRoot', 'flowPara', 'flowSpan']);
@@ -35,7 +35,7 @@ export function preflightSvg(svgText: string): SvgPreflightResult {
   const diagnostics: Diagnostic[] = [], artwork: PreflightArtwork[] = [];
   let hasErrors = false, omittedDiagnostics = 0;
   const add = (code: DiagnosticCode, element: Element, path: readonly number[], detail = '') => {
-    const diagnostic = createDiagnostic(code, { scope: 'element', layerId: null, elementId: element.getAttribute('id'), elementPath: path });
+    const diagnostic = createDiagnostic(code, elementLocation(element, path));
     hasErrors ||= diagnostic.severity === 'error';
     if (diagnostics.length >= 100) {
       omittedDiagnostics++;
@@ -130,7 +130,7 @@ export function preflightSvg(svgText: string): SvgPreflightResult {
               }
               if (!closed) add('OPEN_PATH_UNSUPPORTED', element, path);
             }
-            artwork.push({ elementId: element.getAttribute('id'), elementPath: path, fill, fillRule: style['fill-rule'].toLowerCase() === 'evenodd' ? 'evenodd' : 'nonzero' });
+            artwork.push({ ...(elementLabel(element) ? { elementLabel: elementLabel(element) } : {}), elementId: element.getAttribute('id'), elementPath: path, fill, fillRule: style['fill-rule'].toLowerCase() === 'evenodd' ? 'evenodd' : 'nonzero' });
           }
         }
       }

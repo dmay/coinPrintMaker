@@ -45,12 +45,12 @@ export function canonicalizeSvg(source: SourceDocument, normalized: SvgNormaliza
   };
   try {
     for (const layer of normalized.layers) {
-      location={scope:'layer',layerId:layer.id};
+      location={scope:'layer',layerId:layer.id,layerName:layer.name};
       if (!layer.shapes.length) return reject(layer.id===normalized.baseCandidateId?'BASE_EMPTY':'LAYER_EMPTY');
       const shapes: FootprintMm[] = [];
       const previousShapes: (readonly Point2Mm[])[][] = [];
       for (const shape of layer.shapes) {
-        location={scope:'element',layerId:layer.id,elementId:shape.elementId,elementPath:shape.elementPath};
+        location={scope:'element',layerId:layer.id,layerName:layer.name,elementId:shape.elementId,elementLabel:shape.elementLabel,elementPath:shape.elementPath};
         const raw=shape.contours.map(c => flattenCurves(c.curves,budget));
         const rings=raw.map(points => normalizeRing(points,budget));
         for (const previous of previousShapes) for (const a of previous) for (const b of raw) assertNoNearObjectContact(a,b,budget);
@@ -68,13 +68,13 @@ export function canonicalizeSvg(source: SourceDocument, normalized: SvgNormaliza
         if (!filled.length) throw new PolygonFailure('Source shape has no filled region.');
         shapes.push(filled);
       }
-      location={scope:'layer',layerId:layer.id};
+      location={scope:'layer',layerId:layer.id,layerName:layer.name};
       const union=createPolygonService(kernel).union(shapes,{budget,location});
       if(union.status==='rejected') return {status:'rejected',diagnostics:[...diagnostics,...union.diagnostics]};
       const footprintMm=union.value;
       if (!footprintMm.length) return reject(layer.id===normalized.baseCandidateId?'BASE_EMPTY':'LAYER_EMPTY');
       if (layer.id===normalized.baseCandidateId && footprintMm.length!==1) return reject('BASE_DISCONNECTED');
-      layers.push({id:layer.id,name:layer.name,sourceOrder:layer.sourceOrder,sourceElements:layer.shapes.map(s=>({elementId:s.elementId,elementPath:s.elementPath})),footprintMm,...footprintMetrics(footprintMm)});
+      layers.push({id:layer.id,name:layer.name,sourceOrder:layer.sourceOrder,sourceElements:layer.shapes.map(s=>({elementId:s.elementId,...(s.elementLabel ? {elementLabel:s.elementLabel} : {}),elementPath:s.elementPath})),footprintMm,...footprintMetrics(footprintMm)});
     }
     if (!layers.length || layers[0].id!==normalized.baseCandidateId) return reject('BASE_EMPTY');
     const coin: ImportedCoin={schemaVersion:1,source,physicalPageMm:normalized.physicalPageMm,sizeOrigin:normalized.sizeOrigin,baseLayerId:normalized.baseCandidateId,layers,diagnostics};

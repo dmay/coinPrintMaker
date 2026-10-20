@@ -6,7 +6,7 @@ import type { ExtractedLayer, ExtractedShape, SvgCurve, SvgExtractionResult, Svg
 import { findInkscapeLayers } from './findInkscapeLayers';
 import { parseSvgDocument, SVG_NAMESPACE } from './parseSvgDocument';
 import { preflightSvg } from './preflightSvg';
-import { elementEntries, INKSCAPE_NAMESPACE, isInkscapeLayer, sourceIdentity } from './svgElements';
+import { elementEntries, elementLocation, INKSCAPE_NAMESPACE, isInkscapeLayer, sourceIdentity } from './svgElements';
 import { identity, multiply, parseTransform, transformCurve } from '../core/svgAffine';
 import type { Affine } from '../core/svgAffine';
 import { lengthUserUnits } from '../core/svgViewport';
@@ -69,9 +69,10 @@ export function svgLoaderAdapter(svgText: string): SvgExtractionResult {
   if ('diagnostics' in parsed) return { status: 'rejected', diagnostics: parsed.diagnostics };
   const root = parsed.document.documentElement, discovery = findInkscapeLayers(root);
   if (discovery.status === 'rejected') return { status: 'rejected', diagnostics: [...preflight.diagnostics, ...discovery.diagnostics] };
+  const rootElementAt = (path: readonly number[]) => path.reduce<Element>((node, index) => node.children[index], root);
   const diagnostics: Diagnostic[] = [...preflight.diagnostics];
   const reject = (code: DiagnosticCode, shape?: PreflightArtwork, detail = ''): SvgExtractionResult => {
-    const diagnostic = createDiagnostic(code, shape ? { scope: 'element', layerId: null, elementId: shape.elementId, elementPath: shape.elementPath } : { scope: 'document' });
+    const diagnostic = createDiagnostic(code, shape ? elementLocation(rootElementAt(shape.elementPath), shape.elementPath) : { scope: 'document' });
     return { status: 'rejected', diagnostics: [...diagnostics, { ...diagnostic, message: diagnostic.message + (detail ? ` ${detail}` : '') }] };
   };
   const entries = elementEntries(root), byPath = new Map(entries.map(e => [pathKey(e.path), e.element]));
@@ -102,7 +103,7 @@ export function svgLoaderAdapter(svgText: string): SvgExtractionResult {
       if (element !== root && element.localName === 'svg') throw new Error('Nested SVG viewports are unsupported.');
       transforms.set(element, multiply(element === root ? identity : transforms.get(element.parentElement!)!, parseTransform(element.getAttribute('transform'))));
     } catch (error) {
-      const diagnostic = createDiagnostic('SVG_TRANSFORM_UNSUPPORTED', { scope: 'element', layerId: null, elementId: element.getAttribute('id'), elementPath: path });
+      const diagnostic = createDiagnostic('SVG_TRANSFORM_UNSUPPORTED', elementLocation(element, path));
       return { status: 'rejected', diagnostics: [...diagnostics, { ...diagnostic, message: diagnostic.message + ' ' + (error as Error).message }] };
     }
   }

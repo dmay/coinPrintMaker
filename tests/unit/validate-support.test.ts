@@ -61,7 +61,7 @@ describe('difference-based support with independent analytic residuals', () => {
     expect(result.unsupportedRemainders).toEqual([{ upperLayerId: 'layer-1', lowerLayerId: 'layer-0', footprintMm: box(2,2,6,6) }]);
     expect(measureFootprint(result.unsupportedRemainders[0].footprintMm).areaMm2).toBe(36);
     expect(result.diagnostics.at(-1)).toMatchObject({ location: { scope: 'layer', layerId: 'layer-1' },
-      message: expect.stringContaining('Tier 0 (layer-0)'), remediation: expect.stringContaining('Tier 1 (layer-1)') });
+      message: expect.stringContaining('Tier 0'), remediation: expect.stringContaining('Tier 1') });
   });
   test('equal area and identical bbox with different holes cannot pass', () => {
     const a: FootprintMm = [{ outer: box()[0].outer, holes: [[[1,1],[1,3],[3,3],[3,1]]] }];
@@ -215,7 +215,7 @@ describe('precision and failure gating', () => {
     const difference = vi.fn(polygonClippingKernel.difference).mockImplementationOnce(()=>{throw new Error('private detail');});
     const result = rejected(validateSupport(coin,defaults(coin),{...polygonClippingKernel,difference}),'POLYGON_INVALID');
     expect(difference).toHaveBeenCalledTimes(2); expect(result.diagnostics[0]).toEqual(warning);
-    expect(result.diagnostics[1]).toMatchObject({ location:{scope:'layer',layerId:'layer-1'},message:expect.stringContaining('layer-0') });
+    expect(result.diagnostics[1]).toMatchObject({ location:{scope:'layer',layerId:'layer-1'},message:expect.stringContaining('Tier 0') });
     expect(JSON.stringify(result)).not.toContain('private detail');
     expect(result.unsupportedRemainders).toEqual([{upperLayerId:'layer-2',lowerLayerId:'layer-1',footprintMm:box(12,0,1,1)}]);
   });
@@ -232,7 +232,7 @@ describe('precision and failure gating', () => {
   test('all pair operations share bounded document work and no diagnostics/remnants are silently capped', () => {
     const coin = coinOf(...Array.from({length:3300},()=>box()));
     const result = rejected(check(coin),'IMPORT_LIMIT_EXCEEDED');
-    expect(result.diagnostics.at(-1)?.location).toEqual({scope:'layer',layerId:'layer-3299'});
+    expect(result.diagnostics.at(-1)?.location).toMatchObject({scope:'layer',layerId:'layer-3299'});
     const outside = coinOf(...Array.from({length:105},(_,i)=>box(i*20,0,1,1)));
     const all = rejected(check(outside));
     expect(all.unsupportedRemainders).toHaveLength(104); expect(all.diagnostics).toHaveLength(104);

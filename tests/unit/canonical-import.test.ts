@@ -108,7 +108,7 @@ describe('explicit fill interpretation and canonical topology',()=>{
   test('empty/hidden nonbase layers preserve identity in an explicit rejection',()=>{
     for(const body of ['', '<circle display="none" r="3"/>']){
       const result=reject(wrap(layer(rect)+layer(body,'empty')),'LAYER_EMPTY');
-      expect(result.diagnostics.at(-1)?.location).toEqual({scope:'layer',layerId:'source:empty'});
+      expect(result.diagnostics.at(-1)?.location).toEqual({scope:'layer',layerId:'source:empty',layerName:'empty'});
       if(body)expect(result.diagnostics.some(d=>d.code==='ARTWORK_IGNORED')).toBe(true);
     }
   });

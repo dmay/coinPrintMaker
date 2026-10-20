@@ -15,6 +15,7 @@ export interface PolygonMm {
 export type FootprintMm = readonly PolygonMm[];
 
 export interface SourceElement {
+  readonly elementLabel?: string;
   readonly elementId: string | null;
   // Zero-based element-child indices from the SVG root; independent of labels.
   readonly elementPath: readonly number[];

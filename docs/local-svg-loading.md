@@ -88,3 +88,12 @@ an XHTML parser-error document, while jsdom uses Mozilla's parser-error namespac
 the loader and a regression test cover both without misclassifying authored
 parsererror elements inside valid SVG XML. This is a bounded native parsing/API
 smoke check, not full picker automation or cross-browser acceptance.
+
+### Source display names (DIG-40)
+
+Diagnostics prefer a nonblank Inkscape label (resolved by namespace URI) for
+an element, falling back to its SVG ID and then its structural path. Owning
+layer names appear in import and geometry diagnostics. Labels are rendered as
+text; duplicate labels are allowed. Source IDs and paths remain unchanged for
+mapping, selection, settings and generation freshness. The Gumi and Teto
+regression fixtures retain their original path labels as source metadata.

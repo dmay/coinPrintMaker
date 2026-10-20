@@ -30,7 +30,7 @@ export function normalizeSvgCoordinates(extraction: SvgExtractionResult, viewpor
         if (!boundsMm) throw new Error('Missing curve bounds.');
         shapes.push({ ...shape, contours, boundsMm });
       } catch {
-        return { status: 'rejected', diagnostics: [...diagnostics, createDiagnostic('SVG_TRANSFORM_UNSUPPORTED', { scope: 'element', layerId: layer.id, elementId: shape.elementId, elementPath: shape.elementPath })] };
+        return { status: 'rejected', diagnostics: [...diagnostics, createDiagnostic('SVG_TRANSFORM_UNSUPPORTED', { scope: 'element', layerId: layer.id, layerName: layer.name, elementLabel: shape.elementLabel, elementId: shape.elementId, elementPath: shape.elementPath })] };
       }
     }
     layers.push({ ...layer, shapes, boundsMm: unionBounds(shapes.map(shape => shape.boundsMm)) });

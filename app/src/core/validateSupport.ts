@@ -17,15 +17,15 @@ export function validateSupport(coin: ImportedCoin, settings: CoinSettings, kern
   // Even a base-only stack must pass the checked polygon boundary. Do not trust
   // stack resolution's intentionally minimal finite-ring checks as topology proof.
   const base = stack.activeTiers[0];
-  const baseCheck = service.isEmpty(base.footprintMm, { budget, location: { scope: 'layer', layerId: base.layerId } });
+  const baseCheck = service.isEmpty(base.footprintMm, { budget, location: { scope: 'layer', layerId: base.layerId, layerName: base.name } });
   if (baseCheck.status === 'rejected') diagnostics.push(...baseCheck.diagnostics);
   for (let index = 1; index < stack.activeTiers.length; index++) {
     const lower = stack.activeTiers[index - 1], upper = stack.activeTiers[index];
-    const location = { scope: 'layer' as const, layerId: upper.layerId };
+    const location = { scope: 'layer' as const, layerId: upper.layerId, layerName: upper.name };
     const difference = service.difference(upper.footprintMm, lower.footprintMm, { budget, location });
     if (difference.status === 'rejected') {
       diagnostics.push(...difference.diagnostics.map(diagnostic => ({ ...diagnostic,
-        message: `${diagnostic.message} Support pair: ${upper.name} (${upper.layerId}) above ${lower.name} (${lower.layerId}).` })));
+        message: `${diagnostic.message} Support pair: ${upper.name} above ${lower.name}.` })));
       continue;
     }
     // The service has validated the complete result. Region presence is exact
@@ -34,8 +34,8 @@ export function validateSupport(coin: ImportedCoin, settings: CoinSettings, kern
     unsupportedRemainders.push({ upperLayerId: upper.layerId, lowerLayerId: lower.layerId, footprintMm: difference.value });
     const diagnostic = createDiagnostic('SUPPORT_OUTSIDE_LOWER', location);
     diagnostics.push({ ...diagnostic,
-      message: `${diagnostic.message} ${upper.name} (${upper.layerId}) is not fully supported by ${lower.name} (${lower.layerId}).`,
-      remediation: `Move or resize ${upper.name} (${upper.layerId}), extend the filled footprint of ${lower.name} (${lower.layerId}), or change enabled layer order so the immediately lower tier supports all artwork, including holes and islands.` });
+      message: `${diagnostic.message} ${upper.name} is not fully supported by ${lower.name}.`,
+      remediation: `Move or resize ${upper.name}, extend the filled footprint of ${lower.name}, or change enabled layer order so the immediately lower tier supports all artwork, including holes and islands.` });
   }
   if (diagnostics.some(diagnostic => diagnostic.severity === 'error')) {
     return { status: 'rejected', input: stack.input, diagnostics, unsupportedRemainders };
