@@ -152,3 +152,37 @@ test('detached buffers never mutate domain points and resource presentation neve
   expect(JSON.stringify(part)).toBe(snapshot);
   view.dispose();
 });
+
+test('actual Drei event handlers orbit, pan and zoom without touching engine output; fit restores target', async () => {
+  const snapshot = JSON.stringify(result);
+  renderer = await create(scene(result), { width: 900, height: 420 });
+  const controls = state.controls as unknown as import('three-stdlib').OrbitControls;
+  const canvas = state.gl.domElement;
+  Object.defineProperty(canvas, 'clientHeight', { configurable: true, value: 420 });
+  canvas.setPointerCapture = vi.fn(); canvas.releasePointerCapture = vi.fn();
+  function pointer(type: string, button: number, x: number, y: number) {
+    const event = new MouseEvent(type, { button, clientX: x, clientY: y, bubbles: true });
+    Object.defineProperties(event, { pointerId: { value: 1 }, pointerType: { value: 'mouse' } });
+    return event;
+  }
+  const initial = state.camera.position.clone();
+  await act(async () => {
+    canvas.dispatchEvent(pointer('pointerdown', 0, 300, 200));
+    document.dispatchEvent(pointer('pointermove', 0, 370, 230));
+    document.dispatchEvent(pointer('pointerup', 0, 370, 230));
+  });
+  expect(state.camera.position.distanceTo(initial)).toBeGreaterThan(1);
+  const beforePan = controls.target.clone();
+  await act(async () => {
+    canvas.dispatchEvent(pointer('pointerdown', 2, 300, 200));
+    document.dispatchEvent(pointer('pointermove', 2, 330, 230));
+    document.dispatchEvent(pointer('pointerup', 2, 330, 230));
+  });
+  expect(controls.target.distanceTo(beforePan)).toBeGreaterThan(1);
+  const distance = state.camera.position.distanceTo(controls.target);
+  await act(async () => { canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, cancelable: true })); });
+  expect(state.camera.position.distanceTo(controls.target)).toBeLessThan(distance);
+  await renderer.update(scene(result, { preset: 'fit', sequence: 1 }));
+  expect(controls.target.distanceTo(beforePan)).toBeLessThan(1e-9);
+  expect(JSON.stringify(result)).toBe(snapshot);
+});

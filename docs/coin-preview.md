@@ -49,13 +49,15 @@ current geometry. Failure never changes domain validity or enables export.
 
 ## Automated evidence
 
-Five scene tests use actual imported offset-nested-transforms output through the
+Six scene tests use actual imported offset-nested-transforms output through the
 production generateCoin engine and the pinned React Three test renderer. WebGL is
 mocked by that renderer; these tests are not native GPU evidence. They verify exact
 off-center [4,24]-[10,30] mm placement, unchanged transforms, top/side projection,
 framing every emitted vertex, narrow-aspect resize, fit/reset, checked colors,
 selection nonmutation, renderer/control identity, replacement/pending cleanup of
-all four resource kinds and Drei control cleanup on final unmount.
+all four resource kinds and Drei control cleanup on final unmount. Synthetic
+mouse/pointer/wheel events exercise the actual Drei orbit/pan/zoom handlers;
+jsdom pointer-capture functions are shimmed and WebGL remains mocked.
 
 Four component tests mock Canvas/scene to test view commands and source/store
 selection isolation, retained canvas, fresh dimensions, stale/invalid mesh removal,
@@ -65,7 +67,7 @@ GPU failure, native touch hardware, cross-browser, serializer/slicer or print
 acceptance follows from these tests. Native browser observations are recorded in
 the PR/Linear handoff separately from mock/synthetic evidence.
 
-Initial complete local verification: all three typecheck targets, 747 Vitest tests
+Initial complete local verification: all three typecheck targets, 748 Vitest tests
 and 22 retained Node checks, build:pages and check:pages pass. The generated bundle
 includes actual production engine and scene (624 modules; approximately 1.31 MB JS,
 369 kB gzip). Vite retains its >500 kB advisory; no warning suppression or Worker
@@ -86,7 +88,9 @@ the circular base with its off-center raised tile; side showed the thin Z slab.
 The raised tier was selected and edited. After the event-value amendment and
 reload, fill(2) + Enter committed without blur and regenerated current dimensions
 to 39.9975 x 39.9988 x 3.6 mm. Console had Three.Clock deprecation warnings and no
-errors. Programmatic color fill did not commit, so no native color-picker claim
+errors. Native coordinate drag visibly changed the orbit and revealed the
+selection outline; wheel zoom changed framing; Fit and Reset restored the oblique
+Z-up view with the raised tile. Programmatic color fill did not commit, so no native color-picker claim
 is made. Native GPU/context loss, narrow-device/touch and cross-browser acceptance
 were not observed in these actions; mock/synthetic tests above cover the stated
 handlers and resize behavior. No slicer, serializer or print behavior was tested.
