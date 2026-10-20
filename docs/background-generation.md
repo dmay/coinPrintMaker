@@ -109,3 +109,64 @@ document control was unavailable. Those absent files are not represented as read
 
 Measured results and native limitations are recorded in D-08 and the committed
 evidence summary. DIG-27 remains In Progress until operator merge.
+
+## Final native comparison and acceptance
+
+The final generated app was profiled on clean implementation commit
+`5013d685f3a0aa6613bdbad8677bb11041b8f366`, tree
+`bf2b3c6f2875e56e17dd065edf399a8090536d43`. Main asset
+`index-Cox_woU9.js` is 1,277,959 bytes (SHA-256
+`6dc0fa23e261671cdedcc182fd7a188b6a03a08d852f4495ffbaeb46dc018419`);
+`generation.worker-BBJGLBPc.js` is 82,177 bytes (SHA-256
+`c044a178ca1562b2ee2f1fb17eb7c9c5b0e3aabb713b9d3d44cad792bae43735`).
+Later documentation commits do not change these runtime assets.
+
+Fifty completed action rows recorded 285 state snapshots, 3,828 animation frames,
+4,292 timer samples, zero main-thread long tasks and zero window errors. Measured
+action frame gaps stayed at 18.0–19.6 ms. The four scheduled Enter inputs arrived
+0.1 / 1.9 / 3.9 / 6.9 ms late; the final checked source key/current revision 4
+matched, with 3.1 mm height. Generation remains hundreds of milliseconds of real
+work; the Worker removes observed input blocking, not the validation work itself.
+See [all final samples and build hashes](evidence/dig27-worker.json).
+
+
+| Fixture | Worker import generation interval ms | Worker edit generation interval ms | Total import ms | Total edit ms |
+| --- | ---: | ---: | ---: | ---: |
+| sun-medallion | 516.8–682.4 | 544.9–552.3 | 539.6–714.8 | 557.0–588.5 |
+| twin-stars | 386.9–430.7 | 379.0–401.7 | 411.2–444.2 | 395.1–413.1 |
+| monogram-o | 170.0–197.7 | 172.8–174.5 | 202.9–220.5 | 203.0–205.1 |
+| offset-nested-transforms | 168.3–175.6 | 171.5–210.2 | 188.0–204.9 | 204.0–219.7 |
+| polygon-600 | 453.3–476.3 | 460.4–465.3 | 474.7–492.3 | 476.0–477.1 |
+| polygon-800 | 618.4–651.7 | 614.4–651.4 | 651.3–683.8 | 635.1–668.0 |
+| near-source-cap | 183.5–194.4 | 171.6–181.5 | 234.5–237.0 | 203.5–204.9 |
+
+Generation intervals use the first pending state of the completed token through
+its ready state. Intermediate progress updates remain pending and must not reset
+the interval. Totals include polling/file reading; these are three-run ranges,
+not statistical percentiles or CPU-only measurements.
+
+The 2,090,000-byte import finished in 234.5–237.0 ms total; frame gaps remained
+18.1 ms and timer gaps 34.3–35.3 ms. The 8,191-point source (158,939 bytes) rejected
+at the existing bounded import gate in 27.5–44.1 ms. The 8,192-point source
+(158,957 bytes) rejected in 28.0 ms. Both retained the previous 800-point source
+honestly. The accepted 600/800-point inputs are 11,865/15,737 bytes.
+
+Root-agent native browser observations completed the real file-chooser path:
+offset-nested-transforms reached checked 2 mm. Browser fill(2) plus Enter on raised
+thickness reached checked 3.6 mm and current Z 1.6–3.6. The deliberate native
+Worker fault displayed GENERATION_WORKER_FAILED, no current Z/preview eligibility,
+disabled exports, and Retry generation. Clicking the real retry button restored
+checked 3.12 mm. The local request log records the faulted Worker at
+18:38:57.181Z and its fresh replacement at 18:38:59.058Z, both from
+`/coinPrintMaker/assets/generation.worker-BBJGLBPc.js`.
+
+The final viewport was 1280×720 CSS px, while baseline was 679×1044. Same device,
+browser and DPR were used; differing viewport and desktop-only runs limit the
+comparison. Baseline narrow-layout synthetic repeated input and final desktop
+browser-native keyboard/chooser checks are distinguished from physical input.
+In both root IAB/harness testing sequences Canvas displayed its existing
+preview-unavailable fallback while text/controls remained usable; earlier console
+contained only the Three.Clock warning. This does not diagnose a production GPU
+defect or prove native orbit/GPU frame rate, touch hardware or cross-browser
+acceptance. Main-thread callback responsiveness and independent diagnostics are
+established; component/scene tests cover the documented rendering handlers.
