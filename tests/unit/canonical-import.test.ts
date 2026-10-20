@@ -77,11 +77,18 @@ describe('explicit fill interpretation and canonical topology',()=>{
     const l=accept(wrap(layer(a+b+c))).layers[0];expect(l.areaMm2).toBe(200);expect(l.boundsMm).toEqual([0,30,20,40]);
     expect(accept(wrap(layer(c+b+a))).layers[0].footprintMm).toEqual(l.footprintMm);
   });
+  test('same-winding nonzero compound crossings form a union, while other fill rules stay guarded',()=>{
+    const d=`${square(0,0,10,10)} ${square(5,5,15,15)}`;
+    const l=accept(wrap(layer(`<path d="${d}"/>`))).layers[0];
+    expect(l.areaMm2).toBe(175); expect(l.footprintMm).toHaveLength(1);
+    expect(l.footprintMm[0].holes).toHaveLength(0);
+    reject(wrap(layer(`<path fill-rule="evenodd" d="${d}"/>`)));
+    reject(wrap(layer(`<path d="${square(0,0,10,10)} ${square(5,5,15,15,true)}"/>`)));
+  });
   test.each([
     'M0 0L10 10L0 10L10 0Z', // bow tie
     'M0 0H10V10H5V0H0Z', // repeated contact
     'M0 0H10H5V10H0Z', // adjacent backtrack
-    `${square(0,0,10,10)} ${square(5,5,15,15)}`, // crossing compound
     `${square(0,0,10,10)} ${square(0,2,5,5,true)}`, // touching compound
     `${square(0,0,10,10)} ${square(.000001,2,5,5,true)}`, // ambiguous near contact
     'M0 0L.0000001 0L0 .0000001Z', // collapse

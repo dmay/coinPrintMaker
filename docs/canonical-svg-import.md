@@ -184,3 +184,28 @@ source directory; these decisions follow the current issue and repository eviden
 M1 implementation is reviewable when this change's final-head CI and generated
 artifact checks pass. Operator merge remains the final handoff; no M2 work starts
 as part of DIG-16. Later support/meshing/export/manual gates remain unfinished.
+
+## DIG-42: detailed Teto artwork
+
+Contour contact validation now sweeps segment X bounds and filters Y bounds
+before the existing exact/tolerance predicates. Bounds include the full 0.000002 mm
+contact tolerance; sorting does not change ring order or geometry.
+Every X-overlap scan still charges the shared 2,000,000-step budget, even if its
+Y bounds are disjoint. Dense inputs therefore retain bounded rejection; no limits,
+curve tolerance, snapping, or export gates were raised or bypassed.
+
+A nonzero compound path whose individually simple contours all have the same
+winding sign is a union of filled regions. Such contours now enter the existing
+Boolean union as individual operands, after raw near-contact checks. This supports
+actual crossings without inventing holes. Mixed-winding and evenodd crossing
+compound paths still require authoring cleanup; simple nested holes retain their
+existing interpretation. Self-intersections and ambiguous precision still reject.
+
+`fixtures/regressions/teto-coin.svg` preserves the original DIG-42 upload. It has
+one Inkscape layer (`Image`) containing paths `path8`, `path2`, and `path6`;
+labels on paths do not make separate printing layers. Its 4,014-vertex base
+previously exhausted the comparison budget before `path2` was examined. `path2`
+also contains overlapping same-winding nonzero contours. The regression verifies
+successful deterministic import, one filled region with no holes, retained source
+identity, and approximately 6,979.470906 mm² area at source scale. This acceptance
+covers import; it does not claim downstream mesh, slicer, or physical-print success.
