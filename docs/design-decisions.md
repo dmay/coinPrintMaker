@@ -780,3 +780,23 @@ crossings. This is a limited evidence-driven extension of the import subset;
 it does not implement arbitrary SVG paint order or accept self-intersecting rings.
 See [canonical SVG import](canonical-svg-import.md#dig-42-detailed-teto-artwork)
 for the retained source, acceptance evidence and limits.
+
+## D-27 — Preserve short edges between diverging contour neighbours
+
+**DIG-41:** The original Gumi upload's `path10` closes with a roughly 0.000002 mm
+edge after snapping. Its two neighbouring segments are necessarily within the
+0.000002 mm clearance, despite having no intersection. Treating this local
+proximity as a self-contact incorrectly rejects valid artwork.
+
+For same-ring segments separated by exactly one edge no longer than the existing
+clearance, waive only proximity when the vectors departing the intervening edge
+have a nonpositive dot product (diverging neighbours). Still reject actual
+crossings, touches and overlaps. Hairpins, nonlocal pairs, cross-ring contacts,
+snap-collapse and corner-preservation checks retain existing guards. Preserve the
+edge and its endpoints; do not repair artwork, merge vertices, raise budgets or
+change chord/snap tolerances. This applies to raw and snapped ring validation.
+
+The original upload is retained at `fixtures/regressions/gumi-coin.svg`. Regression
+coverage checks deterministic whole-file import and isolated `path10` import,
+plus an analytical tiny bevel, reversed winding, actual crossings/touches and a
+narrow channel. These are import checks, not slicer or physical-print acceptance.

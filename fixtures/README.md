@@ -119,3 +119,9 @@ physical-print acceptance. Original generated verification data is unchanged.
 Source baselines: `coinprint-requirements-tech-assessment-mvp-plan.md` §3/§6 and
 `coinprint-technical-design-p0.md` §9, both dated 2026-10-17. No architecture
 proposal was changed by this fixture-only task.
+
+## DIG-41 regression
+
+`regressions/gumi-coin.svg` is the unmodified Gumi upload from DIG-41. Whole-file
+and isolated `path10` import tests cover its tiny closing edge; see
+[canonical import](../docs/canonical-svg-import.md#dig-41-gumi-short-closing-edge).

@@ -209,3 +209,16 @@ also contains overlapping same-winding nonzero contours. The regression verifies
 successful deterministic import, one filled region with no holes, retained source
 identity, and approximately 6,979.470906 mm² area at source scale. This acceptance
 covers import; it does not claim downstream mesh, slicer, or physical-print success.
+
+## DIG-41: Gumi short closing edge
+
+`fixtures/regressions/gumi-coin.svg` preserves the original upload. Its single
+Inkscape layer `Image` contains six filled paths; path labels such as
+`glasses-strip` do not create printing tiers. `path10` has a tiny closing edge
+whose diverging neighbours triggered the clearance guard. The importer now checks
+these local neighbours for actual contact while preserving both edge endpoints.
+All other proximity and precision checks remain. See D-27 in the decision log.
+The regression also imports `path10` alone and retains its 222-vertex outline,
+so union with the underlying base cannot conceal a contour change. Separate
+printing tiers still require separate Inkscape layers. Import success does not
+claim mesh, slicer or physical-print validation.

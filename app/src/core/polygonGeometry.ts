@@ -39,8 +39,7 @@ export function segmentDistance(p: Point2Mm, a: Point2Mm, b: Point2Mm): number {
   const t = denominator ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / denominator)) : 0;
   return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
 }
-function contact(a: Point2Mm, b: Point2Mm, c: Point2Mm, d: Point2Mm): boolean {
-  const eps = POLYGON_POLICY.snapMm * 2;
+function contact(a: Point2Mm, b: Point2Mm, c: Point2Mm, d: Point2Mm, eps: number = POLYGON_POLICY.snapMm * 2): boolean {
   if (Math.max(a[0], b[0]) + eps < Math.min(c[0], d[0]) || Math.max(c[0], d[0]) + eps < Math.min(a[0], b[0]) || Math.max(a[1], b[1]) + eps < Math.min(c[1], d[1]) || Math.max(c[1], d[1]) + eps < Math.min(a[1], b[1])) return false;
   const x = cross(a,b,c), y = cross(a,b,d), z = cross(c,d,a), w = cross(c,d,b);
   if (((x > 0 && y < 0) || (x < 0 && y > 0)) && ((z > 0 && w < 0) || (z < 0 && w > 0))) return true;
@@ -98,7 +97,18 @@ export function normalizeRing(points: readonly Point2Mm[], budget: PolygonBudget
   if (ring.length < 3 || Math.abs(signedRingArea(ring)) <= POLYGON_POLICY.snapMm ** 2) throw new PolygonFailure('Contour collapsed or has zero area.');
   for (const [i,j] of segmentCandidates(ring,null,budget)) {
     if ((i+1)%ring.length===j || (j+1)%ring.length===i) continue;
-    if (contact(ring[i], ring[(i+1)%ring.length], ring[j], ring[(j+1)%ring.length])) throw new PolygonFailure('Contour self-intersects or has near-contact.');
+    // Diverging neighbours of a short edge are necessarily within clearance
+    // at that edge. Preserve it and still check actual contact. Hairpins and
+    // nonlocal pairs keep the full precision clearance guard.
+    const bridge = (i+2)%ring.length===j ? (i+1)%ring.length : (j+2)%ring.length===i ? (j+1)%ring.length : -1;
+    let clearance: number = 2*POLYGON_POLICY.snapMm;
+    if (bridge>=0) {
+      const before=ring[(bridge+ring.length-1)%ring.length], a=ring[bridge];
+      const b=ring[(bridge+1)%ring.length], after=ring[(bridge+2)%ring.length];
+      const diverging=(before[0]-a[0])*(after[0]-b[0])+(before[1]-a[1])*(after[1]-b[1])<=0;
+      if (diverging && Math.hypot(a[0]-b[0],a[1]-b[1])<=clearance) clearance=0;
+    }
+    if (contact(ring[i], ring[(i+1)%ring.length], ring[j], ring[(j+1)%ring.length],clearance)) throw new PolygonFailure('Contour self-intersects or has near-contact.');
   }
   return ring as unknown as RingMm;
 }
