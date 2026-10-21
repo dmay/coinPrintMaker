@@ -15,26 +15,32 @@ export the reused checked geometry. Export errors are local UI state only.
 `core/serializeBinaryStl.ts` is DOM-free. It writes an 80-byte fixed ASCII header
 with zero padding, a little-endian uint32 count and exactly 50 bytes per triangle:
 float32 normal, three float32 XYZ vertices, zero uint16 attributes. Total length
-is `84 + 50 * triangles`. Triangle order and absolute +Y-up, Z-up mm coordinates
-are preserved; normals are recomputed from emitted coordinates. No centering,
-axis swap, scale, geometry repair, color or layer metadata is applied.
+is `84 + 50 * triangles`. Absolute +Y-up, Z-up mm coordinates are retained;
+normals are recomputed from emitted coordinates. No centering, axis swap, scale,
+color or layer metadata is applied. Surviving facets retain their source order.
 
-The serializer checks the actual `Math.fround` coordinates before allocating its
-output. It rejects nonfinite/overflow/invalid indices, output-size/count limits,
-zero-area triangles, reversed normals, coincident duplicates, open/nonmanifold
-edges/vertices, inward shells, shell-count disagreement, intersections and internal
-components. Existing bounded topology and exact intersection predicates are
-reused without changing generation acceptance, precision or work limits.
+The serializer first tries ordinary float32 rounding, welding identical emitted
+positions and omitting facets whose emitted area is exactly zero. If that surface
+cannot pass validation, it retries with a 0.001 mm coordinate grid before float32
+encoding. Every source vertex must remain within **0.001 mm Euclidean distance**
+of its emitted position, including float32 rounding. Source data is never changed.
+This export-only cleanup may remove microscopic bevels or holes; it does not use
+nozzle size as a simplification threshold. It supersedes the previous policy of
+rejecting any collapsed facet regardless of physical significance.
 
-Only this export boundary allows float32 rounding relative to checked metrics:
-bounds error at each min/max coordinate is at most `1e-6 + abs(source) * 2e-7` mm;
-relative volume error is at most `1e-6`. A compensated signed-volume calculation
-feeds the existing topology consistency gate; independently checked emitted
-metrics are then compared with `GeneratedCoin` metrics. These allowances do not
-permit collapsed topology, changed orientation or intersections. Fine geometry
-or large absolute coordinates that cannot survive float32 export fail visibly.
-The current engine-valid button is eligibility, not a promise that STL rounding
-will pass. No old result is substituted after export failure.
+Both attempts validate the actual output: finite coordinates, source and emitted
+normals, index/count limits, duplicate facets, closed manifold edges and vertex
+links, outward positive shells, unchanged shell count, exact intersections and
+internal components. Cleanup cannot excuse holes or intersections in the emitted
+mesh. Empty output, large coordinate loss and candidates that remain invalid
+reject. Generation acceptance and construction/validation work limits are unchanged.
+
+Emitted bounds must agree with checked metrics within the measured maximum vertex
+displacement plus `1e-6 + abs(source) * 2e-7` mm. Volume must agree within `1e-6`
+relative plus source surface area times measured maximum displacement (mm³).
+These are output sanity checks; the absolute vertex displacement limit separately
+bounds geometric changes. A compensated signed-volume calculation feeds the
+existing topology consistency gate. No old result is substituted after failure.
 
 STL has no unit field. The file contains millimeter coordinate values; consumers
 must interpret them as millimeters. It carries geometry only, with no layer or
@@ -61,7 +67,9 @@ is always lowercase `.stl`. Filename sanitation does not establish content trust
 The unit suite reparses every valid development fixture and compares mm bounds,
 volume, orientation, normal values and preserved triangle order with production
 `GeneratedCoin`. It checks exact header/count/LE bytes/attributes/length and
-adversarial malformed/overflow/collapse/open/inward inputs. jsdom coverage checks
+adversarial malformed/overflow/collapse/open/inward inputs. Microscopic bevel and
+hole regressions independently reparse cleaned STL facets and verify closed edges,
+volume, normals, unchanged input and retention of a 0.01 mm hole. jsdom coverage checks
 Blob content, filename edge cases, anchor lifecycle, setup/click/scheduler failure,
 current-only export, rapid edit races, retained-source names and retry/unmount.
 These are automated byte/lifecycle checks, not native browser-save evidence.

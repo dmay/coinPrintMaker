@@ -2,22 +2,28 @@ import type { MeshMetrics, Point3Mm, TriangleMesh } from './contracts';
 import { assertNoMeshIntersections } from './exactMeshPredicates';
 import { inspectMeshTopology } from './meshTopology';
 import { MESH_CONSTRUCTION_POLICY, MeshValidationBudget } from './meshConstructionPolicy';
+import { inspectStlSource, prepareStlMesh, stlNormal } from './prepareStlMesh';
 
-/** Export rounding allowances only. Generation acceptance is unchanged. */
+/** Export measurement allowances only. Generation acceptance is unchanged. */
 export const STL_PRECISION = { absoluteBoundsMm: 1e-6, relativeBounds: 2e-7, relativeVolume: 1e-6 } as const;
 export const STL_HEADER = 'CoinPrint binary STL; coordinates in millimeters; geometry only';
 function reject(): never { throw new Error('STL coordinates could not be validated.'); }
-function normal(a: Point3Mm, b: Point3Mm, c: Point3Mm): Point3Mm {
-  const u = b.map((v, i) => v - a[i]), v = c.map((x, i) => x - a[i]);
-  const n: Point3Mm = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
-  if (!n.every(Number.isFinite) || !n.some(x => x !== 0)) reject();
-  return n;
+/** DOM-free. Normalize precision artifacts within a bounded print tolerance,
+ * then validate the actual emitted surface. The checked source stays unchanged. */
+export function serializeBinaryStl(mesh: TriangleMesh, metrics: MeshMetrics): ArrayBuffer {
+  const surfaceAreaMm2 = inspectStlSource(mesh);
+  // Prefer ordinary float32 coordinates. Use the cleanup grid only if those
+  // coordinates cannot form a valid printable surface.
+  for (const snap of [false, true]) {
+    try {
+      const prepared = prepareStlMesh(mesh, snap);
+      return serializePreparedStl(prepared.mesh, metrics, prepared.displacementMm, surfaceAreaMm2);
+    } catch { /* Try bounded cleanup; no invalid candidate is emitted. */ }
+  }
+  return reject();
 }
 
-/** DOM-free. Input is the detached checked unified domain mesh, never a scene.
- * Validate the exact float32 coordinates that will be emitted; never repair,
- * transform, reorder or silently drop geometry that rounds badly. */
-export function serializeBinaryStl(mesh: TriangleMesh, metrics: MeshMetrics): ArrayBuffer {
+function serializePreparedStl(mesh: TriangleMesh, metrics: MeshMetrics, displacementMm: number, surfaceAreaMm2: number): ArrayBuffer {
   const count = mesh.triangles.length, size = 84 + 50 * count;
   if (!Array.isArray(mesh.vertices) || !Array.isArray(mesh.triangles)
     || !Number.isSafeInteger(count) || count < 1 || count > 0xffffffff
@@ -40,9 +46,8 @@ export function serializeBinaryStl(mesh: TriangleMesh, metrics: MeshMetrics): Ar
   const normals = mesh.triangles.map(t => {
     if (!Array.isArray(t) || t.length !== 3 || t.some(i => !Number.isSafeInteger(i) || i < 0 || i >= vertices.length)) reject();
     const [a, b, c] = t.map(i => vertices[i]);
-    const n = normal(a, b, c), source = normal(...t.map(i => mesh.vertices[i]) as [Point3Mm, Point3Mm, Point3Mm]);
-    const alignment = n.reduce((sum, v, i) => sum + v * source[i], 0);
-    if (!Number.isFinite(alignment) || alignment <= 0) reject();
+    const n = stlNormal(a, b, c);
+    if (!n.every(Number.isFinite) || !n.some(v => v !== 0)) reject();
     const local = [a, b, c].map(p => p.map((v, i) => v - origin[i]) as unknown as Point3Mm);
     const [, u, v] = local;
     const cross = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
@@ -61,9 +66,9 @@ export function serializeBinaryStl(mesh: TriangleMesh, metrics: MeshMetrics): Ar
   if (checked.status !== 'stitched') reject();
   for (let end = 0; end < 2; end++) for (let axis = 0; axis < 3; axis++) {
     const source = metrics.boundsMm[end][axis], emitted = checked.metrics.boundsMm[end][axis];
-    if (Math.abs(source - emitted) > STL_PRECISION.absoluteBoundsMm + Math.abs(source) * STL_PRECISION.relativeBounds) reject();
+    if (Math.abs(source - emitted) > displacementMm + STL_PRECISION.absoluteBoundsMm + Math.abs(source) * STL_PRECISION.relativeBounds) reject();
   }
-  if (Math.abs(checked.metrics.volumeMm3 - metrics.volumeMm3) > metrics.volumeMm3 * STL_PRECISION.relativeVolume) reject();
+  if (Math.abs(checked.metrics.volumeMm3 - metrics.volumeMm3) > metrics.volumeMm3 * STL_PRECISION.relativeVolume + surfaceAreaMm2 * displacementMm) reject();
   assertNoMeshIntersections(checked.mesh, budget, checked.components);
   const buffer = new ArrayBuffer(size), data = new DataView(buffer);
   for (let i = 0; i < STL_HEADER.length; i++) data.setUint8(i, STL_HEADER.charCodeAt(i));
