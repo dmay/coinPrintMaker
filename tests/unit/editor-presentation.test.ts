@@ -38,7 +38,7 @@ test('current measurements come from checked domain result and warnings do not b
   expect(view.current?.metrics.volumeMm3).toBeCloseTo(200);
   expect(view.current?.activeTiers.map(t => [t.layerId, t.bottomZMm, t.topZMm])).toEqual([['base', 0, 1.6], ['middle', 1.6, 2], ['top', 2, 2.4]]);
   expect(view.warningCount).toBe(1); expect(view.errorCount).toBe(0);
-  expect(view.exportNote).toContain('valid'); expect(view.exportNote).toContain('not available yet');
+  expect(view.exportNote).toContain('valid'); expect(view.exportNote).toContain('STL and 3MF are available');
   const current = view.current;
   h.store.getState().selectLayer('middle'); h.store.getState().setColor('top', '#abcdef'); await flush();
   expect(h.jobs).toHaveLength(1);

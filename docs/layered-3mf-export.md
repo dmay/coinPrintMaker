@@ -7,11 +7,11 @@ dependency and does not rebuild geometry. The writer can be replaced without
 changing the generation contract.
 
 This function validates a snapshot, not its freshness in a running editor.
-The future export action must obtain the exact current snapshot through
-`selectExportableGeometry` and recheck identity/revisions/source after serialization
+The export action obtains the exact current snapshot through
+`selectExportableGeometry` and rechecks identity/revisions/source after serialization
 and before download, as the STL action does. A historical valid snapshot remains
 historical; calling this pure function does not authorize its delivery. The UI
-3MF button remains disabled until DIG-31 adds the guarded integration.
+3MF button now opens DIG-31's [guarded export dialog](export-options.md).
 
 ## Package contract
 
@@ -80,9 +80,11 @@ the localhost Pages test connection (`connect EACCES 127.0.0.1`). An initial run
 also encountered sandbox OS-temp rename restrictions; contained temp resolved
 that restriction. Historical fixture reports, Git settings and build tests were
 left untouched. Clean Linux pull-request CI is the full-suite acceptance check.
-The unreferenced writer adds no published runtime surface yet.
+The DIG-30 writer was initially unreferenced; DIG-31 now integrates it into the UI.
 
-Production OrcaSlicer initial loading remains a manual acceptance gate: record
+Production OrcaSlicer initial loading was explicitly deferred to later polish by
+the operator on 2026-10-20 (recorded on DIG-30); it is unperformed and is not a
+DIG-30/DIG-31 closure gate. The deferred checklist still requires recording
 version/operator/package identity and intended scale, alignment, selectable layer
 parts, absolute Z, holes/islands and absence of unexpected repair. The historical
 [M0 worksheet](m0-slicer-validation.md) establishes the chosen structure, not

@@ -55,6 +55,6 @@ export function PreviewViewport({ state, selectedLayerId = null, generationPhase
       {!checked && <div className="preview-symbol" aria-hidden="true">◎</div>}
       <h3>{title}</h3><p>{description}</p>
     </div>
-    <p className="preview-caption">Preview shading and selection outlines are display aids. Dimensions and layer colors come from checked geometry. Export formats remain unavailable.</p>
+    <p className="preview-caption">Preview shading and selection outlines are display aids. Dimensions and layer colors come from checked geometry. Export is available only for current checked geometry.</p>
   </section>;
 }

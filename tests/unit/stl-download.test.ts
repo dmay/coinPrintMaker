@@ -93,15 +93,19 @@ test.each(['edit','replacement','throw'])('reentrant %s during serialization can
   expect(exportCurrentStl(h.store,{serialize,download})).toBe(STL_EXPORT_FAILURE);expect(download).not.toHaveBeenCalled();h.store.dispose();
 });
 test('real shell current STL click performs download; failures show bounded alert, do not mutate domain and retry clears browser error',async()=>{
+  Object.defineProperty(HTMLDialogElement.prototype,'showModal',{configurable:true,value:function(this:HTMLDialogElement){this.open=true;}});
+  Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(this:HTMLDialogElement){this.open=false;}});
   const b=browser(),h=harness(),container=document.createElement('div');document.body.append(container);root=createRoot(container);
   await act(async()=>root!.render(createElement(AppShell,{store:h.store})));
   const buttons=()=>[...container.querySelectorAll<HTMLButtonElement>('.export-controls button')];
   expect(buttons().map(b=>b.disabled)).toEqual([true,true]);
-  await act(async()=>h.imported());await h.finish(0);expect(buttons().map(b=>b.disabled)).toEqual([false,true]);
+  await act(async()=>h.imported());await h.finish(0);expect(buttons().map(b=>b.disabled)).toEqual([false,false]);
   const before=h.store.getState();b.click.mockImplementationOnce(()=>{throw Error('secret');});
-  await act(async()=>buttons()[0].click());expect(container.querySelector('[role="alert"]')?.textContent).toBe(STL_EXPORT_FAILURE);
+  await act(async()=>buttons()[0].click());
+  const submit=()=>container.querySelector<HTMLButtonElement>('dialog button[type="submit"]')!.click();
+  await act(async()=>submit());expect(container.querySelector('[role="alert"]')?.textContent).toBe(STL_EXPORT_FAILURE);
   expect(container.textContent).not.toContain('secret');expect(h.store.getState()).toBe(before);expect(b.revoke).toHaveBeenCalledTimes(1);
-  await act(async()=>buttons()[0].click());expect(container.querySelector('[role="alert"]')).toBeNull();expect(b.create).toHaveBeenCalledTimes(2);
+  await act(async()=>submit());expect(container.querySelector('[role="alert"]')).toBeNull();expect(b.create).toHaveBeenCalledTimes(2);
   await act(async()=>root!.unmount());root=null;vi.runAllTimers();expect(b.revoke).toHaveBeenCalledTimes(2);
   expect(container.textContent).not.toContain('saved');
 });

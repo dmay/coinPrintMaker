@@ -67,6 +67,6 @@ export function selectGeometryPresentation(state: EditorState): GeometryPresenta
   const warningCount = diagnostics.length - errorCount;
   return { status, summary, current, stalePreview, rejectedImport, diagnostics, errorCount, warningCount,
     exportNote: current
-      ? 'Current geometry is valid. STL is available; 3MF export is not available yet.'
-      : 'No current validated geometry is eligible for export. 3MF export is not available yet.' };
+      ? 'Current geometry is valid. STL and 3MF are available.'
+      : 'No current validated geometry is eligible for STL or 3MF export.' };
 }
