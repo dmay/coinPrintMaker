@@ -1,3 +1,4 @@
+import { Color } from 'three';
 import type { FootprintMm, ImportedCoin, ImportedLayer, Point2Mm, RingMm, SourceDocument } from './contracts';
 import { createDiagnostic } from './diagnostics';
 import type { Diagnostic, DiagnosticCode, DiagnosticLocation } from './diagnostics';
@@ -6,6 +7,13 @@ import type { PolygonKernel } from './polygonKernel';
 import { createPolygonService } from './polygonService';
 import { flattenCurves } from './flattenSvg';
 import { assertNoNearObjectContact, assertSeparate, canonicalRing, footprintMetrics, inside, normalizeRing, PolygonBudget, PolygonFailure, signedRingArea } from './polygonGeometry';
+
+function sourceColor(fill: string): string | undefined {
+  // Preflight has already limited this to opaque CSS solid paint. Color is a
+  // pure value parser here; it does not touch a canvas, renderer, or UI state.
+  try { return `#${new Color(fill).getHexString()}`; }
+  catch { return undefined; }
+}
 
 export type CoinImportResult =
   | { readonly status: 'imported'; readonly coin: ImportedCoin; readonly diagnostics: readonly Diagnostic[] }
@@ -74,7 +82,10 @@ export function canonicalizeSvg(source: SourceDocument, normalized: SvgNormaliza
       const footprintMm=union.value;
       if (!footprintMm.length) return reject(layer.id===normalized.baseCandidateId?'BASE_EMPTY':'LAYER_EMPTY');
       if (layer.id===normalized.baseCandidateId && footprintMm.length!==1) return reject('BASE_DISCONNECTED');
-      layers.push({id:layer.id,name:layer.name,sourceOrder:layer.sourceOrder,sourceElements:layer.shapes.map(s=>({elementId:s.elementId,...(s.elementLabel ? {elementLabel:s.elementLabel} : {}),elementPath:s.elementPath})),footprintMm,...footprintMetrics(footprintMm)});
+      const firstSourceColor = sourceColor(layer.shapes[0].fill);
+      layers.push({id:layer.id,name:layer.name,sourceOrder:layer.sourceOrder,
+        ...(firstSourceColor ? { sourceColor: firstSourceColor } : {}),
+        sourceElements:layer.shapes.map(s=>({elementId:s.elementId,...(s.elementLabel ? {elementLabel:s.elementLabel} : {}),elementPath:s.elementPath})),footprintMm,...footprintMetrics(footprintMm)});
     }
     if (!layers.length || layers[0].id!==normalized.baseCandidateId) return reject('BASE_EMPTY');
     const coin: ImportedCoin={schemaVersion:1,source,physicalPageMm:normalized.physicalPageMm,sizeOrigin:normalized.sizeOrigin,baseLayerId:normalized.baseCandidateId,layers,diagnostics};

@@ -56,6 +56,12 @@ describe('production importer: independent authored golden oracles',()=>{
 });
 const square=(a:number,b:number,c:number,d:number,reverse=false)=>reverse?`M${a} ${b}V${d}H${c}V${b}Z`:`M${a} ${b}H${c}V${d}H${a}Z`;
 describe('explicit fill interpretation and canonical topology',()=>{
+  test('records the first printable object\'s opaque source color per layer',()=>{
+    const coin=accept(wrap(layer('<rect fill="#3c8" width="30" height="30"/><circle fill="#ff0000" cx="15" cy="15" r="5"/>')
+      +layer('<path fill="rgb(12, 34, 56)" d="M0 0H10V10H0Z"/><rect fill="#abcdef" width="5" height="5"/>','art')
+      +layer('<rect fill="rebeccapurple" width="4" height="4"/>','named')));
+    expect(coin.layers.map(item=>item.sourceColor)).toEqual(['#33cc88','#0c2238','#663399']);
+  });
   test.each([
     ['nonzero',false,900,0,1],['nonzero',true,500,1,1],
     ['evenodd',false,500,1,1],['evenodd',true,500,1,1],
