@@ -5,7 +5,7 @@ import { importCoinSvg } from '../../app/src/import/importCoinSvg';
 import { createDefaultCoinSettings } from '../../app/src/core/resolveStack';
 
 test('DIG-41: original Gumi Coin imports deterministically with its short closing edge intact', () => {
-  const svgText=readFileSync(new URL('../../fixtures/regressions/gumi-coin.svg',import.meta.url),'utf8');
+  const svgText=readFileSync(new URL('../../fixtures/regressions/gumi-coin-dig41.svg',import.meta.url),'utf8');
   const source={svgText,fileName:'Gumi coin.svg',byteLength:new TextEncoder().encode(svgText).length,importId:'gumi'};
   const result=importCoinSvg(source);
   expect(result.status,JSON.stringify(result.diagnostics)).toBe('imported');

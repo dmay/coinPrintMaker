@@ -122,6 +122,24 @@ proposal was changed by this fixture-only task.
 
 ## DIG-41 regression
 
-`regressions/gumi-coin.svg` is the unmodified Gumi upload from DIG-41. Whole-file
+`regressions/gumi-coin-dig41.svg` is the unmodified Gumi upload from DIG-41. Whole-file
 and isolated `path10` import tests cover its tiny closing edge; see
 [canonical import](../docs/canonical-svg-import.md#dig-41-gumi-short-closing-edge).
+
+
+## DIG-79 current multilayer fixtures
+
+`regressions/gumi-coin.svg` and `regressions/teto-coin.svg` are the unmodified
+original attachments from [DIG-79](https://linear.app/diggy-01/issue/DIG-79/updated-base-fixtures-that-must-be-imported-properly).
+Each contains three Inkscape printing layers with distinct source colors. The
+previous single-layer uploads remain in `gumi-coin-dig41.svg` and
+`teto-coin-dig42.svg`; their historical tests still use those original bytes.
+
+`regressions/cases.json` records SHA-256 provenance, layer names/colors/element IDs,
+imported region/hole counts, source page size, default generated bounds/volume,
+shell counts and required stage outcomes. All four stages (import, generation,
+STL and layered 3MF export) must succeed. It is a data-only manifest intended for
+reuse by DIG-47's bulk pipeline. Run `npm run test:real-coins` for the current
+end-to-end tests. They reparse STL bytes and the 3MF ZIP/model without constructing
+a large XML DOM, check closed STL topology and compare exact 3MF part meshes.
+These automated checks do not establish slicer or physical-print acceptance.

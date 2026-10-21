@@ -4,7 +4,7 @@ import './setup';
 import { importCoinSvg } from '../../app/src/import/importCoinSvg';
 
 test('DIG-42: original Teto Coin imports deterministically without exhausting contour budget', () => {
-  const svgText=readFileSync(new URL('../../fixtures/regressions/teto-coin.svg',import.meta.url),'utf8');
+  const svgText=readFileSync(new URL('../../fixtures/regressions/teto-coin-dig42.svg',import.meta.url),'utf8');
   const source={svgText,fileName:'Teto coin.svg',byteLength:new TextEncoder().encode(svgText).length,importId:'teto'};
   const result=importCoinSvg(source);
   expect(result.status,JSON.stringify(result.diagnostics)).toBe('imported');

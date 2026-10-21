@@ -16,10 +16,11 @@ export class PolygonFailure extends Error {
 }
 /** A single budget spans input flattening, validation and kernel output. */
 export class PolygonBudget {
+  constructor(private readonly maxVertices: number = POLYGON_POLICY.maxDocumentVertices) {}
   private vertices = 0;
   private checks = 0;
   vertex() {
-    if (++this.vertices > POLYGON_POLICY.maxDocumentVertices) throw new PolygonFailure('Document vertex limit exceeded.', true);
+    if (++this.vertices > this.maxVertices) throw new PolygonFailure('Document vertex limit exceeded.', true);
   }
   check() {
     if (++this.checks > POLYGON_POLICY.maxSegmentChecks) throw new PolygonFailure('Contour comparison limit exceeded.', true);
@@ -112,9 +113,38 @@ export function normalizeRing(points: readonly Point2Mm[], budget: PolygonBudget
   }
   return ring as unknown as RingMm;
 }
+/** Neighbours on opposite ends of an identical short edge are close by
+ * construction. Both operands must contain that same noncollapsed bridge;
+ * unrelated gaps, overlaps and hairpins retain the clearance requirement. */
+function sharedShortBridgePairs(a:readonly Point2Mm[],b:readonly Point2Mm[]):Set<string>{
+  const key=(p:Point2Mm,q:Point2Mm)=>{const x=JSON.stringify(p),y=JSON.stringify(q);return x<y?x+'|'+y:y+'|'+x;};
+  const bridges=(ring:readonly Point2Mm[])=>{
+    const result=new Map<string,number>();
+    for(let i=0;i<ring.length;i++){
+      const p=ring[i],q=ring[(i+1)%ring.length],length=Math.hypot(p[0]-q[0],p[1]-q[1]);
+      const before=ring[(i+ring.length-1)%ring.length],after=ring[(i+2)%ring.length];
+      if(length>0&&length<=2*POLYGON_POLICY.snapMm&&(before[0]-p[0])*(after[0]-q[0])+(before[1]-p[1])*(after[1]-q[1])<=0)result.set(key(p,q),i);
+    }
+    return result;
+  };
+  const left=bridges(a),right=bridges(b),pairs=new Set<string>();
+  const neighbours=(ring:readonly Point2Mm[],i:number)=>[
+    {edge:(i+ring.length-1)%ring.length,point:ring[i],outside:ring[(i+ring.length-1)%ring.length]},
+    {edge:(i+1)%ring.length,point:ring[(i+1)%ring.length],outside:ring[(i+2)%ring.length]},
+  ];
+  for(const [key,i] of left){const j=right.get(key);if(j===undefined)continue;
+    for(const x of neighbours(a,i))for(const y of neighbours(b,j)){
+      if(equalPoint(x.point,y.point))continue;
+      if((x.outside[0]-x.point[0])*(y.outside[0]-y.point[0])+(x.outside[1]-x.point[1])*(y.outside[1]-y.point[1])<=0
+        && !contact(a[x.edge],a[(x.edge+1)%a.length],b[y.edge],b[(y.edge+1)%b.length],0))pairs.add(`${x.edge}:${y.edge}`);
+    }
+  }
+  return pairs;
+}
 /** Before snapping/union: allow actual intersections/shared edges across objects,
  * but never let the snap grid bridge a tiny gap or erase a narrow overlap. */
 export function assertNoNearObjectContact(a: readonly Point2Mm[], b: readonly Point2Mm[], budget: PolygonBudget): void {
+  const sharedBridges=sharedShortBridgePairs(a,b);
   for (const [i,j] of segmentCandidates(a,b,budget)) {
     const p=a[i],q=a[(i+1)%a.length],r=b[j],s=b[(j+1)%b.length];
     const x=cross(p,q,r),y=cross(p,q,s),z=cross(r,s,p),w=cross(r,s,q);
@@ -132,7 +162,7 @@ export function assertNoNearObjectContact(a: readonly Point2Mm[], b: readonly Po
     const onSegment=(point: Point2Mm,a: Point2Mm,b: Point2Mm)=>cross(a,b,point)===0 && point[0]>=Math.min(a[0],b[0]) && point[0]<=Math.max(a[0],b[0]) && point[1]>=Math.min(a[1],b[1]) && point[1]<=Math.max(a[1],b[1]);
     if(onSegment(p,r,s) || onSegment(q,r,s) || onSegment(r,p,q) || onSegment(s,p,q)) continue;
     const distance=Math.min(segmentDistance(p,r,s),segmentDistance(q,r,s),segmentDistance(r,p,q),segmentDistance(s,p,q));
-    if (distance<=2*POLYGON_POLICY.snapMm) throw new PolygonFailure('Separate objects have ambiguous near-contact before snapping. Separate them clearly or union them in Inkscape.');
+    if (distance<=2*POLYGON_POLICY.snapMm && !sharedBridges.has(`${i}:${j}`)) throw new PolygonFailure('Separate objects have ambiguous near-contact before snapping. Separate them clearly or union them in Inkscape.');
   }
 }
 export function assertSeparate(a: RingMm, b: RingMm, budget: PolygonBudget): void {
