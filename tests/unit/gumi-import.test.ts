@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { expect, test } from 'vitest';
 import './setup';
 import { importCoinSvg } from '../../app/src/import/importCoinSvg';
+import { createDefaultCoinSettings } from '../../app/src/core/resolveStack';
 
 test('DIG-41: original Gumi Coin imports deterministically with its short closing edge intact', () => {
   const svgText=readFileSync(new URL('../../fixtures/regressions/gumi-coin.svg',import.meta.url),'utf8');
@@ -13,6 +14,10 @@ test('DIG-41: original Gumi Coin imports deterministically with its short closin
   const layer=result.coin.layers[0];
   expect(layer.id).toBe('source:g1');
   expect(layer.sourceElements.map(e=>e.elementId)).toEqual(['path8','path10','path9','path7','path4','path3']);
+  expect(layer.sourceColor).toBe('#fd8400');
+  const defaults = createDefaultCoinSettings(result.coin);
+  expect(defaults.status).toBe('created');
+  if (defaults.status === 'created') expect(defaults.settings.layers[0].color).toBe('#fd8400');
   expect(layer.footprintMm).toHaveLength(1);
   expect(layer.footprintMm[0].holes).toHaveLength(0);
   expect(layer.areaMm2).toBeGreaterThan(0);

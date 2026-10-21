@@ -46,6 +46,10 @@ function deepFreeze<T>(value: T): T {
 }
 
 describe('separate defaults and immutable active stack', () => {
+  test('defaults seed display colors from each imported layer\'s first object', () => {
+    const imported = { ...coin, layers: coin.layers.map((layer, index) => ({ ...layer, sourceColor: ['#112233', '#445566', '#778899'][index] })) };
+    expect(defaults(imported).layers.map(layer => layer.color)).toEqual(['#112233', '#445566', '#778899']);
+  });
   test('defaults are 1.6/0.4 mm, neutral opaque color, source order, enabled and revision zero', () => {
     expect(settings).toEqual({ importId: 'first-import', revision: 0, layers: [
       { layerId: 'base', role: 'base', enabled: true, thicknessMm: 1.6, color: '#808080' },

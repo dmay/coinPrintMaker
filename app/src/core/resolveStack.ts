@@ -4,7 +4,7 @@ import type { Diagnostic, DiagnosticCode, DiagnosticLocation } from './diagnosti
 
 export const DEFAULT_BASE_THICKNESS_MM = 1.6;
 export const DEFAULT_ARTWORK_THICKNESS_MM = 0.4;
-// Neutral display intent only; independent of source SVG paint and filament.
+// Fallback where a source color cannot be represented as opaque sRGB.
 export const DEFAULT_LAYER_COLOR = '#808080';
 
 function failure(detail: string, layerId?: string, code: DiagnosticCode = 'SETTINGS_INVALID'): Diagnostic {
@@ -52,8 +52,8 @@ export function createDefaultCoinSettings(coin: ImportedCoin): CoinSettingsResul
     importId: coin.source.importId,
     revision: 0,
     layers: [
-      { layerId: coin.baseLayerId, role: 'base', enabled: true, thicknessMm: DEFAULT_BASE_THICKNESS_MM, color: DEFAULT_LAYER_COLOR },
-      ...coin.layers.slice(1).map(layer => ({ layerId: layer.id, role: 'artwork' as const, enabled: true, thicknessMm: DEFAULT_ARTWORK_THICKNESS_MM, color: DEFAULT_LAYER_COLOR })),
+      { layerId: coin.baseLayerId, role: 'base', enabled: true, thicknessMm: DEFAULT_BASE_THICKNESS_MM, color: coin.layers[0].sourceColor ?? DEFAULT_LAYER_COLOR },
+      ...coin.layers.slice(1).map(layer => ({ layerId: layer.id, role: 'artwork' as const, enabled: true, thicknessMm: DEFAULT_ARTWORK_THICKNESS_MM, color: layer.sourceColor ?? DEFAULT_LAYER_COLOR })),
     ],
   };
   return { status: 'created', settings, diagnostics };

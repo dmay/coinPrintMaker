@@ -31,6 +31,9 @@ export interface ImportedLayer {
   readonly id: LayerId;
   readonly name: string;
   readonly sourceOrder: number;
+  // Opaque sRGB derived from this layer's first printable source object.
+  // This is an import hint only; editable display/filament intent lives in settings.
+  readonly sourceColor?: string;
   readonly sourceElements: readonly SourceElement[];
   readonly footprintMm: FootprintMm;
   readonly boundsMm: Bounds2Mm;
@@ -49,7 +52,7 @@ export interface ImportedCoin {
 interface LayerSettingsFields {
   readonly layerId: LayerId;
   readonly thicknessMm: number;
-  // Opaque sRGB #RRGGBB; display intent, independent of SVG paint/filament mapping.
+  // Opaque sRGB #RRGGBB; editable display/filament intent seeded from SVG paint.
   readonly color: string;
 }
 export interface BaseLayerSettings extends LayerSettingsFields {
