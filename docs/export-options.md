@@ -62,7 +62,9 @@ jsdom otherwise differ. Production serialization is unchanged; browser evidence
 below independently exercises the actual bundled writer.
 
 `npm run typecheck`, `npm run build:pages`, `npm run check:pages` and
-`git diff --check` pass. Local Windows legacy suite: 18 pass, 3 fail, 1 skipped.
+authored-source `git diff --check` pass. The generated Three.js shader strings
+retain vendor trailing/indent whitespace; generated assets are kept byte-identical
+to the guarded build. Local Windows legacy suite: 18 pass, 3 fail, 1 skipped.
 Two unchanged build tests encounter sandbox temporary-directory EPERM renames;
 the historical M0 3MF fixture audit sees CRLF bytes versus expected LF; creating
 symlinks is unavailable. Historical fixtures, Git configuration and build tests
