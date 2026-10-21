@@ -1,5 +1,10 @@
 # Unified external coin surface (DIG-21)
 
+DIG-78 supersedes the support rejection and single connected result policy below.
+Current generation extends every active footprint down through all lower tiers,
+including the base, and permits detached closed components. Source SVGs remain
+immutable. See [automatic downward support](support-validation.md).
+
 DIG-22 adds complete [checked headless generation](headless-generation.md) and the
 [M2 checkpoint](m2-geometry-checkpoint.md). Pending-generation notes below record
 prior stage boundaries; construction remains distinct from final current-revision

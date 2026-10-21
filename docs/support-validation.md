@@ -1,122 +1,79 @@
-# Immediate-lower support validation (DIG-19)
+# Automatic downward support (DIG-78)
 
-`core/validateSupport.ts` exposes the pure `validateSupport(ImportedCoin,
-CoinSettings, PolygonKernel)` stage. It calls `resolveStack` on the supplied
-current source/settings on **every call**, then uses the shared
-[planar Boolean service](polygon-service.md) to calculate each consecutive
-active pair's `upper − lower`. The base is always first and enabled. Disabled
-tiers consume neither height nor adjacency. Reorder/show/hide therefore changes
-the actual pair list rather than consulting source-order or cached neighbors.
+`core/validateSupport.ts` resolves the current enabled order and extends hanging
+artwork straight down through every lower enabled tier, including the base.
+The effective footprint at tier i is the union of its original footprint and
+every active footprint above it. Imported SVGs, source footprints, settings,
+colors, layer identities and thicknesses are not changed.
 
-No renderer, UI state, DOM or library geometry object enters this stage. The
-caller supplies the existing `polygonClippingKernel` production adapter (or a
-compatible plain-DTO replacement); there is no second Boolean implementation.
-Source/settings and earlier results are not mutated. Active tiers retain their
-source identity and footprint references, page-relative Y-up XY and cumulative
-absolute Z intervals from stack resolution. Cached source bounds/area are never
-used to prove support.
+The operator explicitly approved filling holes and extending the original base
+outline, and rejected a disconnected-result restriction. Artwork outside the
+original base becomes a separate column down to Z=0. No bridge, clipping,
+resizing or recentering is added. Generated support belongs to each lower tier's
+color and existing height interval; no new tier or color is created.
 
-## Outcomes and failure gating
+## Pure computation and validation
 
-- `status: 'supported'` contains the generation key, complete active tiers,
-  total height, source warnings and an empty `unsupportedRemainders` list.
-  Every active upper-minus-lower result was valid and empty. Even a base-only
-  stack passes the checked polygon boundary to validate its planar topology.
-- `status: 'rejected'` contains diagnostics and `unsupportedRemainders`, with
-  **no active tiers, height, mesh, parts or mesh metrics**. It carries the input
-  key only after stack resolution succeeded. A settings/source-resolution
-  failure short-circuits before any Boolean operation and has no input key.
-- Each successfully computed nonempty difference is retained in full as
-  `{ upperLayerId, lowerLayerId, footprintMm }`, in active pair order. This is
-  diagnostics-only geometry, never a clipped replacement tier. Its diagnostic
-  has `SUPPORT_OUTSIDE_LOWER`, an upper-layer location, both names/identities,
-  and a remedy to move/resize the upper, extend filled lower material, or change
-  the enabled order. Holes and every disconnected upper island participate.
-- Kernel, malformed-output, precision and work-limit failures retain the
-  service's error code/location and add both support-pair identities. Later
-  pairs are still attempted in order, using the same budget. Their successfully
-  measured unsupported remainders remain available. A pair that failed to
-  compute has an error diagnostic **instead of a remainder**; an empty remainder
-  list on rejection does not establish support. There is no silent diagnostic
-  or remainder cap. Existing canonical import/preflight and shared work budgets
-  bound inputs and geometry work; exhausted budget rejects subsequent pairs.
+1. Resolve settings afresh using `resolveStack`. Hidden tiers contribute neither
+   material nor height. Invalid source/settings still reject before Booleans.
+2. Check base topology even for a base-only stack.
+3. Walk from the top active tier toward the base. Compute `upper - lower` using
+   the existing checked polygon service. Already-contained footprints keep their
+   exact original coordinates and references.
+4. For a nonempty difference, replace only the local effective lower footprint
+   with the checked union of lower and upper. That union is propagated to the
+   next lower tier. All operations share one bounded PolygonBudget.
+5. On any polygon/precision/kernel/work-limit failure, return diagnostics and no
+   active tiers or partial effective geometry. No SUPPORT_OUTSIDE_LOWER error is
+   produced; unsupported material is extended rather than rejected.
 
-`SupportedStack` is distinct from `GeneratedCoin`. This stage establishes planar
-support, never export validity. A future mesher must consume only the supported
-branch and must run its own mesh/connected-coin validation before constructing
-a valid generated result. Rejected support blocks that pipeline by exposing no
-resolved active tier payload. No production mesher, serializer, exporter, editor,
-store or UI integration is introduced in this issue.
+The shared polygon policy is unchanged: no area allowance, precision relaxation,
+near-contact repair or budget increase. Invalid point contacts and ambiguous
+small features may still fail polygon or mesh validation. The original imported
+base must still meet canonical import policy; this change allows multiple
+regions in the **effective generated base**.
 
-`isCurrentSupportedStack(result, currentKey)` checks already-validated planar
-support's status, import identity, settings revision and absence of errors.
-It does not validate arbitrary deserialized data or mesh/export eligibility.
-Callers must construct the key from current source/settings and increment
-revision on every generation-affecting edit. The pure stage recomputes every
-call; asynchronous state coordination/caching remains M3. An old supported
-result fails freshness after reorder/show/hide or source replacement.
+`SupportedStack` remains a pre-mesh result. Independent parts, the unified
+boundary and final generation all call the same pure stage. Mesh validation
+checks effective footprints, exact surface coverage, outward winding, volume,
+intersections and closed manifold topology. The expected unified shell count is
+the number of effective base regions, rather than a hardcoded one. This permits
+separate downward columns without accepting unexpected extra shells.
 
-## Precision and policy
+## Current state and exports
 
-Support adds **no area or distance allowance**. Empty means that the checked
-regularized area difference contains zero regions. In particular, equal bounds,
-less/equal area, very small area, or base support several tiers below cannot
-override a nonempty difference against the immediately lower active tier.
-An 8e-12 mm² unsupported corner remains a failure; smaller ambiguous residuals
-fail polygon validation instead of being swallowed as empty.
+Hide/show/reorder recomputes from immutable source footprints. Hiding the artwork
+that required support removes that support on regeneration; added geometry is
+not permanently written into lower source layers. Current-generation keys and
+the existing stale/invalid export gates are unchanged. The Worker, preview, STL
+and layered 3MF use the same checked effective tiers. STL retains all unified
+components; 3MF retains each lower colored layer's complete closed mesh.
 
-The documented tolerance is the existing canonical polygon representation:
-0.005 mm physical curve chord error, 0.000001 mm grid, 0.000002 mm ambiguous
-nonincident contact, and 0.000000001 mm closure noise **only for redundant ring
-endpoints**. The service checks raw operands/output before snapping, preserves
-nonempty representable residuals, and rejects collapsed/reversed turns or
-ambiguous contacts. One new `PolygonBudget` is shared by base validation and all
-pair operations during this call, retaining the service's stricter raw/snapped
-work accounting. The import's earlier budget is a separate operation lifetime.
-No new offset, artwork repair, clipping or precision relaxation is applied.
+The layer panel explains that downward extension can fill holes, enlarge the
+outline or create separate pieces.
 
-Retain D-05: one connected planar base region, through holes allowed; disconnected
-bases reject. Raised disconnected islands are allowed when **all** their filled
-material is contained in the immediate lower footprint. Exact identical tiers,
-shared exterior/hole segments and partial oblique segments are allowed subject
-to checked polygon validation. A line or point of contact alone does not support
-an outside filled region. Positive near-contact or crossings near endpoints
-reject conservatively. The existing 1000 mm source-affine oblique-contact ULP
-limitation remains unchanged; exact DTO contact is not a universal promise that
-every nominally shared source edge survives floating-point normalization.
+## Regression evidence
 
-For the authored `over-lower-hole` input, the center fails against Ring despite
-the solid base below it. Hide Ring: center is checked against base and succeeds
-at absolute Z[1.6,2.0], total height 2.0 mm. Showing Ring restores failure.
-In a fully supported nested stack, hiding an intermediate tier preserves support
-by transitivity; showing a narrower intervening tier or reordering can invalidate
-support. Each call still recomputes the actual pairs.
+Tests cover cascading unions, partial/complete hole filling, protruding artwork,
+multiple islands, disjoint columns, enabled order/height/color, source immutability,
+hide/show/reorder/freshness, existing topology/precision guards, malformed kernels,
+shared budgets and all accepted authored SVGs.
 
-## Evidence and limitations
+The historical outside-rim and over-lower-hole examples now generate successfully.
+Original fixture JSON remains unchanged for import and M0 spike oracles;
+`tests/unit/helpers/downwardSupportExpectation.ts` supplies independently derived
+current-generation expectations (a circle/rectangle integral and a 36 mm2 center
+addition).
 
-45 focused tests supplement the 459 historical Vitest and 22 retained Node cases.
-Independent analytic cases verify a 36 mm² lower-hole remainder, equal-bound/equal-
-area footprints with different holes, all upper islands, 20 mm² out-of-rim strip,
-multiple complete residuals, identical/donut/partial shared boundaries, a supported
-oblique boundary, outside point/edge-only contact, disconnected-base rejection,
-base-only topology validation, show/hide/reorder adjacency, immutable snapshots,
-JSON results, stale keys, source warnings/errors, invalid settings, kernel throws,
-malformed output, tiny residuals, positive near-contact, shared work exhaustion
-and 104 untruncated pair remainders. All eleven accepted authored SVGs run through
-the production importer → settings → stack → support. Nine pass planar support;
-outside-rim and over-lower-hole reject. The authored hidden-Ring case also passes
-with the exact expected identity and Z changes.
+A production-imported detached-column regression independently expects areas
+104/40/4 mm2, total volume 184 mm3, two unified shells, layer shell counts 2/2/1
+and exact source position. It parses emitted STL float32 coordinates and 3MF XML,
+revalidates closed meshes, checks layer colors and loads 3MF with ThreeMFLoader.
+Automated round-trips are not slicer or physical-print acceptance.
 
-The original Library baselines remain unavailable (empty synced sources; no
-project documents or connected document sessions). This bounded scope follows
-the live DIG-19 description, current canonical contracts and recorded decisions.
-No M0 fixture/report/sample/spike change, production mesh, D-10 offset-nested-
-transforms mesher fix, export, browser/performance, slicer or physical-print
-acceptance is claimed. No production UI path changes, so no additional browser
-smoke is required for this pure stage. Pages artifacts are checked by the normal
-guarded build; the application runtime does not import this new stage yet.
-
-Local final verification: typecheck, npm test (504 Vitest + 22 retained Node
-tests), build:pages, check:pages and whitespace checks pass. Operator review/merge
-and final-head CI remain the PR boundary; DIG-19 stays In Progress until the
-operator merge is independently verified.
+Validation on this branch: 911 Vitest tests, 22 retained Node tests, typecheck,
+build:pages and check:pages pass. The retained build tests were rerun through
+the normal native Node runtime after sandbox temporary-directory rename errors.
+Live browser smoke was unavailable: browser/app inventory returned no surfaces.
+Editor controls/presentation are covered by the automated jsdom suite; no new
+manual browser, target-slicer or physical-print acceptance is claimed.

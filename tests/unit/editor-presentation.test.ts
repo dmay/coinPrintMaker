@@ -59,16 +59,17 @@ test('rapid reorder/hide/show renders no former measurements or geometry errors 
   expect(latest?.input.settingsRevision).toBe(4);
 });
 
-test('invalid support maps duplicate names to stable upper and immediate lower IDs with corrective action', async () => {
+test('reordered duplicate names retain stable identities and show current extended support', async () => {
   const h = harness(); importSource(h.store); await flush(); await h.finish(0);
   h.store.getState().reorderArtwork(['top', 'middle']); await flush(); await h.finish(1);
-  const view = h.view(); const item = view.diagnostics.find(d => d.diagnostic.code === 'SUPPORT_OUTSIDE_LOWER')!;
-  expect(view.status).toBe('invalid'); expect(view.current).toBeNull(); expect(view.stalePreview).toBe(false);
-  expect(view.errorCount).toBe(1); expect(view.warningCount).toBe(1);
-  expect(item.layerId).toBe('middle'); expect(item.location).toContain('ID: middle'); expect(item.supportPair).toContain('ID: top');
-  expect(item.diagnostic.remediation).toMatch(/Move or resize/);
+  const view = h.view();
+  expect(view.status).toBe('current'); expect(view.stalePreview).toBe(false);
+  expect(view.errorCount).toBe(0); expect(view.warningCount).toBe(1);
+  expect(view.diagnostics.some(d => d.diagnostic.code === 'SUPPORT_OUTSIDE_LOWER')).toBe(false);
+  expect(view.current?.activeTiers.map(t=>t.layerId)).toEqual(['base','top','middle']);
+  expect(view.current?.parts[1].metrics.volumeMm3).toBeCloseTo(64 * .4);
   h.store.getState().setEnabled('top', false); await flush();
-  expect(h.view().errorCount).toBe(0); expect(h.view().warningCount).toBe(1);
+  expect(h.view().current).toBeNull();
   await h.finish(2);
   expect(h.view().current?.dimensionsMm[2]).toBe(2);
   expect(h.view().current?.activeTiers.map(t=>t.layerId)).toEqual(['base', 'middle']);

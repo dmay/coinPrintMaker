@@ -1,4 +1,5 @@
 import './setup';
+import { downwardSupportExpectation } from './helpers/downwardSupportExpectation';
 import { describe, expect, test, vi } from 'vitest';
 import type { CoinSettings, FootprintMm, ImportedCoin, Point2Mm, PolygonMm, RingMm, TriangleMesh } from '../../app/src/core/contracts';
 import { buildUnifiedMesh, isCurrentUnifiedMesh, unifiedMeshBuilder } from '../../app/src/core/buildUnifiedMesh';
@@ -191,9 +192,9 @@ describe('bounded stitching gates malformed constructed surfaces',()=>{
 });
 
 describe('fresh source and settings orchestration',()=>{
-  test('stale identity, reorder and unsupported immediate lower tier block meshing',()=>{
+  test('stale identity blocks meshing',()=>{
     const coin=coinOf([box()],[donut],[box(3,3,2,2)]),s=defaults(coin),triangulate=vi.fn(earcutTriangulationKernel.triangulate);
-    for(const settings of [s,{...s,importId:'stale'}]){const r=buildUnifiedMesh(coin,settings,polygonClippingKernel,{triangulate});expect(r.status).toBe('rejected');for(const key of ['unifiedMesh','metrics','activeTiers','totalHeightMm'])expect(r).not.toHaveProperty(key);}
+    for(const settings of [{...s,importId:'stale'}]){const r=buildUnifiedMesh(coin,settings,polygonClippingKernel,{triangulate});expect(r.status).toBe('rejected');for(const key of ['unifiedMesh','metrics','activeTiers','totalHeightMm'])expect(r).not.toHaveProperty(key);}
     expect(triangulate).not.toHaveBeenCalled();
   });
   test('hide, color, thickness, revision and source mutations rebuild without stale-stage input',()=>{
@@ -203,11 +204,11 @@ describe('fresh source and settings orchestration',()=>{
     expect(b.activeTiers.map(t=>t.layerId)).toEqual(['layer-0','layer-2']);expect(b.activeTiers[1]).toMatchObject({color:'#fedcba',bottomZMm:1.6,topZMm:2.3});verify(b.unifiedMesh,162.8);expect(isCurrentUnifiedMesh(a,b.input)).toBe(false);expect(isCurrentUnifiedMesh(b,b.input)).toBe(true);expect(isCurrentUnifiedMesh(null,b.input)).toBe(false);expect(isCurrentUnifiedMesh(b,{...b.input,importId:'other'})).toBe(false);
     const error={code:'MESH_INVALID',severity:'error',message:'error',location:{scope:'document'},remediation:'fix'} as const;expect(isCurrentUnifiedMesh({...b,diagnostics:[error]},b.input)).toBe(false);
     expect(JSON.stringify([coin,s])).toBe(before);expect(buildUnifiedMesh(coin,settings,polygonClippingKernel,earcutTriangulationKernel)).toEqual(b);
-    const reordered={...s,revision:2,layers:[s.layers[0],s.layers[2],s.layers[1]]} as CoinSettings;expect(buildUnifiedMesh(coin,reordered,polygonClippingKernel,earcutTriangulationKernel).status).toBe('rejected');
+    const reordered={...s,revision:2,layers:[s.layers[0],s.layers[2],s.layers[1]]} as CoinSettings;expect(buildUnifiedMesh(coin,reordered,polygonClippingKernel,earcutTriangulationKernel).status).toBe('unified-built');
   });
 });
 
-const fixtures=(await loadFixtures()).filter(f=>f.expected.importOutcome==='accept');
+const fixtures=(await loadFixtures()).filter(f=>f.expected.importOutcome==='accept').map(downwardSupportExpectation);
 describe('authored production import → support → unified surface regressions',()=>{
   test.each(fixtures)('$name',f=>{
     const imported=importCoinSvg({importId:f.name,fileName:f.name+'.svg',svgText:f.svg,byteLength:f.svg.length});if(imported.status!=='imported')throw new Error(JSON.stringify(imported));

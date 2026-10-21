@@ -61,6 +61,7 @@ export function LayerPanel({ store }: { readonly store: EditorStore }) {
         <p>{disabled ? 'Checking replacement artwork. Editing is paused.' : current ? `Current checked height: ${format(current.dimensionsMm[2])} mm.` : state.generationStatus === 'pending' ? 'Checking edited geometry. Current height and Z are pending.' : 'Geometry needs attention. Current height and Z are unavailable.'}</p>
       </div>
       <p className="layer-order">Printing order, bottom to top</p>
+      <p className="reorder-help">Artwork extends straight down through lower enabled layers to the base. This can fill holes, enlarge the outline, or create separate pieces.</p>
       <p className="reorder-help" id="reorder-help">Drag a raised tier by its handle, or use Move toward base / Move toward top. Drag to the desired row and release; Escape cancels. The base stays first.</p>
       <p className="sr-only" role="status" aria-live="polite">{announcement}</p>
       <ol className="layer-list" ref={list}>{settings.layers.map((setting, index) => {
