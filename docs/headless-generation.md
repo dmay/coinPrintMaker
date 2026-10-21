@@ -1,5 +1,10 @@
 # Checked headless coin generation (DIG-22)
 
+DIG-78 supersedes the support rejection and single connected result policy below.
+Current generation extends every active footprint down through all lower tiers,
+including the base, and permits detached closed components. Source SVGs remain
+immutable. See [automatic downward support](support-validation.md).
+
 `core/generateCoin.ts` implements current source/settings -> fresh support ->
 closed parts + unified exterior -> independently checked actual coordinates.
 No renderer, scene, DOM, UI/store, Worker, serializer or previous generation enters

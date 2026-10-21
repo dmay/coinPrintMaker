@@ -118,14 +118,15 @@ failures produce diagnostics and valid empty results retain null bounds.
 See [docs/polygon-service.md](docs/polygon-service.md) for expected boundary,
 hole/island/tangency outcomes and bounded precision evidence.
 
-## Immediate-lower support core
+## Automatic downward support
 
-Pure support validation recomputes enabled adjacency, checks each complete
-upper-minus-lower difference, and exposes unsupported remainders with layer
-remedies. Rejections contain no active tiers or exportable mesh; supported
-results remain a pre-mesh stage with import/revision freshness checks.
-See [docs/support-validation.md](docs/support-validation.md) for exact-boundary,
-base/island and precision policy, failure gating and evidence.
+Each active layer's artwork extends straight down through every lower enabled
+layer, including the base. This fills only needed material, may enlarge the
+outline or fill holes, and permits separate columns without adding bridges.
+Hide/show/reorder recomputes from the original SVG; support takes the lower
+layer's color and thickness. Preview, STL and 3MF use the same checked geometry.
+Polygon/mesh failures and stale results still block export.
+See [docs/support-validation.md](docs/support-validation.md) for policy and evidence.
 
 ## Closed positioned layer-part core
 

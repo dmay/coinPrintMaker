@@ -148,7 +148,7 @@ test('ready color-only edits do zero clipping/tessellation, preserve meshes and 
   expect(after.colorBoundaryHeightsMm).toEqual(before.colorBoundaryHeightsMm);
 });
 
-test('valid to invalid thickness/support clears current geometry; old preview is explicitly pending only', async () => {
+test('invalid thickness clears current geometry; reorder derives supported geometry afresh', async () => {
   const store = createEditorStore({ execute: computed });
   imported(store); await flush();
   const original = selectCurrentGeneration(store.getState())!;
@@ -161,10 +161,10 @@ test('valid to invalid thickness/support clears current geometry; old preview is
   store.getState().setThickness('middle', 0.4); await flush();
   expect(selectCurrentGeneration(store.getState())).not.toBeNull();
   store.getState().reorderArtwork(['top', 'middle']); await flush();
-  expect(store.getState().generationStatus).toBe('invalid');
-  expect(store.getState().result?.diagnostics.some(d => d.code === 'SUPPORT_OUTSIDE_LOWER')).toBe(true);
-  expect(selectExportableGeometry(store.getState())).toBeNull();
-  expect(store.getState().result).not.toHaveProperty('parts');
+  expect(store.getState().generationStatus).toBe('ready');
+  expect(store.getState().result?.diagnostics.some(d => d.code === 'SUPPORT_OUTSIDE_LOWER')).toBe(false);
+  expect(selectExportableGeometry(store.getState())).not.toBeNull();
+  expect(selectCurrentGeneration(store.getState())?.activeTiers.map(t => t.layerId)).toEqual(['base', 'top', 'middle']);
 });
 
 test('visibility/order/thickness edits generate again; locked base and invalid order are no-ops; selection is separate', async () => {

@@ -1,4 +1,5 @@
 import './setup';
+import { downwardSupportExpectation } from './helpers/downwardSupportExpectation';
 import { describe, expect, test, vi } from 'vitest';
 import type { CoinSettings, FootprintMm, ImportedCoin, Point3Mm, PolygonMm, TriangleMesh } from '../../app/src/core/contracts';
 import { createDiagnostic } from '../../app/src/core/diagnostics';
@@ -155,9 +156,9 @@ describe('fresh complete generation and failure-atomic snapshots',()=>{
     const coin=coinOf([box()]),s=defaults(coin),r=generateCoin(coin,{...s,revision},polygon,triangulator);
     expect(r.status).toBe('invalid');expect(r).not.toHaveProperty('input');expect(JSON.parse(JSON.stringify(r))).toEqual(r);
   });
-  test('fresh immediate active lower support rejects disabled intermediate tier',()=>{
+  test('downward support expands an intermediate tier and hiding it recomputes from source',()=>{
     const coin=coinOf([box()],[box(2,2,6,6)],[box(1,1,8,8)]),s=defaults(coin);
-    expect(generateCoin(coin,s,polygon,triangulator).status).toBe('invalid');
+    expect(generateCoin(coin,s,polygon,triangulator).status).toBe('valid');
     const edited={...s,revision:1,layers:s.layers.map((t,i)=>i===1?{...t,enabled:false}:t)} as unknown as CoinSettings;
     expect(generateCoin(coin,edited,polygon,triangulator).status).toBe('valid');
   });
@@ -208,12 +209,12 @@ describe('fresh complete generation and failure-atomic snapshots',()=>{
   });
 });
 
-const fixtures=(await loadFixtures()).filter(f=>f.expected.importOutcome==='accept');
+const fixtures=(await loadFixtures()).filter(f=>f.expected.importOutcome==='accept').map(downwardSupportExpectation);
 describe('production importer to final checked snapshot M2 exit',()=>{
   test.each(fixtures)('$name',fixture=>{
     const imported=importCoinSvg({importId:fixture.name,fileName:fixture.name+'.svg',byteLength:fixture.svg.length,svgText:fixture.svg});expect(imported.status).toBe('imported');if(imported.status!=='imported')return;
     const coin=imported.coin,s=defaults(coin),r=generateCoin(coin,s,polygon,triangulator);
-    const unsupported=['outside-rim','over-lower-hole'].includes(fixture.name);expect(r.status,JSON.stringify(r)).toBe(unsupported?'invalid':'valid');
+    expect(r.status,JSON.stringify(r)).toBe('valid');
     if(r.status!=='valid'){expect(r).not.toHaveProperty('unifiedMesh');return;}
     const ideal=fixture.expected.analyticalVolumeMm3!;near(r.metrics.volumeMm3,ideal,ideal*tolerance.volumeRelative);near(r.metrics.volumeMm3,r.analyticalVolumeMm3,r.analyticalVolumeMm3*1e-9);
     expect(r.parts).toHaveLength(fixture.expected.layers.length);expect(r.metrics.boundsMm[0][2]).toBe(0);near(r.dimensionsMm[2],fixture.expected.totalHeightMm!,1e-12);

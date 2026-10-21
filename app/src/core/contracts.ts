@@ -72,6 +72,8 @@ export interface ActiveTier {
   readonly layerId: LayerId;
   readonly name: string;
   readonly color: string;
+  // resolveStack retains source footprints; supported/generated tiers include
+  // the union of this tier and all enabled artwork above it (DIG-78).
   readonly footprintMm: FootprintMm;
   readonly thicknessMm: number;
   readonly bottomZMm: number;
@@ -156,7 +158,7 @@ export type CoinSettingsResult =
 export interface UnsupportedRemainder {
   readonly upperLayerId: LayerId;
   readonly lowerLayerId: LayerId;
-  // Diagnostics only: upper-minus-lower, never a clipped replacement tier.
+  // Legacy diagnostic payload. Automatic downward support emits no remainders.
   readonly footprintMm: FootprintMm;
 }
 export interface SupportedStack {
@@ -172,8 +174,8 @@ export interface RejectedSupport {
   // Absent when settings/source stack resolution fails.
   readonly input?: GenerationKey;
   readonly diagnostics: readonly Diagnostic[];
-  // All successfully measured nonempty differences; failed pairs have diagnostics
-  // instead. An empty list therefore does not establish support on rejection.
+  // Retained DTO shape; automatic extension failures carry diagnostics and an
+  // empty list. Empty remainders never establish success on rejection.
   readonly unsupportedRemainders: readonly UnsupportedRemainder[];
   readonly activeTiers?: never;
   readonly totalHeightMm?: never;

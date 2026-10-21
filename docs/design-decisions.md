@@ -944,3 +944,26 @@ project metadata remain outside acceptance. The operator deferred DIG-30 target-
 slicer initial loading to later polish; no new slicer gate or acceptance claim.
 See [export options and evidence](export-options.md). No DIG-32 height-guidance,
 M5, geometry policy or hosting arrangement change.
+
+## D-31 - Extend hanging artwork through lower active tiers
+
+**DIG-78, operator clarification:** Automatically extend every enabled footprint
+straight down through all lower enabled layers, including the base. The operator
+approved filling holes and enlarging the outer outline, and explicitly declined
+a disconnected-result rejection. Detached artwork becomes a separate column to
+Z=0; no connecting bridge is invented. This supersedes D-05's single connected
+generated-coin policy, while retaining the canonical source import requirements.
+
+Compute effective footprints by checked top-down Boolean propagation after
+current order/visibility resolution. Preserve already-supported binary geometry;
+never modify imported footprints/settings. Support added to each tier uses that
+tier's existing color and Z interval. Hiding or reordering regenerates all support
+from source, so automatic additions do not persist after the need disappears.
+
+Use effective footprints consistently for parts, unified surfaces, independent
+surface/bounds/volume validation and both exports. Expected unified shell count
+comes from effective base regions instead of the previous constant one. Retain
+all precision, closed-manifold, orientation, intersection, work-limit and stale
+result gates. No SUPPORT_OUTSIDE_LOWER diagnostic is emitted by generation;
+polygon/mesh failures still fail atomically. See [support policy and regression
+evidence](support-validation.md).

@@ -1,4 +1,5 @@
 import './setup';
+import { downwardSupportExpectation } from './helpers/downwardSupportExpectation';
 import { describe, expect, test, vi } from 'vitest';
 import type { ActiveTier, CoinSettings, FootprintMm, GeneratedPart, ImportedCoin, Point2Mm, PolygonMm, RingMm, Triangle } from '../../app/src/core/contracts';
 import type { TriangulationKernel } from '../../app/src/core/triangulationKernel';
@@ -256,9 +257,9 @@ describe('untrusted triangulator and bounded failure-atomic construction',()=>{
 });
 
 describe('fresh support orchestration, identity and failure gating',()=>{
-  test('fresh immediate-lower support blocks every mesh call when unsupported or source/settings stale',()=>{
+  test('stale source/settings block every mesh call',()=>{
     const coin=coinOf([box()],[donut],[box(3,3,2,2)]),settings=defaults(coin),triangulate=vi.fn(earcutTriangulationKernel.triangulate);
-    for(const config of [settings,{...settings,importId:'stale'}]){
+    for(const config of [{...settings,importId:'stale'}]){
       const result=buildLayerParts(coin,config,polygonClippingKernel,{triangulate});expect(result.status).toBe('rejected');
       for(const key of ['parts','activeTiers','totalHeightMm','unifiedMesh','metrics'])expect(result).not.toHaveProperty(key);
     }
@@ -275,7 +276,7 @@ describe('fresh support orchestration, identity and failure gating',()=>{
     expect(isCurrentLayerParts(a,b.input)).toBe(false);expect(isCurrentLayerParts(b,b.input)).toBe(true);expect(isCurrentLayerParts(b,{...b.input,importId:'other'})).toBe(false);expect(isCurrentLayerParts(null,b.input)).toBe(false);
     expect(isCurrentLayerParts({...b,diagnostics:[{code:'MESH_INVALID',severity:'error',message:'error',location:{scope:'document'},remediation:'fix'}]},b.input)).toBe(false);
     const reordered={...settings,revision:2,layers:[settings.layers[0],settings.layers[2],settings.layers[1]]} as CoinSettings;
-    expect(buildLayerParts(coin,reordered,polygonClippingKernel,earcutTriangulationKernel).status).toBe('rejected');
+    expect(buildLayerParts(coin,reordered,polygonClippingKernel,earcutTriangulationKernel).status).toBe('parts-built');
     expect(JSON.stringify([coin,settings])).toBe(before);expect(JSON.parse(JSON.stringify(b))).toEqual(b);
   });
   test('later tier triangulator failure discards every earlier built part',()=>{
@@ -286,7 +287,7 @@ describe('fresh support orchestration, identity and failure gating',()=>{
   });
 });
 
-const fixtures=(await loadFixtures()).filter(f=>f.expected.importOutcome==='accept');
+const fixtures=(await loadFixtures()).filter(f=>f.expected.importOutcome==='accept').map(downwardSupportExpectation);
 describe('production importer → fresh support → independent parts: authored oracles',()=>{
   test.each(fixtures)('$name',f=>{
     const imported=importCoinSvg({importId:f.name,fileName:f.name+'.svg',svgText:f.svg,byteLength:f.svg.length});

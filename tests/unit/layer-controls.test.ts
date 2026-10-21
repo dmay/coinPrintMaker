@@ -51,7 +51,7 @@ async function type(input: HTMLInputElement, text: string) {
 async function key(input: HTMLElement, key: string) { await act(async () => input.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }))); }
 async function blur(input: HTMLElement) { await act(async () => input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }))); }
 
-test('base stays first, visible and locked; selected identity/settings/draft survive keyboard reorder; actual support rejects and recovers', async () => {
+test('base stays first, visible and locked; selected identity/settings/draft survive keyboard reorder; support is recomputed after edits', async () => {
   const { store } = await setup();
   expect(selectCurrentGeneration(store.getState())?.dimensionsMm[2]).toBeCloseTo(2.4);
   expect(row('base').querySelector('.reorder-controls,input[type="checkbox"]')).toBeNull();
@@ -67,16 +67,16 @@ test('base stays first, visible and locked; selected identity/settings/draft sur
   expect(input.value).toBe('bad draft');
   expect(store.getState().settings!.layers[2]).toMatchObject({ layerId: 'middle', thicknessMm: .75, enabled: true });
   expect(container.textContent).toContain('Middle moved to raised position 2 of 2');
-  expect(store.getState().generationStatus).toBe('invalid');
-  expect(container.textContent).toContain('SUPPORT_OUTSIDE_LOWER');
-  expect(container.textContent).not.toContain('Current checked height:');
+  expect(store.getState().generationStatus).toBe('ready');
+  expect(container.textContent).not.toContain('SUPPORT_OUTSIDE_LOWER');
+  expect(selectCurrentGeneration(store.getState())?.dimensionsMm[2]).toBeCloseTo(2.75);
   await click('Show Top');
   const result = selectCurrentGeneration(store.getState())!;
   expect(result.activeTiers.map(t => [t.layerId, t.bottomZMm, t.topZMm])).toEqual([['base', 0, 1.6], ['middle', 1.6, 2.35]]);
   expect(result.dimensionsMm[2]).toBe(2.35);
   expect(row('top').textContent).toContain('Hidden · contributes no height');
   await click('Show Top');
-  expect(store.getState().generationStatus).toBe('invalid');
+  expect(store.getState().generationStatus).toBe('ready');
   await click('Move Middle toward base');
   expect(selectCurrentGeneration(store.getState())?.activeTiers.map(t => t.layerId)).toEqual(['base', 'middle', 'top']);
 });
@@ -148,7 +148,7 @@ test.each(['mouse', 'touch'])('captured %s drag commits on release only, keeps b
   expect(store.getState().settings!.revision).toBe(0);
   await pointer('pointerdown', 250); await pointer('pointermove', 110); await pointer('pointerup', 110);
   expect(ids()).toEqual(['base', 'top', 'middle']);
-  expect(store.getState().generationStatus).toBe('invalid');
+  expect(store.getState().generationStatus).toBe('ready');
   await pointer('pointerdown', 150); await pointer('pointermove', 400); await pointer('pointercancel', 400); await pointer('pointerup', 400);
   expect(store.getState().settings!.revision).toBe(1);
 });

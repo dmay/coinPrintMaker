@@ -69,7 +69,9 @@ export function generateCoin(coin:ImportedCoin,settings:CoinSettings,polygonKern
     const unified=(builders.unified??unifiedMeshBuilder).build(detached(source),detached(current),polygonKernel,triangulator);
     if(unified.status==='rejected')return reject(unified.diagnostics);
     assertMetadata(unified,input,tiers);diagnostics=combined(diagnostics,unified.diagnostics);
-    const expected=measure(tiers),checked=validateMesh(unified.unifiedMesh,{expectedShellCount:1,expectedBoundsMm:expected.bounds,expectedVolumeMm3:expected.volume,budget});
+    // Downward extension may create detached columns. Each effective base
+    // region supplies one complete boundary component; never add a bridge.
+    const expected=measure(tiers),checked=validateMesh(unified.unifiedMesh,{expectedShellCount:tiers[0].footprintMm.length,expectedBoundsMm:expected.bounds,expectedVolumeMm3:expected.volume,budget});
     if(checked.status==='rejected')return reject(checked.diagnostics);
     assertTierSurfaces(checked.mesh,tiers,'unified',budget);
     const dimensionsMm=checked.metrics.boundsMm[1].map((v,j)=>v-checked.metrics.boundsMm[0][j]) as unknown as Point3Mm;

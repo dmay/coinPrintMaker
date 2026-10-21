@@ -54,7 +54,7 @@ export function buildUnifiedMesh(coin:ImportedCoin,settings:CoinSettings,polygon
     for(const [i,tier] of tiers.entries()){
       const value=emittedFootprintArea(footprints[i])*(tier.topZMm-tier.bottomZMm)-compensation,total=expected+value;compensation=(total-expected)-value;expected=total;
     }
-    const result=stitchTopology({vertices,triangles},{budget,expectedVolumeMm3:expected});if(result.status==='rejected')return reject(result.diagnostics);
+    const result=stitchTopology({vertices,triangles},{budget,expectedVolumeMm3:expected,expectedShellCount:tiers[0].footprintMm.length});if(result.status==='rejected')return reject(result.diagnostics);
     return {status:'unified-built',input:support.input,activeTiers:support.activeTiers,totalHeightMm:support.totalHeightMm,unifiedMesh:result.mesh,metrics:result.metrics,diagnostics:support.diagnostics};
   }catch(error){return reject([constructionDiagnostic(error,null)]);}
 }
