@@ -967,3 +967,22 @@ all precision, closed-manifold, orientation, intersection, work-limit and stale
 result gates. No SUPPORT_OUTSIDE_LOWER diagnostic is emitted by generation;
 polygon/mesh failures still fail atomically. See [support policy and regression
 evidence](support-validation.md).
+
+
+## D-32 — STL cleanup uses physical distance rather than exact facet preservation
+
+**DIG-79, operator clarification:** Rejecting sub-micron float32 artifacts blocks
+otherwise printable artwork. At export, weld identical emitted vertices and omit
+zero-area emitted facets, then retry on a 0.001 mm grid when necessary. Require
+at most 0.001 mm Euclidean displacement for every source vertex, including encoding
+rounding. This supersedes D-29's prohibition on export repair and facet removal;
+source geometry and generation acceptance remain unchanged. Nozzle diameter is
+not the cleanup threshold.
+
+Validate the resulting surface with the existing closed-manifold, shell-count,
+orientation and exact intersection gates. Keep bounds and volume sanity checks
+scaled to measured displacement. A microscopic hole may close; a 0.01 mm hole is
+covered by preservation tests. This is bounded cleanup, not arbitrary mesh repair:
+a candidate that cannot produce a valid surface still rejects. Synthetic STL
+round-trips cover collapsed bevels, microscopic holes and preservation of a
+0.01 mm hole. No slicer or physical-print result is claimed. See [binary STL export](binary-stl-export.md).

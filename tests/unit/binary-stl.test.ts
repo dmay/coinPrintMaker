@@ -8,6 +8,7 @@ import { createDefaultCoinSettings } from '../../app/src/core/resolveStack';
 import { polygonClippingKernel } from '../../app/src/import/polygonClippingKernel';
 import { earcutTriangulationKernel } from '../../app/src/import/earcutTriangulationKernel';
 import { loadFixtures } from './helpers/fixtures';
+import { STL_CLEANUP_MM } from '../../app/src/core/prepareStlMesh';
 
 const cube: TriangleMesh = { vertices:[[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]],
   triangles:[[0,2,1],[0,3,2],[4,5,6],[4,6,7],[0,1,5],[0,5,4],[1,2,6],[1,6,5],[2,3,7],[2,7,6],[3,0,4],[3,4,7]] };
@@ -76,6 +77,62 @@ test.each(['nan','infinity','overflow','underflow','collapse','index','fraction'
 test('closed self-intersection rejects even with plausible metrics',()=>{
   const mesh=clone(cube),v=mesh.vertices as unknown as number[][];[v[4],v[5]]=[v[5],v[4]];
   expect(()=>serializeBinaryStl(mesh,{...metrics,volumeMm3:.5})).toThrow();
+});
+
+test('sub-micron bevel facets that collapse in float32 export as a closed printable solid',()=>{
+  const e = 1e-7, footprint = [[0,0],[1,0],[1,1],[e,1],[0,1-e]];
+  const vertices = [0,1].flatMap(z => footprint.map(([x,y]) => [100+x,100+y,z] as Point3Mm));
+  const triangles: number[][] = [];
+  for (let i=1;i<4;i++) triangles.push([0,i+1,i],[5,5+i,5+i+1]);
+  for (let i=0;i<5;i++) {const j=(i+1)%5;triangles.push([i,j,j+5],[i,j+5,i+5]);}
+  const mesh = {vertices,triangles} as unknown as TriangleMesh, before = JSON.stringify(mesh);
+  const m: MeshMetrics = {boundsMm:[[100,100,0],[101,101,1]],volumeMm3:1-e*e/2,shellCount:1};
+  const buffer = serializeBinaryStl(mesh,m), r=read(buffer);
+  expect(r.facets).toHaveLength(12);
+  expect(r.bounds).toEqual(m.boundsMm);
+  expect(r.volume).toBeCloseTo(1,12);
+  expect(JSON.stringify(mesh)).toBe(before);
+  expect(new Uint8Array(serializeBinaryStl(mesh,m))).toEqual(new Uint8Array(buffer));
+});
+
+function perforatedPlate(halfX: number, halfY: number): {mesh:TriangleMesh;metrics:MeshMetrics} {
+  const outer=[[100,100],[101,100],[101,101],[100,101]];
+  const inner=[[100.5-halfX,100.5-halfY],[100.5+halfX,100.5-halfY],
+    [100.5+halfX,100.5+halfY],[100.5-halfX,100.5+halfY]];
+  const vertices=[0,1].flatMap(z=>[...outer,...inner].map(([x,y])=>[x,y,z] as Point3Mm));
+  const triangles:number[][]=[];
+  for(let i=0;i<4;i++) {
+    const j=(i+1)%4;
+    // Ring caps, exterior walls, then inward-facing hole walls.
+    triangles.push([i,j+4,j],[i,i+4,j+4],[i+8,j+8,j+12],[i+8,j+12,i+12]);
+    triangles.push([i,j,j+8],[i,j+8,i+8],[i+4,j+12,j+4],[i+4,i+12,j+12]);
+  }
+  return {mesh:{vertices,triangles} as unknown as TriangleMesh,
+    metrics:{boundsMm:[[100,100,0],[101,101,1]],volumeMm3:1-4*halfX*halfY,shellCount:1}};
+}
+
+test('one-micron fallback cleans a microscopic hole that rounds into coincident internal walls',()=>{
+  const {mesh,metrics:m}=perforatedPlate(1e-6,1e-5),before=JSON.stringify(mesh);
+  const r=read(serializeBinaryStl(mesh,m));
+  expect(r.facets).toHaveLength(16);
+  expect(r.volume).toBeCloseTo(1,12);
+  expect(r.bounds).toEqual(m.boundsMm);
+  expect(JSON.stringify(mesh)).toBe(before);
+});
+
+test('printable small holes survive and the cleanup allowance cannot hide a material volume error',()=>{
+  const {mesh,metrics:m}=perforatedPlate(.005,.005);
+  const r=read(serializeBinaryStl(mesh,m));
+  expect(r.facets).toHaveLength(mesh.triangles.length);
+  expect(r.volume).toBeCloseTo(m.volumeMm3,6);
+  expect(()=>serializeBinaryStl(mesh,{...m,volumeMm3:m.volumeMm3+.05})).toThrow();
+  expect(STL_CLEANUP_MM).toBe(.001);
+});
+
+test('cleanup cannot move vertices beyond its absolute mm allowance even at large coordinates',()=>{
+  const mesh={...cube,vertices:cube.vertices.map(([x,y,z])=>[x+100000.003,y,z] as Point3Mm)};
+  const m={...metrics,boundsMm:[[100000.003,0,0],[100001.003,1,1]]} as MeshMetrics;
+  expect(()=>serializeBinaryStl(mesh,m)).toThrow();
 });
 const fixtures=(await loadFixtures()).filter(f=>f.expected.geometryOutcome==='valid');
 test.each(fixtures)('production $name reparses with generated mm bounds, volume, winding and exact triangle order',fixture=>{
