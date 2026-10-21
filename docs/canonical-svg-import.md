@@ -201,7 +201,7 @@ actual crossings without inventing holes. Mixed-winding and evenodd crossing
 compound paths still require authoring cleanup; simple nested holes retain their
 existing interpretation. Self-intersections and ambiguous precision still reject.
 
-`fixtures/regressions/teto-coin.svg` preserves the original DIG-42 upload. It has
+`fixtures/regressions/teto-coin-dig42.svg` preserves the original DIG-42 upload. It has
 one Inkscape layer (`Image`) containing paths `path8`, `path2`, and `path6`;
 labels on paths do not make separate printing layers. Its 4,014-vertex base
 previously exhausted the comparison budget before `path2` was examined. `path2`
@@ -212,7 +212,7 @@ covers import; it does not claim downstream mesh, slicer, or physical-print succ
 
 ## DIG-41: Gumi short closing edge
 
-`fixtures/regressions/gumi-coin.svg` preserves the original upload. Its single
+`fixtures/regressions/gumi-coin-dig41.svg` preserves the original upload. Its single
 Inkscape layer `Image` contains six filled paths; path labels such as
 `glasses-strip` do not create printing tiers. `path10` has a tiny closing edge
 whose diverging neighbours triggered the clearance guard. The importer now checks
@@ -222,3 +222,21 @@ The regression also imports `path10` alone and retains its 222-vertex outline,
 so union with the underlying base cannot conceal a contour change. Separate
 printing tiers still require separate Inkscape layers. Import success does not
 claim mesh, slicer or physical-print validation.
+
+
+## DIG-79: updated multilayer Gumi and Teto
+
+The current `fixtures/regressions/gumi-coin.svg` and `teto-coin.svg` are the
+original DIG-79 attachments, with three separate Inkscape layers each. Gumi
+imports Base/Hair/Glasses; Teto imports Base/Black/Red. Their historical
+single-layer predecessors remain under the DIG-41/DIG-42 filenames above.
+
+Both current files already passed canonical import on the original main baseline;
+the observed upload failures occurred in automatic generation. The combined
+regression now exercises default settings, checked generation, STL and layered
+3MF for each unchanged attachment. Earcut chooses indices using the existing
+canonical integer lattice; emitted coordinates and exact coverage/orientation
+checks retain their original values. Identical shared short bridges may keep
+diverging neighbours close in a Boolean operation; unrelated close boundaries
+and hairpins still use the existing clearance guard. Source import limits and
+the 0.000001 mm canonical grid are unchanged. See the fixture manifest and D-33.

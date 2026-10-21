@@ -12,7 +12,8 @@
     "build:pages": "npm run typecheck && node scripts/build-pages.mjs",
     "check:pages": "npm run typecheck && node scripts/build-pages.mjs --check",
     "test:unit": "vitest run",
-    "test:legacy": "node --test tests/import/*.test.mjs tests/geometry/*.test.mjs tests/export/*.test.mjs tests/build/*.test.mjs"
+    "test:legacy": "node --test tests/import/*.test.mjs tests/geometry/*.test.mjs tests/export/*.test.mjs tests/build/*.test.mjs",
+    "test:real-coins": "vitest run tests/unit/real-coin-pipeline.test.ts"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",

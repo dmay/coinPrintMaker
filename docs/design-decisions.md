@@ -881,7 +881,7 @@ snap-collapse and corner-preservation checks retain existing guards. Preserve th
 edge and its endpoints; do not repair artwork, merge vertices, raise budgets or
 change chord/snap tolerances. This applies to raw and snapped ring validation.
 
-The original upload is retained at `fixtures/regressions/gumi-coin.svg`. Regression
+The original upload is retained at `fixtures/regressions/gumi-coin-dig41.svg`. Regression
 coverage checks deterministic whole-file import and isolated `path10` import,
 plus an analytical tiny bevel, reversed winding, actual crossings/touches and a
 narrow channel. These are import checks, not slicer or physical-print acceptance.
@@ -976,13 +976,54 @@ otherwise printable artwork. At export, weld identical emitted vertices and omit
 zero-area emitted facets, then retry on a 0.001 mm grid when necessary. Require
 at most 0.001 mm Euclidean displacement for every source vertex, including encoding
 rounding. This supersedes D-29's prohibition on export repair and facet removal;
-source geometry and generation acceptance remain unchanged. Nozzle diameter is
+source geometry and generation acceptance remain unchanged by export cleanup. Nozzle diameter is
 not the cleanup threshold.
 
 Validate the resulting surface with the existing closed-manifold, shell-count,
 orientation and exact intersection gates. Keep bounds and volume sanity checks
 scaled to measured displacement. A microscopic hole may close; a 0.01 mm hole is
 covered by preservation tests. This is bounded cleanup, not arbitrary mesh repair:
-a candidate that cannot produce a valid surface still rejects. Synthetic STL
+internal cap diagonals may be flipped to fix rounding reversal while preserving
+all rounded positions and the exact patch boundary. A candidate that cannot
+produce a valid surface still rejects. Synthetic STL
 round-trips cover collapsed bevels, microscopic holes and preservation of a
 0.01 mm hole. No slicer or physical-print result is claimed. See [binary STL export](binary-stl-export.md).
+
+
+## D-33 — Updated production fixtures pass every upload/export stage
+
+**DIG-79:** Keep the updated three-layer attachments as the current Gumi/Teto
+fixtures and preserve the DIG-41/DIG-42 originals under historical filenames.
+The data-only `fixtures/regressions/cases.json` records attachment hashes,
+source layer identity/colors, geometry measurements and required stage outcomes
+for reuse by DIG-47. Both fixtures must pass import, default checked generation,
+STL and layered 3MF. A precision rejection is not an accepted fixture outcome.
+
+Condition Earcut index selection with the already canonical integer grid rather
+than binary approximations in millimeters. Emit the original coordinates and
+retain exact grid and binary coverage/orientation/boundary proofs. Across Boolean
+operands, permit clearance at an identical noncollapsed short bridge only when
+both operands retain it and neighbouring segments diverge without actual contact.
+Do not extend that exception to unrelated gaps, short hairpins or crossings.
+
+Use an inclusive spatial bounds hierarchy for triangle candidates and an exact
+projected separation/shared-simplex proof before the full rational intersection
+check. Cancel identical directed surface edges before primitive-line GCD work;
+residual chains still undergo the complete exact line-interval comparison. Tests
+compare bounds candidates with exhaustive pairs and the projected proof with
+600 exhaustive exact triangle checks. No tolerance replaces intersection checks.
+
+Allow 200,000 repeated polygon-validation vertices during mesh construction
+(previously the 50,000 SVG document allowance was reused for repeated raw/snapped
+passes). The SVG import allowance stays 50,000; mesh input/output caps and the
+2,000,000 construction work allowance stay unchanged. Increase aggregate final
+mesh-validation work from 8,000,000 to 24,000,000 units. After the filtering changes,
+Teto measures 17,650,587 generation-validation units on this implementation;
+the larger finite allowance accommodates the actual fixture. Exhaustion still
+rejects. These work units are bounds on operations, not browser timing guarantees.
+
+STL float32 normalization and cap retriangulation use D-32's bounded export path.
+The end-to-end tests reparse actual STL and 3MF output, check closed STL topology,
+source immutability, source colors/names and exact 3MF part geometry. Parse the
+large 3MF models without a DOM in this fixture suite to limit test memory. No
+slicer or physical-print result follows from these automated checks.

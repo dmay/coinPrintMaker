@@ -39,7 +39,7 @@ test.each([
 });
 
 test.each(['gumi','teto'])('DIG-41/42 %s retains labels and stable source IDs', name => {
-  const text = readFileSync(new URL('../../fixtures/regressions/' + name + '-coin.svg',import.meta.url),'utf8');
+  const text = readFileSync(new URL('../../fixtures/regressions/' + name + (name === 'gumi' ? '-coin-dig41.svg' : '-coin-dig42.svg'),import.meta.url),'utf8');
   const result = load(text);
   expect(result.status,JSON.stringify(result.diagnostics)).toBe('imported');
   if (result.status !== 'imported') return;

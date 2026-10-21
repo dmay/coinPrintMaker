@@ -1,3 +1,4 @@
+import { meshBoundsCandidates } from './meshBoundsCandidates';
 import type { Point3Mm, TriangleMesh } from './contracts';
 import { MeshConstructionBudget, MeshConstructionFailure } from './meshConstructionPolicy';
 
@@ -63,18 +64,28 @@ export function assertTrianglePair(a:readonly ExactPoint[],b:readonly ExactPoint
   };
   edgesAgainst(a,b,nb,axesB);edgesAgainst(b,a,na,axesA);
 }
+/** A separating projected edge proves disjointness or contact confined to the
+ * indexed common simplex. All comparisons are exact, including zero-distance
+ * contact. Otherwise defer to the full rational intersection predicates. */
+export function projectedContactIsShared(a:readonly ExactPoint[],b:readonly ExactPoint[],shared:readonly ExactPoint[]):boolean {
+  for(const axes of [[0,1],[0,2],[1,2]])for(const [triangle,other] of [[a,b],[b,a]])for(let i=0;i<3;i++){
+    const x=triangle[i],y=triangle[(i+1)%3],inside=orient(x,y,rational(triangle[(i+2)%3]),axes);
+    if(inside===0n)continue;
+    if(other.every(p=>{
+      const side=orient(x,y,rational(p),axes);
+      return side*inside<0n || (side===0n&&shared.some(q=>q.every((v,j)=>v===p[j])));
+    }))return true;
+  }
+  return false;
+}
 export function assertNoMeshIntersections(mesh:TriangleMesh,budget:MeshConstructionBudget,components:readonly (readonly number[])[]):void{
   const points=exactCoordinates(mesh.vertices,budget),boxes=mesh.triangles.map((t,id)=>{
     budget.check(4);if(!normal(t.map(i=>points[i])).some(x=>x!==0n))throw new MeshConstructionFailure('Exact dyadic triangle normal is zero.');const p=t.map(i=>mesh.vertices[i]);return {id,min:[0,1,2].map(j=>Math.min(...p.map(x=>x[j]))),max:[0,1,2].map(j=>Math.max(...p.map(x=>x[j])))};
   });
-  // Longest spatial axis bounds sweep candidates; every scan and pair is charged.
-  const span=[0,1,2].map(j=>{let lo=Infinity,hi=-Infinity;for(const p of mesh.vertices){budget.check();lo=Math.min(lo,p[j]);hi=Math.max(hi,p[j]);}return hi-lo;}),axis=span.indexOf(Math.max(...span));
-  boxes.sort((a,b)=>{budget.check();return a.min[axis]-b.min[axis]||a.id-b.id;});
-  for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){
-    budget.check();const a=boxes[i],b=boxes[j];if(b.min[axis]>a.max[axis])break;
-    if([0,1,2].some(k=>a.max[k]<b.min[k]||b.max[k]<a.min[k]))continue;
-    budget.check(32);const ta=mesh.triangles[a.id],tb=mesh.triangles[b.id];
-    assertTrianglePair(ta.map(k=>points[k]),tb.map(k=>points[k]),ta.filter(k=>tb.includes(k)).map(k=>points[k]));
+  for(const [a,b] of meshBoundsCandidates(boxes,budget)){
+    budget.check(4);const ta=mesh.triangles[a],tb=mesh.triangles[b];
+    const pa=ta.map(k=>points[k]),pb=tb.map(k=>points[k]),shared=ta.filter(k=>tb.includes(k)).map(k=>points[k]);
+    if(!projectedContactIsShared(pa,pb,shared)){budget.check(32);assertTrianglePair(pa,pb,shared);}
   }
 
   // Closed disjoint components may still enclose one another. Such a boundary

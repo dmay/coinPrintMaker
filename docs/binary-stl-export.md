@@ -17,13 +17,18 @@ with zero padding, a little-endian uint32 count and exactly 50 bytes per triangl
 float32 normal, three float32 XYZ vertices, zero uint16 attributes. Total length
 is `84 + 50 * triangles`. Absolute +Y-up, Z-up mm coordinates are retained;
 normals are recomputed from emitted coordinates. No centering, axis swap, scale,
-color or layer metadata is applied. Surviving facets retain their source order.
+color or layer metadata is applied. Surviving facets retain their source order except for local cap retriangulation.
 
 The serializer first tries ordinary float32 rounding, welding identical emitted
 positions and omitting facets whose emitted area is exactly zero. If that surface
 cannot pass validation, it retries with a 0.001 mm coordinate grid before float32
 encoding. Every source vertex must remain within **0.001 mm Euclidean distance**
 of its emitted position, including float32 rounding. Source data is never changed.
+If rounding reverses or flattens a thin horizontal cap triangle, a shared internal
+diagonal may be flipped with its coplanar neighbour. Both replacement triangles
+must face outward; the patch's directed boundary and all rounded positions remain
+exactly unchanged. This also restores a subdivision that would otherwise become
+a collinear gap. A patch that cannot meet these conditions still rejects.
 This export-only cleanup may remove microscopic bevels or holes; it does not use
 nozzle size as a simplification threshold. It supersedes the previous policy of
 rejecting any collapsed facet regardless of physical significance.
@@ -33,7 +38,8 @@ normals, index/count limits, duplicate facets, closed manifold edges and vertex
 links, outward positive shells, unchanged shell count, exact intersections and
 internal components. Cleanup cannot excuse holes or intersections in the emitted
 mesh. Empty output, large coordinate loss and candidates that remain invalid
-reject. Generation acceptance and construction/validation work limits are unchanged.
+reject. Export cleanup does not change generation acceptance. Construction/validation
+limits are documented separately in D-33.
 
 Emitted bounds must agree with checked metrics within the measured maximum vertex
 displacement plus `1e-6 + abs(source) * 2e-7` mm. Volume must agree within `1e-6`
@@ -69,7 +75,10 @@ volume, orientation, normal values and preserved triangle order with production
 `GeneratedCoin`. It checks exact header/count/LE bytes/attributes/length and
 adversarial malformed/overflow/collapse/open/inward inputs. Microscopic bevel and
 hole regressions independently reparse cleaned STL facets and verify closed edges,
-volume, normals, unchanged input and retention of a 0.01 mm hole. jsdom coverage checks
+volume, normals, unchanged input and retention of a 0.01 mm hole. A thin-cap
+regression proves that retriangulation fixes rounding reversal without moving
+any vertex. Both DIG-79 fixtures also pass the full import/generation/STL/3MF
+pipeline through `npm run test:real-coins`. jsdom coverage checks
 Blob content, filename edge cases, anchor lifecycle, setup/click/scheduler failure,
 current-only export, rapid edit races, retained-source names and retry/unmount.
 These are automated byte/lifecycle checks, not native browser-save evidence.

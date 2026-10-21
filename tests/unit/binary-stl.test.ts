@@ -134,6 +134,23 @@ test('cleanup cannot move vertices beyond its absolute mm allowance even at larg
   const m={...metrics,boundsMm:[[100000.003,0,0],[100001.003,1,1]]} as MeshMetrics;
   expect(()=>serializeBinaryStl(mesh,m)).toThrow();
 });
+
+test('a cap diagonal is retriangulated when float32 reverses a thin triangle without moving its vertices',()=>{
+  const xy=[[16.395847,197.052208],[16.37015,196.986459],[16.382998,197.019333],[16.45,197.0]];
+  const vertices=[0,1].flatMap(z=>xy.map(([x,y])=>[x,y,z] as Point3Mm));
+  const triangles:number[][]=[[0,1,2],[1,0,3],[4,6,5],[5,7,4]];
+  const boundary=[2,1,3,0];
+  for(let i=0;i<4;i++){const a=boundary[i],b=boundary[(i+1)%4];triangles.push([a,b,b+4],[a,b+4,a+4]);}
+  const cross=(a:readonly number[],b:readonly number[],c:readonly number[])=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+  expect(cross(...[0,1,2].map(i=>vertices[i].map(Math.fround)) as [number[],number[],number[]])).toBeGreaterThan(0);
+  const volumeMm3=-(cross(xy[0],xy[1],xy[2])+cross(xy[1],xy[0],xy[3]))/2;
+  const mesh={vertices,triangles} as unknown as TriangleMesh,before=JSON.stringify(mesh);
+  const r=read(serializeBinaryStl(mesh,{boundsMm:[[16.37015,196.986459,0],[16.45,197.052208,1]],volumeMm3,shellCount:1}));
+  expect(r.facets).toHaveLength(12);
+  expect(new Set(r.facets.flat().map(p=>p.join(':')))).toEqual(new Set(vertices.map(p=>p.map(Math.fround).join(':'))));
+  expect(r.volume).toBeCloseTo(volumeMm3,6);
+  expect(JSON.stringify(mesh)).toBe(before);
+});
 const fixtures=(await loadFixtures()).filter(f=>f.expected.geometryOutcome==='valid');
 test.each(fixtures)('production $name reparses with generated mm bounds, volume, winding and exact triangle order',fixture=>{
   const imported=importCoinSvg({importId:fixture.name,fileName:fixture.name+'.svg',byteLength:fixture.svg.length,svgText:fixture.svg});

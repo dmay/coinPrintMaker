@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "dig79-gumi",
+      "file": "gumi-coin.svg",
+      "sourceIssue": "https://linear.app/diggy-01/issue/DIG-79/updated-base-fixtures-that-must-be-imported-properly",
+      "sha256": "bb850b125fc670bce39bc27973a060f7cce31ce4fe92b4a27f3997cea24d7455",
+      "expected": {
+        "stages": {
+          "import": "imported",
+          "generation": "valid",
+          "stl": "exported",
+          "threeMf": "exported"
+        },
+        "physicalPageMm": [
+          215.9,
+          279.4
+        ],
+        "layers": [
+          {
+            "id": "source:layer1",
+            "name": "Base",
+            "color": "#fd8400",
+            "regionCount": 1,
+            "holeCount": 0,
+            "sourceElementIds": [
+              "path8"
+            ]
+          },
+          {
+            "id": "source:layer2",
+            "name": "Hair",
+            "color": "#28d800",
+            "regionCount": 2,
+            "holeCount": 0,
+            "sourceElementIds": [
+              "path3",
+              "path4"
+            ]
+          },
+          {
+            "id": "source:layer3",
+            "name": "Glasses",
+            "color": "#fc011e",
+            "regionCount": 3,
+            "holeCount": 0,
+            "sourceElementIds": [
+              "path10",
+              "path9",
+              "path7"
+            ]
+          }
+        ],
+        "boundsMm": [
+          [
+            64.855349,
+            154.53659299999998,
+            0
+          ],
+          [
+            142.830571,
+            229.73054399999998,
+            2.4
+          ]
+        ],
+        "volumeMm3": 7906.397494094454,
+        "unifiedShellCount": 1,
+        "partShellCounts": [
+          1,
+          5,
+          3
+        ]
+      }
+    },
+    {
+      "id": "dig79-teto",
+      "file": "teto-coin.svg",
+      "sourceIssue": "https://linear.app/diggy-01/issue/DIG-79/updated-base-fixtures-that-must-be-imported-properly",
+      "sha256": "e1fa9128ab5238f38fb6d1e37dde73057b44953a53c10e81195f7e12f8b4b8fe",
+      "expected": {
+        "stages": {
+          "import": "imported",
+          "generation": "valid",
+          "stl": "exported",
+          "threeMf": "exported"
+        },
+        "physicalPageMm": [
+          215.9,
+          279.4
+        ],
+        "layers": [
+          {
+            "id": "source:layer1",
+            "name": "Base",
+            "color": "#c5c5c5",
+            "regionCount": 1,
+            "holeCount": 0,
+            "sourceElementIds": [
+              "path8"
+            ]
+          },
+          {
+            "id": "source:layer2",
+            "name": "Black",
+            "color": "#0f0e0e",
+            "regionCount": 2,
+            "holeCount": 0,
+            "sourceElementIds": [
+              "path2"
+            ]
+          },
+          {
+            "id": "source:layer3",
+            "name": "Red",
+            "color": "#fd001e",
+            "regionCount": 5,
+            "holeCount": 0,
+            "sourceElementIds": [
+              "path6"
+            ]
+          }
+        ],
+        "boundsMm": [
+          [
+            13.265096,
+            165.580746,
+            0
+          ],
+          [
+            107.878901,
+            260.02615399999996,
+            2.4
+          ]
+        ],
+        "volumeMm3": 12610.192690338054,
+        "unifiedShellCount": 1,
+        "partShellCounts": [
+          1,
+          2,
+          5
+        ]
+      }
+    }
+  ]
+}

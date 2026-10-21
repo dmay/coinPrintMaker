@@ -14,8 +14,18 @@ function line(a:ExactPoint,b:ExactPoint,budget:MeshConstructionBudget){
   return {key:[...d,...m].join(':'),axis,sign};
 }
 function assertChain(actual:readonly Segment[],expected:readonly Segment[],budget:MeshConstructionBudget){
-  const lines=new Map<string,Map<bigint,number>>();
+  // Cancel identical directed edges before expensive primitive-line GCDs.
+  // Residual differently subdivided edges still use the exact line-chain proof.
+  const residual=new Map<string,{a:ExactPoint;b:ExactPoint;weight:number}>();
   for(const [segments,weight] of [[actual,1],[expected,-1]] as const)for(const [a,b] of segments){
+    budget.check();const ak=a.join(':'),bk=b.join(':');
+    if(ak===bk)throw new MeshConstructionFailure('Surface boundary has a zero-length segment.');
+    const forward=ak<bk,key=forward?ak+'|'+bk:bk+'|'+ak;
+    const item=residual.get(key)??{a:forward?a:b,b:forward?b:a,weight:0};item.weight+=forward?weight:-weight;residual.set(key,item);
+  }
+  const lines=new Map<string,Map<bigint,number>>();
+  for(const {a,b,weight} of residual.values()){
+    if(!weight)continue;
     budget.check();const l=line(a,b,budget),events=lines.get(l.key)??new Map<bigint,number>();lines.set(l.key,events);
     events.set(a[l.axis],(events.get(a[l.axis])??0)+weight);events.set(b[l.axis],(events.get(b[l.axis])??0)-weight);
   }
