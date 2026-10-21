@@ -201,6 +201,17 @@ intent; do not add vendor-specific metadata to force UI behavior. Future guidanc
 must describe this boundary and the observed limitations without promising a
 tested assignment workflow.
 
+**Production ownership clarification — DIG-30, 2026-10-20:** The pure layered
+writer emits the baseline Core base-material/display-color resources and
+references because these remain explicit DIG-30 package acceptance requirements.
+DIG-31 owns the export dialog/options, guarded editor/download integration,
+color-only UI flow and consumer-facing explanation. This does not expand export
+acceptance to slicer display or filament mapping. Production serialization keeps
+the D-06 assembly arrangement, adds XML-safe `partnumber` for domain layer IDs,
+and uses Deflate rather than prototype STORE compression. See
+[the production writer contract and evidence limits](layered-3mf-export.md).
+Production target-slicer initial loading still needs its own recorded evidence.
+
 ## M0 consolidation and remaining risks
 
 | Decision | Current evidence / next action |

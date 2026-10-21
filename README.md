@@ -5,7 +5,8 @@ coins. The production UI is being built incrementally; the current page is a
 responsive React/TypeScript editor with local canonical SVG import, revision-safe
 checked generation, editable layers, interactive 3D preview and validated binary
 STL download. Successful import alone does not claim valid geometry. 3MF remains
-unavailable. See [binary STL export](docs/binary-stl-export.md). M0 prototypes
+unavailable in the UI; a [production layered 3MF writer](docs/layered-3mf-export.md)
+is available as a pure core boundary. See [binary STL export](docs/binary-stl-export.md). M0 prototypes
 remain reference implementations.
 
 ## Development and publication
