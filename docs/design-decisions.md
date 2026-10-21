@@ -923,3 +923,24 @@ and do not depend on a mounted component for cleanup. UI text explains that STL
 is geometry-only and unitless, with millimeter coordinate convention. Browser
 action success cannot establish an OS save. See [binary STL export](binary-stl-export.md)
 for automated coverage and distinct instrumented/native evidence tracks.
+
+## D-30 — Export choices resolve current checked state at submission
+
+**DIG-31:** A native ExportDialog owns only format/filename/error choices. Both
+formats resolve the current checked domain snapshot on submit and recheck exact
+snapshot/source revision/source reference after pure serialization before any
+download. No stale/previous result or renderer buffer can supply bytes. Color-only
+edits reuse existing checked meshes through the store's proven metadata projection;
+the unchanged DIG-30 writer receives current part/tier colors and emits its existing
+Core material references. No duplicate color resource owner or geometry rebuild.
+
+Keep the old STL action/wrapper behavior. A shared DOM-only download boundary
+adds `model/3mf` alongside `model/stl`, normalizes the chosen suffix and preserves
+exactly-once URL cleanup and retry. Native modal focus, Cancel/Escape, live status
+and submit gating accompany bounded-width scrolling. Browser MIME hints/anchor
+success cannot prove an OS save. Generic 3MF names/color intent remain package
+requirements; consumer presentation/filament/printer configuration and vendor
+project metadata remain outside acceptance. The operator deferred DIG-30 target-
+slicer initial loading to later polish; no new slicer gate or acceptance claim.
+See [export options and evidence](export-options.md). No DIG-32 height-guidance,
+M5, geometry policy or hosting arrangement change.

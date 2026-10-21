@@ -11,7 +11,9 @@ import { LayerPanel } from './LayerPanel';
 import { PreviewViewport } from './PreviewViewport';
 import type { PreviewState } from './PreviewViewport';
 import { Toolbar } from './Toolbar';
-import { exportCurrentStl } from '../state/exportStl';
+import { exportCurrentCoin } from '../state/exportCoin';
+import { ExportDialog } from './ExportDialog';
+import type { ExportFormat } from '../export/createDownload';
 
 function editorPreview(state: EditorState): PreviewState {
   const imported = state.importState;
@@ -29,12 +31,15 @@ export function AppShell({ store: providedStore }: { readonly store?: EditorStor
   const [store] = useState(() => providedStore ?? createEditorStore());
   useEffect(() => { store.activate(); return () => store.dispose(); }, [store]);
   const state = useStore(store);
-  const [exportError, setExportError] = useState<string | null>(null);
+  const [exportChoices, setExportChoices] = useState<{ format: ExportFormat; fileName: string } | null>(null);
   const view = selectGeometryPresentation(state);
   return <div className="app-shell">
     <a className="skip-link" href="#editor">Skip to editor</a>
-    <Toolbar onSelect={state.selectFile} exportNote={view.exportNote} canExportStl={view.current !== null}
-      onExportStl={() => setExportError(exportCurrentStl(store))} exportError={exportError} />
+    <Toolbar onSelect={state.selectFile} exportNote={view.exportNote} canExport={view.current !== null}
+      onExport={format => setExportChoices({ format, fileName: state.importState.coin?.source.fileName.replace(/\.[^.]*$/, '') ?? 'coin' })} />
+    {exportChoices && <ExportDialog initialFormat={exportChoices.format} initialName={exportChoices.fileName}
+      canExport={view.current !== null} exportNote={view.exportNote} onExport={choices => exportCurrentCoin(store, choices)}
+      onClose={() => setExportChoices(null)} />}
     <main id="editor" tabIndex={-1}>
       <EditorErrorBoundary resetKey={state.importState.requestId}>
         <div className="editor-layout">

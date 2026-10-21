@@ -7,7 +7,7 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 280px; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 button, input::file-selector-button {
   min-height: 44px; padding: .6rem .9rem; border: 1px solid #8b9ca6;
   border-radius: 6px; background: white; color: #22333d; font-weight: 600;
@@ -138,7 +138,16 @@ input[aria-invalid="true"] { border: 2px solid #a12d20; }
 .diagnostics-panel li button { margin-top: .5rem; font-size: .8rem; max-width: 100%; overflow-wrap: anywhere; }
 .diagnostic-pages { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: .8rem; }
 .eligibility-note { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid #dce3e7; }
-.export-controls { max-width: 320px; }
+.export-controls { width: 320px; max-width: 100%; min-width: 0; flex: 0 1 320px; }
+.export-dialog { width: min(34rem, calc(100% - 2rem)); max-height: calc(100dvh - 2rem); overflow: auto; border: 1px solid #8b9ca6; border-radius: 10px; padding: 1.25rem; color: #22333d; }
+.export-dialog::backdrop { background: rgb(20 35 45 / .5); }
+.export-dialog form { display: grid; gap: .75rem; }
+.export-dialog h2 { font-size: 1.25rem; }
+.export-dialog label { font-weight: 600; }
+.export-dialog input, .export-dialog select { min-width: 0; width: 100%; min-height: 44px; padding: .5rem; border: 1px solid #8b9ca6; border-radius: 6px; }
+.export-dialog p { font-size: .85rem; overflow-wrap: anywhere; }
+.export-dialog [role="alert"] { color: #a12d20; }
+.export-dialog .button-row { flex-wrap: wrap; justify-content: flex-end; }
 @media (max-width: 400px) {
   .panel-body { padding: .8rem; }
   .coin-measurements { grid-template-columns: minmax(0, 1fr); }
