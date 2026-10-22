@@ -99,52 +99,37 @@ test.each(formats.flatMap(format=>['edit','color','replacement','source','revisi
     if(kind==='revision')store.setState({sourceRevision:s.sourceRevision+1});if(kind==='throw')throw Error('private');};
   expect(exportCurrentCoin(store,{format,fileName:'coin'},{stl:()=>{mutate();return new ArrayBuffer(1);},threeMf:()=>{mutate();return new Uint8Array(1);},download})).toBe(exportFailure(format));expect(download).not.toHaveBeenCalled();store.dispose();
 });
-test('modal choices, guidance, cancellation, focus, retry and submit gate follow current state',async()=>{
-  Object.defineProperty(HTMLDialogElement.prototype,'showModal',{configurable:true,value:function(this:HTMLDialogElement){this.open=true;}});
-  Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(this:HTMLDialogElement){this.open=false;}});
+test.each(formats)('%s toolbar downloads immediately with the SVG name and reports retryable errors',async format=>{
   const {store}=await harness(),container=document.createElement('div');document.body.append(container);root=createRoot(container);
   await act(async()=>root!.render(createElement(AppShell,{store})));
-  const open=container.querySelectorAll<HTMLButtonElement>('.export-controls button')[1];open.focus();await act(async()=>open.click());
-  const dialog=()=>container.querySelector('dialog')!,input=()=>container.querySelector<HTMLInputElement>('#export-filename')!;
-  expect(dialog().open).toBe(true);expect(document.activeElement).toBe(input());expect(input().value).toBe('Stars');expect(dialog().textContent).toContain('not an OrcaSlicer project');
-  expect(dialog().textContent).toContain('outside CoinPrint export acceptance');
-  await act(async()=>dialog().dispatchEvent(new Event('cancel',{cancelable:true})));expect(container.querySelector('dialog')).toBeNull();expect(document.activeElement).toBe(open);
-  await act(async()=>open.click());
-  await act(async()=>store.getState().beginImport('new.svg'));
-  expect(container.querySelector<HTMLButtonElement>('button[type="submit"]')!.disabled).toBe(true);
-  const download=vi.fn();vi.stubGlobal('URL',Object.assign(URL,{createObjectURL:download,revokeObjectURL:vi.fn()}));
-  await act(async()=>container.querySelector('form')!.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));expect(download).not.toHaveBeenCalled();
-  await act(async()=>store.getState().finishImport(store.getState().importState.requestId,{status:'rejected',diagnostics:[]}));
-  expect(container.querySelector<HTMLButtonElement>('button[type="submit"]')!.disabled).toBe(false);
-  download.mockImplementationOnce(()=>{throw Error('private');}).mockReturnValue('blob:coin');vi.spyOn(HTMLAnchorElement.prototype,'click').mockImplementation(()=>{});
-  await act(async()=>container.querySelector<HTMLButtonElement>('button[type="submit"]')!.click());expect(dialog().textContent).toContain(exportFailure('3mf'));expect(input().value).toBe('Stars');
-  await act(async()=>container.querySelector<HTMLButtonElement>('button[type="submit"]')!.click());expect(container.querySelector('dialog')).toBeNull();expect(document.activeElement).toBe(open);
+  const button=container.querySelector<HTMLButtonElement>(`[aria-label="Export ${format.toUpperCase()}"]`)!;
+  const create=vi.fn().mockImplementationOnce(()=>{throw Error('private');}).mockReturnValue('blob:coin');
+  vi.stubGlobal('URL',Object.assign(URL,{createObjectURL:create,revokeObjectURL:vi.fn()}));
+  const names:string[]=[];vi.spyOn(HTMLAnchorElement.prototype,'click').mockImplementation(function(this:HTMLAnchorElement){names.push(this.download);});
+  await act(async()=>button.click());expect(container.querySelector('.export-error')?.textContent).toBe(exportFailure(format));
+  expect(container.querySelector('dialog,#export-filename')).toBeNull();
+  await act(async()=>button.click());expect(names).toEqual(['Stars.'+format]);expect(container.querySelector('.export-error')).toBeNull();
+  expect(container.querySelector('.toolbar')?.textContent).not.toContain('Current geometry');
+  expect(container.textContent).not.toContain('STL and 3MF are available');
+  await act(async()=>store.getState().beginImport('new.svg'));expect(button.disabled).toBe(true);
+  await act(async()=>button.click());expect(names).toHaveLength(1);
 });
 
-test('open dialog exports current color revision and replacement source, with changed format/name choices',async()=>{
-  Object.defineProperty(HTMLDialogElement.prototype,'showModal',{configurable:true,value:function(this:HTMLDialogElement){this.open=true;}});
-  Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(this:HTMLDialogElement){this.open=false;}});
+test('direct 3MF download resolves current colors and replacement SVG filename',async()=>{
   const {store,execute}=await harness(),container=document.createElement('div');document.body.append(container);root=createRoot(container);
   await act(async()=>root!.render(createElement(AppShell,{store})));
-  await act(async()=>container.querySelectorAll<HTMLButtonElement>('.export-controls button')[0].click());
-  const format=container.querySelector<HTMLSelectElement>('#export-format')!;
-  await act(async()=>{format.value='3mf';format.dispatchEvent(new Event('change',{bubbles:true}));});
-  const name=container.querySelector<HTMLInputElement>('#export-filename')!;
-  await act(async()=>{Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value')!.set!.call(name,'My coin.STL.3mf');name.dispatchEvent(new Event('input',{bubbles:true}));});
-  const id=store.getState().settings!.layers[1].layerId;
-  await act(async()=>store.getState().setColor(id,'#abcdef'));expect(execute).toHaveBeenCalledTimes(1);
+  await act(async()=>store.getState().setColor(store.getState().settings!.layers[1].layerId,'#abcdef'));expect(execute).toHaveBeenCalledTimes(1);
   const blobs:Blob[]=[],names:string[]=[];
   vi.stubGlobal('URL',Object.assign(URL,{createObjectURL:(blob:Blob)=>{blobs.push(blob);return 'blob:coin';},revokeObjectURL:vi.fn()}));
   vi.spyOn(HTMLAnchorElement.prototype,'click').mockImplementation(function(this:HTMLAnchorElement){names.push(this.download);});
-  async function submitAndXml(){await act(async()=>container.querySelector<HTMLButtonElement>('button[type="submit"]')!.click());
+  async function downloadXml(){await act(async()=>container.querySelector<HTMLButtonElement>('[aria-label="Export 3MF"]')!.click());
     const bytes=await new Promise<ArrayBuffer>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result as ArrayBuffer);reader.onerror=reject;reader.readAsArrayBuffer(blobs.at(-1)!);});
     const entries=unzipSync(new Uint8Array(bytes));return new DOMParser().parseFromString(new TextDecoder().decode(entries['3D/3dmodel.model']),'application/xml');}
-  let xml=await submitAndXml();expect(xml.querySelectorAll('base')[1].getAttribute('displaycolor')).toBe('#ABCDEFFF');expect(names.at(-1)).toBe('My coin.3mf');
-  await act(async()=>container.querySelectorAll<HTMLButtonElement>('.export-controls button')[1].click());
+  let xml=await downloadXml();expect(xml.querySelectorAll('base')[1].getAttribute('displaycolor')).toBe('#ABCDEFFF');expect(names.at(-1)).toBe('Stars.3mf');
   const svg=readFileSync('fixtures/svg/offset-nested-transforms.svg','utf8');
-  const replacement=importCoinSvg({importId:'new-source',fileName:'New.svg',byteLength:svg.length,svgText:svg});
-  await act(async()=>store.getState().finishImport(store.getState().beginImport('New.svg'),replacement));
-  const current=selectExportableGeometry(store.getState())!;expect(current.input.importId).toBe('new-source');
-  xml=await submitAndXml();expect([...xml.querySelectorAll('object')].filter(o=>o.querySelector('mesh')).map(o=>o.getAttribute('partnumber'))).toEqual(current.parts.map(p=>p.layerId));
-  expect(container.querySelector('dialog')).toBeNull();
+  const replacement=importCoinSvg({importId:'new-source',fileName:'New.coin.stl.svg',byteLength:svg.length,svgText:svg});
+  await act(async()=>store.getState().finishImport(store.getState().beginImport('New.coin.stl.svg'),replacement));
+  const current=selectExportableGeometry(store.getState())!;xml=await downloadXml();
+  expect([...xml.querySelectorAll('object')].filter(o=>o.querySelector('mesh')).map(o=>o.getAttribute('partnumber'))).toEqual(current.parts.map(p=>p.layerId));
+  expect(names.at(-1)).toBe('New.coin.stl.3mf');expect(container.querySelector('dialog')).toBeNull();
 });

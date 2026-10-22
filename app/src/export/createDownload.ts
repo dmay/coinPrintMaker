@@ -17,6 +17,8 @@ export function stlFileName(sourceName: string): string {
 
 export type ExportFormat = 'stl' | '3mf';
 export function exportFileName(name: string, format: ExportFormat): string {
+  // Source filenames keep their full stem, including dots and earlier suffixes.
+  if (/\.svg$/i.test(name)) return stlFileName(name).slice(0, -4) + '.' + format;
   // Remove repeated export suffixes, then apply the established portable stem rules.
   return stlFileName(name.trim().replace(/(?:\.(?:svg|stl|3mf))+$/i, '') + '.svg').slice(0, -4) + '.' + format;
 }

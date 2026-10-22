@@ -12,8 +12,6 @@ import { PreviewViewport } from './PreviewViewport';
 import type { PreviewState } from './PreviewViewport';
 import { Toolbar } from './Toolbar';
 import { exportCurrentCoin } from '../state/exportCoin';
-import { ExportDialog } from './ExportDialog';
-import type { ExportFormat } from '../export/createDownload';
 
 function editorPreview(state: EditorState): PreviewState {
   const imported = state.importState;
@@ -31,15 +29,18 @@ export function AppShell({ store: providedStore }: { readonly store?: EditorStor
   const [store] = useState(() => providedStore ?? createEditorStore());
   useEffect(() => { store.activate(); return () => store.dispose(); }, [store]);
   const state = useStore(store);
-  const [exportChoices, setExportChoices] = useState<{ format: ExportFormat; fileName: string } | null>(null);
+  const [exportError, setExportError] = useState<{ key: string; message: string } | null>(null);
+  const exportKey = `${state.sourceRevision}:${state.settings?.revision}:${state.importState.requestId}`;
   const view = selectGeometryPresentation(state);
   return <div className="app-shell">
     <a className="skip-link" href="#editor">Skip to editor</a>
-    <Toolbar onSelect={state.selectFile} exportNote={view.exportNote} canExport={view.current !== null}
-      onExport={format => setExportChoices({ format, fileName: state.importState.coin?.source.fileName.replace(/\.[^.]*$/, '') ?? 'coin' })} />
-    {exportChoices && <ExportDialog initialFormat={exportChoices.format} initialName={exportChoices.fileName}
-      canExport={view.current !== null} exportNote={view.exportNote} onExport={choices => exportCurrentCoin(store, choices)}
-      onClose={() => setExportChoices(null)} />}
+    <Toolbar onSelect={state.selectFile} canExport={view.current !== null}
+      onExport={format => {
+        const fileName = store.getState().importState.coin?.source.fileName ?? 'coin.svg';
+        const message = exportCurrentCoin(store, { format, fileName });
+        setExportError(message ? { key: exportKey, message } : null);
+      }} />
+    {exportError?.key === exportKey && <p className="export-error" role="alert">{exportError.message}</p>}
     <main id="editor" tabIndex={-1}>
       <EditorErrorBoundary resetKey={state.importState.requestId}>
         <div className="editor-layout">

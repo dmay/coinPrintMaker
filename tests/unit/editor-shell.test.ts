@@ -62,7 +62,8 @@ test('shell has labeled local input, skip destination, empty panel and gated exp
   expect(container.querySelector('input')?.getAttribute('aria-describedby')).toBe('local-file-note');
   expect(container.querySelector('[data-state="empty"]')?.textContent).toContain('Start with your artwork');
   expect(container.textContent).toContain('No layers yet');
-  expect([...container.querySelectorAll('button')].every(b => b.disabled)).toBe(true);
+  expect([...container.querySelectorAll<HTMLButtonElement>('.export-controls button')].every(b => b.disabled)).toBe(true);
+  expect(container.querySelector<HTMLButtonElement>('[aria-label="SVG file instructions"]')!.disabled).toBe(false);
   expect(container.querySelector('canvas,svg,img')).toBeNull();
 });
 

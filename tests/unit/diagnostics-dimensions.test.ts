@@ -38,7 +38,7 @@ test('shell shows checked width/depth/cumulative height/volume and Z, clears met
   expect(measurement().textContent).toContain('Total cumulative height (Z)1.6 mm'); expect(measurement().textContent).toContain('Volume160 mm³');
   expect(measurement().querySelector('tbody')?.textContent).toContain('<Base>ID: base01.6');
   expect(container.querySelector('base,svg')).toBeNull();
-  expect(container.querySelector('.export-controls')?.textContent).toContain('Current geometry is valid');
+  expect([...container.querySelectorAll<HTMLButtonElement>('.export-controls button')].every(button => !button.disabled)).toBe(true);
   await act(async () => h.store.getState().setThickness('base', 2));
   expect(measurement().textContent).toContain('Pending'); expect(measurement().textContent).toContain('stale'); expect(measurement().querySelector('dl,table')).toBeNull();
   await act(async () => h.jobs[1].finish({ schemaVersion: 1, status: 'invalid', diagnostics: [createDiagnostic('GENERATION_WORKER_FAILED', { scope: 'document' })] }));

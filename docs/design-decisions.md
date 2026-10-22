@@ -1027,3 +1027,14 @@ The end-to-end tests reparse actual STL and 3MF output, check closed STL topolog
 source immutability, source colors/names and exact 3MF part geometry. Parse the
 large 3MF models without a DOM in this fixture suite to limit test memory. No
 slicer or physical-print result follows from these automated checks.
+
+## D-34 - Compact workflow and direct source-named downloads
+
+**DIG-81:** Replace D-31's format/filename dialog with direct toolbar downloads.
+Open/drop, Review and Export form the top-bar workflow; SVG instructions live in
+an info modal. Preserve the complete imported filename stem (subject to portable
+filename safeguards), replacing only the final SVG extension. The existing
+`exportCurrentCoin` boundary still resolves and validates the current domain
+snapshot on every click and rechecks it before browser delivery. UI availability
+does not replace that guard. Readiness is communicated by enabled buttons;
+bounded download errors appear only when an action fails.
