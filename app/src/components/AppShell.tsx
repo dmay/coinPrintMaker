@@ -47,8 +47,8 @@ export function AppShell({ store: providedStore }: { readonly store?: EditorStor
           <div className="preview-column">
             <PreviewViewport state={editorPreview(state)} selectedLayerId={state.selectedLayerId} generationPhase={state.generationPhase} />
             <ImportStatus state={state.importState} />
-            <DimensionSummary view={view} />
-            <DiagnosticsPanel key={`${state.sourceRevision}:${state.settings?.revision}:${view.status}`} view={view} onSelectLayer={state.selectLayer} onRetry={state.retryGeneration} />
+            <DimensionSummary view={view} coin={state.importState.coin} />
+            <DiagnosticsPanel key={`${state.sourceRevision}:${state.settings?.revision}:${view.status}`} view={view} coin={state.importState.coin} onSelectLayer={state.selectLayer} onRetry={state.retryGeneration} />
           </div>
           <LayerPanel store={store} />
         </div>

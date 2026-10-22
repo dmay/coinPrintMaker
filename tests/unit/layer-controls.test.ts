@@ -55,10 +55,10 @@ test('base stays at the bottom; display order is top to bottom while settings st
   const { store } = await setup();
   expect(selectCurrentGeneration(store.getState())?.dimensionsMm[2]).toBeCloseTo(2.4);
   expect(ids()).toEqual(['top', 'middle', 'base']);
-  expect(container.textContent).toContain('Printing order, top to bottom');
-  expect(control('Drag Top to reorder').textContent).toContain('\u2195');
-  expect(control('Move Middle toward base').textContent).toContain('\u2193');
-  expect(control('Move Middle toward top').textContent).toContain('\u2191');
+  expect(container.querySelector('.source-summary,.layer-order,.reorder-help')).toBeNull();
+  expect(control('Drag Top to reorder').textContent).toBe('=');
+  expect(control('Move Middle toward base').textContent).toContain('\u21CA');
+  expect(control('Move Middle toward top').textContent).toContain('\u21C8');
   expect(store.getState().settings!.layers.map(layer => layer.layerId)).toEqual(['base', 'middle', 'top']);
   expect(row('base').querySelector('.reorder-controls,input[type="checkbox"]')).toBeNull();
   const input = control<HTMLInputElement>('Thickness for Middle (mm)');
@@ -81,7 +81,7 @@ test('base stays at the bottom; display order is top to bottom while settings st
   const result = selectCurrentGeneration(store.getState())!;
   expect(result.activeTiers.map(t => [t.layerId, t.bottomZMm, t.topZMm])).toEqual([['base', 0, 1.6], ['middle', 1.6, 2.35]]);
   expect(result.dimensionsMm[2]).toBe(2.35);
-  expect(row('top').textContent).toContain('Hidden \u00b7 contributes no height');
+  expect(control<HTMLInputElement>('Show Top').checked).toBe(false);
   await click('Show Top');
   expect(store.getState().generationStatus).toBe('ready');
   await click('Move Middle toward base');
@@ -127,13 +127,13 @@ test('opaque color commits reuse checked meshes with zero new geometry execution
 
 test('pending edits never display old Z as current; pending replacement pauses controls and atomic reimport resets drafts', async () => {
   const { store } = await setup({ execute: () => new Promise(() => {}) });
-  expect(container.textContent).toContain('Current height and Z are pending');
-  expect(row('top').textContent).toContain('Current Z unavailable');
+  expect(container.querySelector('.dimension-summary')?.textContent).toContain('Pending');
+  expect(row('top').querySelector('.tier-interval,details')).toBeNull();
   const input = control<HTMLInputElement>('Thickness for Top (mm)'); await type(input, 'unfinished');
   let request = 0;
   await act(async () => { request = store.getState().beginImport('replace.svg'); });
   expect(input.disabled).toBe(true);
-  expect(container.textContent).toContain('Editing is paused');
+  expect(control<HTMLButtonElement>('Drag Top to reorder').disabled).toBe(true);
   await act(async () => store.getState().finishImport(request, { status: 'imported', coin: { ...coin, source: { ...coin.source, importId: 'new' } }, diagnostics: [] }));
   expect(control<HTMLInputElement>('Thickness for Top (mm)').value).toBe('0.4');
   expect(store.getState().selectedLayerId).toBeNull();

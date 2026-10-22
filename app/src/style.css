@@ -158,3 +158,32 @@ input[aria-invalid="true"] { border: 2px solid #a12d20; }
   .coin-measurements { grid-template-columns: minmax(0, 1fr); }
   .tier-measurements th, .tier-measurements td { padding: .35rem; }
 }
+
+/* DIG-82: keep artwork controls compact and technical detail out of the canvas. */
+.preview-heading { flex-wrap: wrap; padding: .65rem 1rem; }
+.preview-heading .view-controls { padding: 0; gap: .3rem; }
+.preview-heading .view-controls button { min-height: 32px; padding: .25rem .55rem; font-size: .75rem; }
+.layer-row-heading { display: grid; grid-template-columns: 32px minmax(0, 1fr) 32px 32px; gap: .2rem; align-items: center; margin-bottom: .5rem; }
+.layer-row-heading h3 { grid-column: 2; grid-row: 1; min-width: 0; margin: 0; }
+.layer-row-heading .layer-select { padding: .3rem; min-height: 36px; border-color: transparent; background: transparent; }
+.layer-row-heading .layer-select[aria-pressed="true"] { background: #e5f2f5; }
+.layer-row-heading .reorder-controls { display: contents; }
+.layer-row-heading .reorder-controls button { grid-row: 1; min-width: 32px; min-height: 36px; padding: .2rem; font-size: 1rem; }
+.layer-row-heading .drag-handle { grid-column: 1; cursor: grab; }
+.layer-row-heading .reorder-controls button:nth-child(2) { grid-column: 3; }
+.layer-row-heading .reorder-controls button:nth-child(3) { grid-column: 4; }
+.layer-row-heading .drag-handle:active { cursor: grabbing; }
+.internal-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem 1rem; margin-bottom: 1rem; font-size: .8rem; }
+.diagnostics-panel > summary { cursor: pointer; justify-content: flex-start; }
+.diagnostics-panel > summary::before { content: '▸'; }
+.diagnostics-panel[open] > summary::before { content: '▾'; }
+.diagnostics-panel > summary span { margin-left: auto; text-align: right; }
+.diagnostics-panel:not([open]) > summary { border-bottom: 0; }
+.geometry-checked { margin-bottom: 1rem; }
+.imported-measurements { margin: .75rem 0; }
+@media (pointer: coarse) {
+  .preview-heading .view-controls button { min-height: 44px; min-width: 44px; }
+  .layer-row-heading { grid-template-columns: 44px minmax(0, 1fr) 44px 44px; }
+  .layer-row-heading .reorder-controls button { min-width: 44px; min-height: 44px; }
+}
+@media (max-width: 400px) { .internal-metrics { grid-template-columns: minmax(0, 1fr); } }

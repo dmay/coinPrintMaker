@@ -1,9 +1,11 @@
+import type { ImportedCoin } from '../core/contracts';
 import { useState } from 'react';
 import type { GeometryPresentation } from '../state/editorPresentation';
 
 const PAGE_SIZE = 8;
-export function DiagnosticsPanel({ view, onSelectLayer, onRetry }: {
+export function DiagnosticsPanel({ view, coin = null, onSelectLayer, onRetry }: {
   readonly view: GeometryPresentation;
+  readonly coin?: ImportedCoin | null;
   readonly onSelectLayer: (id: string) => void;
   readonly onRetry: () => void;
 }) {
@@ -11,9 +13,25 @@ export function DiagnosticsPanel({ view, onSelectLayer, onRetry }: {
   const pages = Math.max(1, Math.ceil(view.diagnostics.length / PAGE_SIZE));
   const page = Math.min(requestedPage, pages - 1);
   const start = page * PAGE_SIZE;
-  return <section className="diagnostics-panel" aria-label="Geometry diagnostics" aria-labelledby="diagnostics-heading">
-    <div className="panel-heading"><h2 id="diagnostics-heading">Diagnostics</h2><span>{view.status}</span></div>
+  return <details className="diagnostics-panel" aria-labelledby="diagnostics-heading">
+    <summary className="panel-heading"><h2 id="diagnostics-heading">Internals</h2><span>{view.errorCount} errors · {view.warningCount} warnings · {view.status}</span></summary>
     <div className="panel-body">
+      {view.current && <div className="geometry-checked"><h3>Geometry checked</h3><p>{view.current.dimensionsMm.map(n => n.toLocaleString(undefined, { maximumSignificantDigits: 8 })).join(' × ')} mm</p></div>}
+      {coin && <dl className="internal-metrics">
+        <div><dt>Source file</dt><dd>{coin.source.fileName} ({coin.source.byteLength.toLocaleString()} bytes)</dd></div>
+        <div><dt>Imported layers</dt><dd>{coin.layers.length}</dd></div>
+        <div><dt>Printable source objects</dt><dd>{coin.layers.reduce((n, layer) => n + layer.sourceElements.length, 0)}</dd></div>
+        <div><dt>Imported regions / holes</dt><dd>{coin.layers.reduce((n, layer) => n + layer.footprintMm.length, 0)} / {coin.layers.reduce((n, layer) => n + layer.footprintMm.reduce((m, polygon) => m + polygon.holes.length, 0), 0)}</dd></div>
+        <div><dt>Flattened contour points</dt><dd>{coin.layers.reduce((n, layer) => n + layer.footprintMm.reduce((m, polygon) => m + polygon.outer.length + polygon.holes.reduce((k, ring) => k + ring.length, 0), 0), 0).toLocaleString()}</dd></div>
+        <div><dt>Coordinates</dt><dd>Millimeters, Y up</dd></div>
+      </dl>}
+      {view.current && <dl className="internal-metrics">
+        <div><dt>Unified mesh vertices / triangles</dt><dd>{view.current.unifiedMesh.vertices.length.toLocaleString()} / {view.current.unifiedMesh.triangles.length.toLocaleString()}</dd></div>
+        <div><dt>Unified mesh shells</dt><dd>{view.current.metrics.shellCount}</dd></div>
+        <div><dt>Layer parts</dt><dd>{view.current.parts.length}</dd></div>
+        <div><dt>Part mesh vertices / triangles</dt><dd>{view.current.parts.reduce((n, part) => n + part.mesh.vertices.length, 0).toLocaleString()} / {view.current.parts.reduce((n, part) => n + part.mesh.triangles.length, 0).toLocaleString()}</dd></div>
+      </dl>}
+
       <div role={view.errorCount ? 'alert' : 'status'} aria-atomic="true">
         <p>{view.summary}</p>
         <p>{view.errorCount} {view.errorCount === 1 ? 'error' : 'errors'} · {view.warningCount} {view.warningCount === 1 ? 'warning' : 'warnings'} for the loaded coin.</p>
@@ -38,5 +56,5 @@ export function DiagnosticsPanel({ view, onSelectLayer, onRetry }: {
       </div>}
       {view.diagnostics.some(item => item.diagnostic.code === 'GENERATION_WORKER_FAILED') && <button type="button" onClick={onRetry}>Retry generation</button>}
     </div>
-  </section>;
+  </details>;
 }
