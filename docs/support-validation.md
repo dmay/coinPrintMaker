@@ -1,4 +1,4 @@
-# Automatic downward support (DIG-78)
+# Automatic downward support
 
 `core/validateSupport.ts` resolves the current enabled order and extends hanging
 artwork straight down through every lower enabled tier, including the base.
@@ -6,8 +6,7 @@ The effective footprint at tier i is the union of its original footprint and
 every active footprint above it. Imported SVGs, source footprints, settings,
 colors, layer identities and thicknesses are not changed.
 
-The operator explicitly approved filling holes and extending the original base
-outline, and rejected a disconnected-result restriction. Artwork outside the
+Artwork outside the
 original base becomes a separate column down to Z=0. No bridge, clipping,
 resizing or recentering is added. Generated support belongs to each lower tier's
 color and existing height interval; no new tier or color is created.
@@ -51,29 +50,3 @@ components; 3MF retains each lower colored layer's complete closed mesh.
 
 The layer panel explains that downward extension can fill holes, enlarge the
 outline or create separate pieces.
-
-## Regression evidence
-
-Tests cover cascading unions, partial/complete hole filling, protruding artwork,
-multiple islands, disjoint columns, enabled order/height/color, source immutability,
-hide/show/reorder/freshness, existing topology/precision guards, malformed kernels,
-shared budgets and all accepted authored SVGs.
-
-The historical outside-rim and over-lower-hole examples now generate successfully.
-Original fixture JSON remains unchanged for import and M0 spike oracles;
-`tests/unit/helpers/downwardSupportExpectation.ts` supplies independently derived
-current-generation expectations (a circle/rectangle integral and a 36 mm2 center
-addition).
-
-A production-imported detached-column regression independently expects areas
-104/40/4 mm2, total volume 184 mm3, two unified shells, layer shell counts 2/2/1
-and exact source position. It parses emitted STL float32 coordinates and 3MF XML,
-revalidates closed meshes, checks layer colors and loads 3MF with ThreeMFLoader.
-Automated round-trips are not slicer or physical-print acceptance.
-
-Validation on this branch: 911 Vitest tests, 22 retained Node tests, typecheck,
-build:pages and check:pages pass. The retained build tests were rerun through
-the normal native Node runtime after sandbox temporary-directory rename errors.
-Live browser smoke was unavailable: browser/app inventory returned no surfaces.
-Editor controls/presentation are covered by the automated jsdom suite; no new
-manual browser, target-slicer or physical-print acceptance is claimed.
