@@ -37,7 +37,6 @@ export function DiagnosticsPanel({ view, onSelectLayer, onRetry }: {
         <button type="button" disabled={page === pages - 1} onClick={() => setPage(page + 1)}>Next diagnostics</button>
       </div>}
       {view.diagnostics.some(item => item.diagnostic.code === 'GENERATION_WORKER_FAILED') && <button type="button" onClick={onRetry}>Retry generation</button>}
-      <p className="eligibility-note">{view.exportNote}</p>
     </div>
   </section>;
 }

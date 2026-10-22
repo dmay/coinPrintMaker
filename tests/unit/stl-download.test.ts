@@ -101,8 +101,7 @@ test('real shell current STL click performs download; failures show bounded aler
   expect(buttons().map(b=>b.disabled)).toEqual([true,true]);
   await act(async()=>h.imported());await h.finish(0);expect(buttons().map(b=>b.disabled)).toEqual([false,false]);
   const before=h.store.getState();b.click.mockImplementationOnce(()=>{throw Error('secret');});
-  await act(async()=>buttons()[0].click());
-  const submit=()=>container.querySelector<HTMLButtonElement>('dialog button[type="submit"]')!.click();
+  const submit=()=>container.querySelector<HTMLButtonElement>('[aria-label="Export STL"]')!.click();
   await act(async()=>submit());expect(container.querySelector('[role="alert"]')?.textContent).toBe(STL_EXPORT_FAILURE);
   expect(container.textContent).not.toContain('secret');expect(h.store.getState()).toBe(before);expect(b.revoke).toHaveBeenCalledTimes(1);
   await act(async()=>submit());expect(container.querySelector('[role="alert"]')).toBeNull();expect(b.create).toHaveBeenCalledTimes(2);

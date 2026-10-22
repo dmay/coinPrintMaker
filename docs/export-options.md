@@ -1,12 +1,17 @@
-# Export options — DIG-31
+# Direct downloads - DIG-81 (supersedes DIG-31 dialog)
 
-Both toolbar buttons open a native modal with STL/3MF format choice, editable
-filename and the final safe download-name preview. The selected format controls
-the suffix, stripping repeated SVG/STL/3MF suffixes before applying the existing
-portable filename policy (NFC, forbidden characters, controls, reserved Windows
-names and bounded UTF-8 length). Empty names become `coin`. Cancel or Escape
-closes the dialog; focus returns to the initiating control if it is still connected.
-The filename receives initial focus. The modal scrolls at narrow/short sizes.
+The compact toolbar follows Open SVG → Review → Export. The file target accepts
+click/keyboard selection and a single dropped file through the same local importer.
+The info button opens SVG authoring instructions in a native modal; Close or Escape
+returns focus to the info button. The modal scrolls on short screens.
+
+3MF and STL buttons immediately download the current checked model. There is no
+filename or format dialog. The imported SVG's final extension is replaced with
+`.3mf` or `.stl`, preserving dots and earlier suffixes in the stem. Existing portable
+filename safeguards still apply (NFC, forbidden characters, controls, reserved
+Windows names and bounded UTF-8 length). Empty names become `coin`.
+Button availability communicates export readiness; the redundant export-readiness
+paragraphs have been removed. Geometry diagnostics remain in the editor.
 
 STL is a single checked external surface without colors or layer identities.
 STL has no units; CoinPrint coordinates use millimeters. 3MF is a generic Core
@@ -18,7 +23,7 @@ project metadata or tested filament mapping workflow is introduced.
 
 ## State and serialization boundary
 
-The dialog retains choices only, never a mesh or generated snapshot. Every submit
+The toolbar retains no mesh or generated snapshot. Every click
 calls `exportCurrentCoin`, which resolves `selectExportableGeometry` and source
 identity at that moment. It passes the exact checked unified mesh/metrics to the
 existing STL serializer or the exact checked `ValidGeneratedCoin` to `serialize3mf`.
@@ -28,9 +33,10 @@ color revisions, import starts, source replacement or source-revision changes
 discard the captured bytes. Unsupported runtime formats fail before a serializer.
 Importing, pending, stale, invalid and `previousValid` results cannot export.
 
-Availability/status remain live while the modal is open. A later checked revision
-is resolved on submit; prior geometry is never retained by opening the modal.
-Errors are bounded, keep choices for retry and do not alter the domain store.
+Availability remains live during imports and edits. Every click resolves the
+current source filename and checked revision. Errors appear only on failure,
+allow retry and do not alter the domain store. A new import or settings revision
+hides an error belonging to the old state; successful retry clears it.
 The earlier `exportCurrentStl` API retains its behavior and regression coverage.
 
 DIG-30 already owns valid Core base-material resources, ordinal names, opaque
@@ -50,7 +56,25 @@ click; its Object URL is revoked once on the next task, independently of compone
 lifetime. Setup/click/scheduler failures revoke immediately. Retrying uses a fresh
 URL. A successful action means bytes were offered to the browser, not an OS save.
 
-## Evidence and limits
+## DIG-81 verification
+
+Regression coverage includes direct downloads in both formats, current colors and
+replacement-source names, multi-dot names, failure/retry, pending export gating,
+single/multiple-file drops and instructions Close/Escape/focus restoration.
+The Pages artifacts are rebuilt with the existing root publisher. Browser UI
+verification was unavailable in this session (browser inventory empty); desktop
+and narrow layout and real native dialog/drop behavior still need visual review.
+
+Local validation: 932 unit tests pass; typecheck, production build and Pages drift
+check pass. With test temporary files placed in the workspace, the legacy suite
+has 20 passes, one skipped symlink test and one loopback-server test blocked by
+Windows sandbox `EACCES`. The initial default-temp attempt also hit sandbox
+rename restrictions. Linux PR CI remains the complete build/serving check.
+
+## Historical DIG-31 evidence and limits
+
+The following describes the previous dialog UI, not DIG-81 verification.
+The retained `verify-export-options.mjs` observer targets that historical UI.
 
 Full local unit suite: 915 passing tests (34 added), including both-format stale
 and reentrant checks, runtime format rejection, filename/MIME/URL failures,

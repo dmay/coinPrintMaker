@@ -4,7 +4,7 @@ A browser-only utility for turning layered Inkscape SVG artwork into 3D-printabl
 coins. The production UI is being built incrementally; the current page is a
 responsive React/TypeScript editor with local canonical SVG import, revision-safe
 checked generation, editable layers, interactive 3D preview and validated binary
-STL and layered 3MF downloads with format/filename choices. Successful import alone
+STL and layered 3MF downloads using the imported SVG filename. Successful import alone
 does not claim valid geometry. See [export options](docs/export-options.md), the
 [production layered 3MF writer](docs/layered-3mf-export.md) and
 [binary STL export](docs/binary-stl-export.md). M0 prototypes
