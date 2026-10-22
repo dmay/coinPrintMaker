@@ -1,4 +1,4 @@
-# Validated binary STL export (DIG-29)
+# Validated binary STL export
 
 The app exports a binary STL from the checked **current unified domain mesh**.
 `selectExportableGeometry` is the authority. The click action reads the store,
@@ -30,16 +30,14 @@ must face outward; the patch's directed boundary and all rounded positions remai
 exactly unchanged. This also restores a subdivision that would otherwise become
 a collinear gap. A patch that cannot meet these conditions still rejects.
 This export-only cleanup may remove microscopic bevels or holes; it does not use
-nozzle size as a simplification threshold. It supersedes the previous policy of
-rejecting any collapsed facet regardless of physical significance.
+nozzle size as a simplification threshold.
 
 Both attempts validate the actual output: finite coordinates, source and emitted
 normals, index/count limits, duplicate facets, closed manifold edges and vertex
 links, outward positive shells, unchanged shell count, exact intersections and
 internal components. Cleanup cannot excuse holes or intersections in the emitted
 mesh. Empty output, large coordinate loss and candidates that remain invalid
-reject. Export cleanup does not change generation acceptance. Construction/validation
-limits are documented separately in D-33.
+reject. Export cleanup does not change generation acceptance.
 
 Emitted bounds must agree with checked metrics within the measured maximum vertex
 displacement plus `1e-6 + abs(source) * 2e-7` mm. Volume must agree within `1e-6`
@@ -50,7 +48,7 @@ existing topology consistency gate. No old result is substituted after failure.
 
 STL has no unit field. The file contains millimeter coordinate values; consumers
 must interpret them as millimeters. It carries geometry only, with no layer or
-color intent. 3MF remains disabled and belongs to later M4 issues.
+color intent.
 
 ## Local download boundary
 
@@ -67,43 +65,3 @@ override/isolate characters with underscores, trims leading/trailing dots/spaces
 and limits the stem to 100 code points and 180 UTF-8 bytes without splitting a
 code point. Empty names become `coin`; DOS device stems receive `_`; the suffix
 is always lowercase `.stl`. Filename sanitation does not establish content trust.
-
-## Verification and browser reproduction
-
-The unit suite reparses every valid development fixture and compares mm bounds,
-volume, orientation, normal values and preserved triangle order with production
-`GeneratedCoin`. It checks exact header/count/LE bytes/attributes/length and
-adversarial malformed/overflow/collapse/open/inward inputs. Microscopic bevel and
-hole regressions independently reparse cleaned STL facets and verify closed edges,
-volume, normals, unchanged input and retention of a 0.01 mm hole. A thin-cap
-regression proves that retriangulation fixes rounding reversal without moving
-any vertex. Both DIG-79 fixtures also pass the full import/generation/STL/3MF
-pipeline through `npm run test:real-coins`. jsdom coverage checks
-Blob content, filename edge cases, anchor lifecycle, setup/click/scheduler failure,
-current-only export, rapid edit races, retained-source names and retry/unmount.
-These are automated byte/lifecycle checks, not native browser-save evidence.
-
-After `npm run build:pages`, run `node scripts/verify-stl-export.mjs`, then open
-`http://127.0.0.1:4177/coinPrintMaker/`. The loopback-only developer observer serves
-the generated root application and assets; the injected observer is never bundled
-or published. It delays Worker asset HTTP responses 150 ms to expose pending.
-Run STL workflow (intercepted) uses synthetic File/DataTransfer/DOM events with
-the actual importer, Worker, engine, serializer and app handlers. It intercepts
-anchor actions, reparses actual Blobs, checks revisions/metrics/filename/URL
-revocation, exercises browser failure/retry and saves reports in ignored
-`.profiling-results/`. It never claims a native picker or saved file.
-
-For separate native-download evidence, load the native-download fixture (synthetic
-input), enable real STL download, then click the app's Export STL button. Expected
-filename: `offset-nested-transforms.stl`. The original anchor action runs. Inspect
-the browser Downloads UI and downloaded file separately, then Save STL evidence
-to record Blob/URL metadata. Browser/version, native actions and observed saving
-must be reported explicitly. No slicer, cross-browser or physical-print result
-follows from these checks.
-
-Local Windows verification also retains the known historical JSON report CRLF
-byte-drift failure in the Node suite; historical M0 artifacts are not rewritten.
-Exact PR-head Linux CI is the retained-artifact verification authority for this
-checkout limitation. Browser outcomes and final commit/CI links are recorded in
-the PR/Linear handoff after execution, without treating unavailable Library
-documents as read.
