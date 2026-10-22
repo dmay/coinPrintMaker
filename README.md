@@ -156,9 +156,8 @@ precision, bounded construction checks and independent analytical evidence.
 metrics, dimensions, analytical volume and internal active-tier boundary heights.
 All failures strip geometry; revision freshness rejects old valid results after
 edits. This pure API is separate from the current inspector. Editor/preview/export
-remain later work. See [headless generation](docs/headless-generation.md) and the
-[M2 checkpoint](docs/m2-geometry-checkpoint.md) for tests/native evidence, precision
-and work limits, and the independent operator-merge boundary.
+remain later work. See [headless generation](docs/headless-generation.md) for the
+generation contract, tests, precision and work limits.
 
 ## Interactive Z-up preview
 
@@ -187,5 +186,4 @@ stable layers and corrective actions; diagnostic buttons select layers only.
 Failed replacement imports are kept separate from the retained checked coin.
 STL is enabled only for current checked geometry and independently validates
 float32 output before local download; 3MF remains unavailable and disabled.
-See [current diagnostics](docs/current-diagnostics.md) and the
-[pre-merge M3 checkpoint](docs/m3-editor-checkpoint.md) for evidence and limits.
+See [current diagnostics](docs/current-diagnostics.md) for evidence and limits.

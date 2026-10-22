@@ -103,5 +103,4 @@ Historical spikes/fixtures/reports/samples are untouched.
 Library baselines were rechecked: no synced source files, Linear project documents
 or connected document sessions were available. The live issue and current
 repository contracts/decisions were read; missing Library documents are not
-represented as read. See the [M3 checkpoint](m3-editor-checkpoint.md) for the
-operator boundary. DIG-28 remains In Progress pending review and merge.
+represented as read.

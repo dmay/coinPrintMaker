@@ -5,10 +5,8 @@ Current generation extends every active footprint down through all lower tiers,
 including the base, and permits detached closed components. Source SVGs remain
 immutable. See [automatic downward support](support-validation.md).
 
-DIG-22 adds complete [checked headless generation](headless-generation.md) and the
-[M2 checkpoint](m2-geometry-checkpoint.md). Pending-generation notes below record
-prior stage boundaries; construction remains distinct from final current-revision
-validation. M2 operator merge is still pending.
+DIG-22 adds complete [checked headless generation](headless-generation.md).
+Construction remains distinct from final current-revision validation.
 
 DIG-21 adds the pure [unified external coin surface](unified-coin-surface.md),
 with exact contour subdivision, terrace boundary checks and bounded connected
@@ -177,8 +175,7 @@ no project documents or connected document sessions); this bounded scope follows
 live DIG-20, canonical contracts and recorded decisions. The production UI does
 not yet import this pure stage, so no additional browser smoke is required. Root
 Pages artifacts remain synchronized through the normal guarded build. No new UI,
-export, slicer or physical-print acceptance is claimed. Operator merge remains
-independent; DIG-20 stays unfinished while its PR is awaiting review.
+export, slicer or physical-print acceptance is claimed.
 
 Local verification on Node 24.14.0: typecheck, npm test (570 Vitest + 22 retained
 Node checks), build:pages, check:pages and whitespace checks pass. The generated

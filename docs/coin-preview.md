@@ -75,8 +75,6 @@ is introduced. Runtime generation profiling/Worker decisions remain DIG-27.
 Pinned dependencies report zero npm audit vulnerabilities at installation. Three's
 Clock and test-renderer CommonJS deprecation notices do not fail the checks.
 
-Operator review/merge remains independent. DIG-26 stays In Progress at PR handoff;
-no later issue begins and no merge, exporter or Worker is included.
 
 
 Native production-browser observations on 2026-10-19 local time were made by the

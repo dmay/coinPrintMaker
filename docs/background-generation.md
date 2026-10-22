@@ -109,7 +109,7 @@ rechecked: synced sources and Linear project documents were empty; connected
 document control was unavailable. Those absent files are not represented as read.
 
 Measured results and native limitations are recorded in D-08 and the committed
-evidence summary. DIG-27 remains In Progress until operator merge.
+evidence summary.
 
 ## Original native comparison before rebase
 
@@ -208,4 +208,4 @@ Fresh current-base checks pass 771 Vitest + 22 retained Node cases, three
 typechecks, build:pages/check:pages and whitespace checks. The emitted main/Worker
 sizes are approximately 1,279.32 / 82.82 kB. Final PR head, CI and synthetic merge
 parents/tree are recorded in the PR/Linear handoff, avoiding circular commit IDs
-inside their own tree. DIG-27 stays In Progress pending operator merge.
+inside their own tree.

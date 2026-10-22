@@ -1,9 +1,8 @@
 # Canonical SVG import and M1 checkpoint (DIG-16)
 
-DIG-22 adds complete [checked headless generation](headless-generation.md) and the
-[M2 checkpoint](m2-geometry-checkpoint.md). Pending-generation notes below record
-prior stage boundaries; construction remains distinct from final current-revision
-validation. M2 operator merge is still pending.
+DIG-22 adds complete [checked headless generation](headless-generation.md).
+Import and generation remain separate stages; checked generation validates the
+current revision before exposing exportable geometry.
 
 DIG-21 adds the pure [unified external coin surface](unified-coin-surface.md),
 with exact contour subdivision, terrace boundary checks and bounded connected
@@ -180,10 +179,6 @@ or source script execution occurred. This is bounded native Chrome UI evidence;
 no cross-browser, performance, slicer, new mesh or physical-print acceptance is
 claimed. The original Library baselines remain unavailable in the empty synced
 source directory; these decisions follow the current issue and repository evidence.
-
-M1 implementation is reviewable when this change's final-head CI and generated
-artifact checks pass. Operator merge remains the final handoff; no M2 work starts
-as part of DIG-16. Later support/meshing/export/manual gates remain unfinished.
 
 ## DIG-42: detailed Teto artwork
 
