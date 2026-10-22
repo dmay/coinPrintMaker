@@ -28,12 +28,13 @@ export function CoinPreview({ result, selectedLayerId }: { readonly result: Vali
   useEffect(() => canvas ? watchContextLoss(canvas, fail) : undefined, [canvas, fail]);
   function view(preset: CameraPreset) { setCommand(previous => ({ preset, sequence: previous.sequence + 1 })); }
   return <>
+    <div className="panel-heading preview-heading"><h2 id="preview-heading">Preview</h2>
     <div className="view-controls" aria-label="3D view controls">
-      <button disabled={!result || failure} onClick={() => view('fit')}>Fit coin</button>
-      <button disabled={!result || failure} onClick={() => view('reset')}>Reset view</button>
-      <button disabled={!result || failure} onClick={() => view('top')}>Top view</button>
-      <button disabled={!result || failure} onClick={() => view('side')}>Side view</button>
-    </div>
+      <button type="button" title="Fit coin" aria-label="Fit coin" disabled={!result || failure} onClick={() => view('fit')}>Fit</button>
+      <button type="button" title="Reset view" aria-label="Reset view" disabled={!result || failure} onClick={() => view('reset')}>Reset</button>
+      <button type="button" title="Top view" aria-label="Top view" disabled={!result || failure} onClick={() => view('top')}>Top</button>
+      <button type="button" title="Side view" aria-label="Side view" disabled={!result || failure} onClick={() => view('side')}>Side</button>
+    </div></div>
     {failure ? <div className="preview-fallback" role="status">
       <p>3D preview is unavailable. Current dimensions and diagnostics remain available below. You can keep opening artwork and editing layers.</p>
       <button onClick={() => { setFailure(false); setAttempt(value => value + 1); }}>Retry 3D preview</button>
@@ -45,7 +46,6 @@ export function CoinPreview({ result, selectedLayerId }: { readonly result: Vali
         </Canvas>
       </SceneBoundary>
     </div>}
-    {started && !failure && <p className="orbit-help">Drag to orbit · right-drag or two fingers to pan · scroll or pinch to zoom. Top: +X right, +Y up. Side: +X right, +Z up.</p>}
   </>;
 }
 // Stable options avoid reconfiguring the camera on React updates.

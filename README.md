@@ -49,6 +49,18 @@ SVG authoring subset, preflight diagnostics and verification:
 [docs/svg-preflight.md](docs/svg-preflight.md). The inspector shows validated XY polygons and metrics; unified meshes
 and exports remain separate from the inspector. Pure support, independent layer-part construction and [unified external surface construction](docs/unified-coin-surface.md) are available as headless stages. See [canonical import and M1 checkpoint](docs/canonical-svg-import.md).
 
+## Editor layout
+
+The Preview header contains Fit, Reset, Top and Side controls. Layer cards contain
+selection, color, thickness, visibility and reorder controls; the base remains
+locked at the bottom. Move icons have tooltips and accessible names, and drag
+handles support Escape to cancel.
+
+Measurements separates imported page/layer dimensions from current checked 3D
+dimensions and Z intervals. Internals is collapsed by default and contains
+validation diagnostics, source object/contour counts and checked mesh statistics.
+Pending or invalid geometry never contributes current mesh statistics or exports.
+
 ## Development fixtures
 
 Representative Inkscape inputs, analytical geometry expectations and verification

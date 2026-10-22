@@ -12,7 +12,7 @@ export type PreviewState =
   | { readonly status: 'invalid'; readonly reason: 'import' | 'generation'; readonly retainedSource: boolean };
 
 export function PreviewViewport({ state, selectedLayerId = null, generationPhase = null }: { readonly state: PreviewState; readonly selectedLayerId?: string | null; readonly generationPhase?: GenerationPhase | null }) {
-  let title: string, description: string;
+  let title = '', description = '';
   let status: string = state.status;
   const checked = state.status === 'ready' && isCurrentValidGeneration(state.result, state.current) ? state.result : null;
   switch (state.status) {
@@ -33,10 +33,7 @@ export function PreviewViewport({ state, selectedLayerId = null, generationPhase
       description = (generationPhase === 'starting' ? 'Starting background processing.' : generationPhase === 'receiving' ? 'Receiving checked geometry.' : 'Checking current geometry in the background.') + ' No current preview is ready.' + (state.stalePreview ? ' Previous checked geometry is stale while generation is pending and cannot be exported.' : '');
       break;
     case 'ready':
-      if (checked) {
-        title = 'Geometry checked';
-        description = `Current geometry passed validation: ${checked.dimensionsMm.map(value => value.toLocaleString(undefined, { maximumFractionDigits: 4 })).join(' × ')} mm.`;
-      } else {
+      if (!checked) {
         status = 'invalid';
         title = 'No current checked geometry';
         description = 'The result is invalid or belongs to older artwork or settings. Generate the current coin before preview or export.';
@@ -49,12 +46,10 @@ export function PreviewViewport({ state, selectedLayerId = null, generationPhase
         : 'Review the geometry diagnostics. Invalid geometry cannot be previewed or exported.';
   }
   return <section className="preview-viewport" aria-labelledby="preview-heading" aria-busy={status === 'importing' || status === 'generating'} data-state={status}>
-    <div className="panel-heading"><h2 id="preview-heading">Preview</h2><span>Dimensions in mm</span></div>
     <CoinPreview result={checked} selectedLayerId={selectedLayerId} />
-    <div className={checked ? 'preview-summary' : 'preview-placeholder'} role="status" aria-live="polite">
-      {!checked && <div className="preview-symbol" aria-hidden="true">◎</div>}
+    {!checked && <div className="preview-placeholder" role="status" aria-live="polite">
+      <div className="preview-symbol" aria-hidden="true">◎</div>
       <h3>{title}</h3><p>{description}</p>
-    </div>
-    <p className="preview-caption">Preview shading and selection outlines are display aids. Dimensions and layer colors come from checked geometry. Export is available only for current checked geometry.</p>
+    </div>}
   </section>;
 }

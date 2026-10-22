@@ -72,7 +72,7 @@ test('imported starts generation; newest failed candidate beats older success an
   vi.mocked(readLocalCoin).mockResolvedValueOnce(imported);
   await select('retained.svg');
   await act(async () => { await new Promise(resolve => setTimeout(resolve, 10)); });
-  expect(container.querySelector('[data-state="ready"]')?.textContent).toContain('Geometry checked');
+  expect(container.querySelector('.diagnostics-panel')?.textContent).toContain('Geometry checked');
   let finishOld!: (result: CoinImportResult) => void;
   vi.mocked(readLocalCoin).mockReturnValueOnce(new Promise(resolve => { finishOld = resolve; }));
   await select('slow.svg');
@@ -83,10 +83,10 @@ test('imported starts generation; newest failed candidate beats older success an
   await act(async () => finishOld({ ...imported, coin: { ...coin, source: { ...coin.source, fileName: 'stale.svg' } } }));
   expect(container.querySelector('[role="alert"]')?.textContent).toContain('Candidate is empty.');
   expect(container.querySelector('[role="alert"]')?.textContent).not.toContain('Retained artwork warning.');
-  expect(container.querySelector('.layer-panel')?.textContent).toContain('Retained artwork warning.');
+  expect(container.querySelector('.diagnostics-panel')?.textContent).toContain('Retained artwork warning.');
   expect(container.textContent).toContain('retained.svg');
   expect(container.textContent).not.toContain('stale.svg');
-  expect(container.querySelector('[data-state="ready"]')?.textContent).toContain('Geometry checked');
+  expect(container.querySelector('.diagnostics-panel')?.textContent).toContain('Geometry checked');
   expect(container.querySelector('.dimension-summary')?.textContent).toContain('retained loaded SVG');
   expect([...container.querySelectorAll<HTMLButtonElement>('.export-controls button')].map(b => b.disabled)).toEqual([false, false]);
 });
@@ -108,7 +108,7 @@ test('preview states pass only checked current geometry to the separately tested
   const current = { importId: coin.source.importId, settingsRevision: 0 };
   const cases: readonly [PreviewState, string, string][] = [
     [{ status: 'generating' }, 'generating', 'Generating coin'],
-    [{ status: 'ready', result, current }, 'ready', 'Geometry checked'],
+    [{ status: 'ready', result, current }, 'ready', ''],
     [{ status: 'ready', result, current: { ...current, settingsRevision: 1 } }, 'invalid', 'No current checked geometry'],
     [{ status: 'ready', result, current: { ...current, importId: 'replaced' } }, 'invalid', 'No current checked geometry'],
     [{ status: 'ready', result: { status: 'invalid', schemaVersion: 1, diagnostics: [], input: current }, current }, 'invalid', 'No current checked geometry'],
@@ -165,13 +165,13 @@ test('store integration visibly gates former checked geometry while pending and 
   });
   expect(container.querySelector('[data-state="generating"]')?.textContent).toContain('No current preview is ready');
   await act(async () => jobs[0].finish(generateCoin(jobs[0].request.coin, jobs[0].request.settings, polygonClippingKernel, earcutTriangulationKernel)));
-  expect(container.querySelector('[data-state="ready"]')?.textContent).toContain('10 × 10 × 1.6 mm');
+  expect(container.querySelector('.diagnostics-panel')?.textContent).toContain('10 × 10 × 1.6 mm');
   await act(async () => store.getState().setThickness('base', 0));
   expect(container.querySelector('[data-state="generating"]')?.textContent).toContain('Previous checked geometry is stale');
   expect([...container.querySelectorAll<HTMLButtonElement>('.export-controls button')].every(button => button.disabled)).toBe(true);
   await act(async () => jobs[1].finish(generateCoin(jobs[1].request.coin, jobs[1].request.settings, polygonClippingKernel, earcutTriangulationKernel)));
   expect(container.querySelector('[data-state="invalid"]')?.textContent).toContain('Coin geometry needs attention');
-  expect(container.querySelector('[aria-label="Geometry diagnostics"]')?.textContent).toContain('SETTINGS_INVALID');
+  expect(container.querySelector('.diagnostics-panel')?.textContent).toContain('SETTINGS_INVALID');
   expect(container.textContent).not.toContain('Geometry checked');
   expect(container.textContent).not.toContain('Previous checked geometry is stale');
 });

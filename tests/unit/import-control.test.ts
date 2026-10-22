@@ -103,14 +103,17 @@ test('accepted preflight warnings are shown as warnings and never a replacement 
   expect(container.textContent).not.toContain('failed');
 });
 
-test('inspector renders canonical metadata and XY metrics as escaped text', async () => {
+test('measurements contains canonical metadata and XY metrics while layers stays compact', async () => {
   const input=await render();
   vi.mocked(readLocalCoin).mockResolvedValue(loaded('metrics.svg'));
   await select(input,new File(['source'],'metrics.svg'));
-  const inspector=container.querySelector('.inspector')!;
+  const layers=container.querySelector('.inspector')!;
+  expect(layers.querySelector('details,.tier-interval,.source-summary')).toBeNull();
+  expect(layers.textContent).not.toContain('40 × 30 mm');
+  const inspector=container.querySelector('.dimension-summary')!;
   expect(inspector.textContent).toContain('40 × 30 mm');
   expect(inspector.textContent).toContain('コイン <script> layer');
-  expect(inspector.textContent).toContain('Base · locked · always visible');
+  expect(layers.textContent).toContain('Base, locked, always visible');
   expect(inspector.textContent).toContain('1, 2, 11, 12');
   expect(inspector.textContent).toContain('10 × 10');
   expect(inspector.textContent).toContain('100');

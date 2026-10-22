@@ -42,6 +42,9 @@ function lastScene() { return mock.scene.mock.lastCall![0] as { result: unknown;
 test('checked results and view commands flow through retained canvas; selection never commits a setting', async () => {
   const store = await ready(), canvas = container.querySelector('canvas');
   expect(canvas).not.toBeNull();
+  expect(container.querySelector('.preview-heading .view-controls')).not.toBeNull();
+  expect(container.querySelector('.preview-viewport')?.textContent).not.toMatch(/Geometry checked|Dimensions in mm|Preview shading/);
+  expect(container.querySelector<HTMLDetailsElement>('.diagnostics-panel')?.open).toBe(false);
   const result = selectCurrentGeneration(store.getState());
   const revision = store.getState().settings!.revision;
   await act(async () => store.getState().selectLayer('base'));
@@ -49,7 +52,7 @@ test('checked results and view commands flow through retained canvas; selection 
   expect(selectCurrentGeneration(store.getState())).toBe(result);
   expect(store.getState().settings!.revision).toBe(revision);
   for (const [label, preset] of [['Top view', 'top'], ['Side view', 'side'], ['Fit coin', 'fit'], ['Reset view', 'reset']]) {
-    await act(async () => [...container.querySelectorAll('button')].find(b => b.textContent === label)!.click());
+    await act(async () => [...container.querySelectorAll('button')].find(b => b.getAttribute('aria-label') === label)!.click());
     expect(lastScene().command.preset).toBe(preset);
   }
   await act(async () => store.getState().setColor('base', '#123456'));
@@ -115,11 +118,11 @@ test('background failure and retry stay usable with a failed preview and cannot 
   fail = true;
   await act(async () => store.getState().setThickness('base', 2.7));
   expect(container.textContent).toContain('3D preview is unavailable');
-  const diagnostics = container.querySelector('[aria-label="Geometry diagnostics"]')!;
+  const diagnostics = container.querySelector('.diagnostics-panel')!;
   expect(diagnostics.textContent).toContain('GENERATION_WORKER_FAILED');
   expect(diagnostics.textContent).toContain('Current geometry is invalid');
   expect(container.querySelector('.preview-summary')).toBeNull();
-  expect(container.querySelector('.tier-interval')?.textContent).toContain('unavailable');
+  expect(container.querySelector('.internal-metrics')?.textContent).not.toContain('Unified mesh');
   expect(selectCurrentGeneration(store.getState())).toBeNull();
   expect([...container.querySelectorAll('button')].filter(button => button.textContent?.startsWith('Export')).every(button => button.disabled)).toBe(true);
   const revision = store.getState().settings!.revision, token = store.getState().generationToken;

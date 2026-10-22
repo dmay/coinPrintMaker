@@ -1,15 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useStore } from 'zustand';
 import type { EditorStore } from '../state/editorStore';
-import { selectCurrentGeneration } from '../state/editorStore';
 import { LayerRow } from './LayerRow';
 
-function format(value: number): string { return value.toLocaleString(undefined, { maximumFractionDigits: 4 }); }
 interface Drag { readonly layerId: string; readonly pointerId: number; readonly targetIndex: number; readonly clientY: number }
 export function LayerPanel({ store }: { readonly store: EditorStore }) {
   const state = useStore(store);
   const coin = state.importState.coin, settings = state.settings;
-  const current = selectCurrentGeneration(state);
   const disabled = state.importState.pendingFileName !== null;
   const list = useRef<HTMLOListElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
@@ -62,14 +59,7 @@ export function LayerPanel({ store }: { readonly store: EditorStore }) {
   return <aside className="layer-panel inspector" aria-labelledby="layers-heading">
     <div className="panel-heading"><h2 id="layers-heading">Layers</h2><span>{coin ? coin.layers.length : 0}</span></div>
     {coin && settings ? <>
-      <div className="source-summary"><h3>Imported layers</h3>
-        <p>Page: {format(coin.physicalPageMm[0])} &times; {format(coin.physicalPageMm[1])} mm ({coin.sizeOrigin === 'explicit' ? 'declared size' : 'inferred size'}).</p>
-        <p>Coordinates: millimeters, Y up.</p>
-        <p>{disabled ? 'Checking replacement artwork. Editing is paused.' : current ? `Current checked height: ${format(current.dimensionsMm[2])} mm.` : state.generationStatus === 'pending' ? 'Checking edited geometry. Current height and Z are pending.' : 'Geometry needs attention. Current height and Z are unavailable.'}</p>
-      </div>
-      <p className="layer-order">Printing order, top to bottom</p>
-      <p className="reorder-help">Artwork extends straight down through lower enabled layers to the base. This can fill holes, enlarge the outline, or create separate pieces.</p>
-      <p className="reorder-help" id="reorder-help">Drag a raised tier by its handle, or use Move toward base / Move toward top. Drag to the desired row and release; Escape cancels. The base stays at the bottom.</p>
+      <p className="sr-only" id="reorder-help">Drag a raised tier to reorder. Escape cancels. The base stays at the bottom.</p>
       <p className="sr-only" role="status" aria-live="polite">{announcement}</p>
       <ol className="layer-list" ref={list}>{displayLayers.map(setting => {
         const layer = coin.layers.find(item => item.id === setting.layerId)!;
@@ -77,7 +67,6 @@ export function LayerPanel({ store }: { readonly store: EditorStore }) {
         const isBase = setting.role === 'base';
         return <li key={`${coin.source.importId}:${layer.id}`} data-layer-id={layer.id} data-drop-target={dropIndex === raisedIndex && !isBase}>
           <LayerRow layer={layer} settings={setting} selected={state.selectedLayerId === layer.id} disabled={disabled}
-            tier={current?.activeTiers.find(tier => tier.layerId === layer.id)}
             selectRef={node => { if (node) buttons.current.set(layer.id, node); else buttons.current.delete(layer.id); }}
             onSelect={() => state.selectLayer(layer.id)} onThickness={value => state.setThickness(layer.id, value)}
             onColor={value => state.setColor(layer.id, value)} onEnabled={enabled => state.setEnabled(layer.id, enabled)}>
@@ -102,14 +91,13 @@ export function LayerPanel({ store }: { readonly store: EditorStore }) {
                   if (!active || active.pointerId !== event.pointerId) return;
                   cancelDrag(); move(active.layerId, active.targetIndex);
                 }} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag}
-                onKeyDown={event => { if (event.key === 'Escape') { cancelDrag(); setAnnouncement(`Move canceled for ${layer.name}.`); } }}>&#x2195; Drag</button>
-              <button type="button" disabled={disabled || raisedIndex === 0} aria-label={`Move ${layer.name} toward base`} onClick={() => move(layer.id, raisedIndex - 1)}>&#x2193; Toward base</button>
-              <button type="button" disabled={disabled || raisedIndex === artwork.length - 1} aria-label={`Move ${layer.name} toward top`} onClick={() => move(layer.id, raisedIndex + 1)}>&#x2191; Toward top</button>
+                onKeyDown={event => { if (event.key === 'Escape') { cancelDrag(); setAnnouncement(`Move canceled for ${layer.name}.`); } }} title={`Drag ${layer.name} to reorder`}><span aria-hidden="true">=</span></button>
+              <button type="button" disabled={disabled || raisedIndex === artwork.length - 1} aria-label={`Move ${layer.name} toward top`} onClick={() => move(layer.id, raisedIndex + 1)} title={`Move ${layer.name} toward top`}><span aria-hidden="true">&#x21C8;</span></button>
+              <button type="button" disabled={disabled || raisedIndex === 0} aria-label={`Move ${layer.name} toward base`} onClick={() => move(layer.id, raisedIndex - 1)} title={`Move ${layer.name} toward base`}><span aria-hidden="true">&#x21CA;</span></button>
             </div>}
           </LayerRow>
         </li>;
       })}</ol>
-      {coin.diagnostics.length > 0 && <p className="retained-warnings">Current coin warnings: {coin.diagnostics.map(d => d.message).join(' ')}</p>}
-    </> : <div className="empty-layers"><h3>No layers yet</h3><p>Open an SVG to see named layers and their dimensions here. The first printing layer becomes the locked base.</p></div>}
+    </> : <div className="empty-layers">No layers yet</div>}
   </aside>;
 }
