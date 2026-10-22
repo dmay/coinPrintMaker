@@ -33,8 +33,7 @@ export function LayerPanel({ store }: { readonly store: EditorStore }) {
       const edge = 64;
       const delta = active.clientY < edge ? -12 : active.clientY > window.innerHeight - edge ? 12 : 0;
       if (delta) window.scrollBy(0, delta);
-      const others = [...list.current.children].slice(1).filter(row => row.getAttribute('data-layer-id') !== active.layerId);
-      const targetIndex = others.filter(row => active.clientY > row.getBoundingClientRect().top + row.getBoundingClientRect().height / 2).length;
+      const targetIndex = targetIndexAt(active.clientY, active.layerId);
       if (active.targetIndex !== targetIndex) { drag.current = { ...active, targetIndex }; setDropIndex(targetIndex); }
       frame = requestAnimationFrame(tick);
     }
@@ -42,6 +41,14 @@ export function LayerPanel({ store }: { readonly store: EditorStore }) {
     return () => cancelAnimationFrame(frame);
   }, [dragging]);
   const artwork = settings?.layers.slice(1) ?? [];
+  const displayLayers = settings ? [...settings.layers.slice(1).reverse(), settings.layers[0]] : [];
+  function targetIndexAt(clientY: number, layerId: string) {
+    if (!list.current) return 0;
+    const others = [...list.current.children].slice(0, artwork.length)
+      .filter(row => row.getAttribute('data-layer-id') !== layerId);
+    const visualIndex = others.filter(row => clientY > row.getBoundingClientRect().top + row.getBoundingClientRect().height / 2).length;
+    return artwork.length - 1 - visualIndex;
+  }
   function move(layerId: string, targetIndex: number) {
     if (!coin || disabled) return;
     const ids = artwork.map(layer => layer.layerId), oldIndex = ids.indexOf(layerId);
@@ -56,24 +63,25 @@ export function LayerPanel({ store }: { readonly store: EditorStore }) {
     <div className="panel-heading"><h2 id="layers-heading">Layers</h2><span>{coin ? coin.layers.length : 0}</span></div>
     {coin && settings ? <>
       <div className="source-summary"><h3>Imported layers</h3>
-        <p>Page: {format(coin.physicalPageMm[0])} × {format(coin.physicalPageMm[1])} mm ({coin.sizeOrigin === 'explicit' ? 'declared size' : 'inferred size'}).</p>
+        <p>Page: {format(coin.physicalPageMm[0])} &times; {format(coin.physicalPageMm[1])} mm ({coin.sizeOrigin === 'explicit' ? 'declared size' : 'inferred size'}).</p>
         <p>Coordinates: millimeters, Y up.</p>
         <p>{disabled ? 'Checking replacement artwork. Editing is paused.' : current ? `Current checked height: ${format(current.dimensionsMm[2])} mm.` : state.generationStatus === 'pending' ? 'Checking edited geometry. Current height and Z are pending.' : 'Geometry needs attention. Current height and Z are unavailable.'}</p>
       </div>
-      <p className="layer-order">Printing order, bottom to top</p>
+      <p className="layer-order">Printing order, top to bottom</p>
       <p className="reorder-help">Artwork extends straight down through lower enabled layers to the base. This can fill holes, enlarge the outline, or create separate pieces.</p>
-      <p className="reorder-help" id="reorder-help">Drag a raised tier by its handle, or use Move toward base / Move toward top. Drag to the desired row and release; Escape cancels. The base stays first.</p>
+      <p className="reorder-help" id="reorder-help">Drag a raised tier by its handle, or use Move toward base / Move toward top. Drag to the desired row and release; Escape cancels. The base stays at the bottom.</p>
       <p className="sr-only" role="status" aria-live="polite">{announcement}</p>
-      <ol className="layer-list" ref={list}>{settings.layers.map((setting, index) => {
+      <ol className="layer-list" ref={list}>{displayLayers.map(setting => {
         const layer = coin.layers.find(item => item.id === setting.layerId)!;
-        const raisedIndex = index - 1;
-        return <li key={`${coin.source.importId}:${layer.id}`} data-layer-id={layer.id} data-drop-target={dropIndex === raisedIndex && index > 0}>
+        const raisedIndex = artwork.findIndex(item => item.layerId === setting.layerId);
+        const isBase = setting.role === 'base';
+        return <li key={`${coin.source.importId}:${layer.id}`} data-layer-id={layer.id} data-drop-target={dropIndex === raisedIndex && !isBase}>
           <LayerRow layer={layer} settings={setting} selected={state.selectedLayerId === layer.id} disabled={disabled}
             tier={current?.activeTiers.find(tier => tier.layerId === layer.id)}
             selectRef={node => { if (node) buttons.current.set(layer.id, node); else buttons.current.delete(layer.id); }}
             onSelect={() => state.selectLayer(layer.id)} onThickness={value => state.setThickness(layer.id, value)}
             onColor={value => state.setColor(layer.id, value)} onEnabled={enabled => state.setEnabled(layer.id, enabled)}>
-            {index > 0 && <div className="reorder-controls">
+            {!isBase && <div className="reorder-controls">
               <button type="button" className="drag-handle" disabled={disabled || artwork.length < 2} aria-label={`Drag ${layer.name} to reorder`} aria-describedby="reorder-help"
                 onPointerDown={event => {
                   if (event.button !== 0 || !event.isPrimary) return;
@@ -86,8 +94,7 @@ export function LayerPanel({ store }: { readonly store: EditorStore }) {
                 onPointerMove={event => {
                   const active = drag.current;
                   if (!active || active.pointerId !== event.pointerId) return;
-                  const others = [...list.current!.children].slice(1).filter(row => row.getAttribute('data-layer-id') !== active.layerId);
-                  const targetIndex = others.filter(row => event.clientY > row.getBoundingClientRect().top + row.getBoundingClientRect().height / 2).length;
+                  const targetIndex = targetIndexAt(event.clientY, active.layerId);
                   drag.current = { ...active, targetIndex, clientY: event.clientY }; setDropIndex(targetIndex);
                 }}
                 onPointerUp={event => {
@@ -95,9 +102,9 @@ export function LayerPanel({ store }: { readonly store: EditorStore }) {
                   if (!active || active.pointerId !== event.pointerId) return;
                   cancelDrag(); move(active.layerId, active.targetIndex);
                 }} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag}
-                onKeyDown={event => { if (event.key === 'Escape') { cancelDrag(); setAnnouncement(`Move canceled for ${layer.name}.`); } }}>↕ Drag</button>
-              <button type="button" disabled={disabled || raisedIndex === 0} aria-label={`Move ${layer.name} toward base`} onClick={() => move(layer.id, raisedIndex - 1)}>↑ Toward base</button>
-              <button type="button" disabled={disabled || raisedIndex === artwork.length - 1} aria-label={`Move ${layer.name} toward top`} onClick={() => move(layer.id, raisedIndex + 1)}>↓ Toward top</button>
+                onKeyDown={event => { if (event.key === 'Escape') { cancelDrag(); setAnnouncement(`Move canceled for ${layer.name}.`); } }}>&#x2195; Drag</button>
+              <button type="button" disabled={disabled || raisedIndex === 0} aria-label={`Move ${layer.name} toward base`} onClick={() => move(layer.id, raisedIndex - 1)}>&#x2193; Toward base</button>
+              <button type="button" disabled={disabled || raisedIndex === artwork.length - 1} aria-label={`Move ${layer.name} toward top`} onClick={() => move(layer.id, raisedIndex + 1)}>&#x2191; Toward top</button>
             </div>}
           </LayerRow>
         </li>;
