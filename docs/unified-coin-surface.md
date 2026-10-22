@@ -5,10 +5,8 @@ Current generation extends every active footprint down through all lower tiers,
 including the base, and permits detached closed components. Source SVGs remain
 immutable. See [automatic downward support](support-validation.md).
 
-DIG-22 adds complete [checked headless generation](headless-generation.md) and the
-[M2 checkpoint](m2-geometry-checkpoint.md). Pending-generation notes below record
-prior stage boundaries; construction remains distinct from final current-revision
-validation. M2 operator merge is still pending.
+DIG-22 adds complete [checked headless generation](headless-generation.md).
+Construction remains distinct from final current-revision validation.
 
 `buildUnifiedMesh(current ImportedCoin, current CoinSettings, PolygonKernel,
 TriangulationKernel)` resolves current settings and validates immediate-lower
@@ -157,4 +155,3 @@ documents or connected document sessions); they are not represented as read.
 This pure stage has no production UI runtime import, so no new browser smoke is
 claimed. Root Pages output remains synchronized through the guarded normal build.
 No new UI, exporter, serializer, slicer or physical-print acceptance follows.
-Operator review/merge remains independent; DIG-21 stays In Progress pending it.

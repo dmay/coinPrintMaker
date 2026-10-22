@@ -677,8 +677,7 @@ No M0 fixture/report/sample/spike changes, production UI/scene integration, unif
 coin surface, full arbitrary-mesh validator, exporter or new slicer/physical-print
 acceptance follows. Library baseline documents remain unavailable and are not
 represented as inspected. Root Pages artifacts stay synchronized via the normal
-guarded build. Operator merge remains independent; leave DIG-20 unfinished until
-that merge is verified.
+guarded build.
 
 ## D-20 — Exact unified exterior with indexed boundary subdivision
 
@@ -745,11 +744,13 @@ connected base/unified exterior, supported raised islands, through holes and
 pinch/cavity/internal-boundary rejection. Point-touch terraces/binary mismatches
 remain explicit limitations.
 
-[M2 checkpoint](m2-geometry-checkpoint.md) maps criteria/tests, all six issue/PR
-references and native bundled observations. Observed 168-633 ms flags D-08/DIG-27
-profiling; no editor/Worker work starts. DIG-22/M2 remain unfinished until operator
-merge verification. No universal geometry/performance, new export/slicer or
-physical-print claim; absent Library baselines are not represented as read.
+The checked generation contract and supported geometry limits are documented in
+[headless generation](headless-generation.md),
+[positioned layer parts](positioned-layer-meshes.md) and
+[unified surface construction](unified-coin-surface.md). Native M2 timing
+observations (168-633 ms) informed D-08/DIG-27 profiling. These bounded results do
+not claim universal geometry/performance, new export/slicer or physical-print
+acceptance.
 
 ## D-22 — Bounded editor shell before revision and scene integration
 
@@ -902,7 +903,7 @@ context. A diagnostic action only selects an existing stable layer. Show width,
 depth, cumulative height in mm, checked mesh volume in mm³, and a bounded-height
 scrollable table of active-layer Z intervals. Both exporters remain unavailable
 and disabled even when engine geometry is valid. See [current diagnostics and
-evidence](current-diagnostics.md) and [pre-merge M3 checkpoint](m3-editor-checkpoint.md).
+evidence](current-diagnostics.md).
 
 ## D-29 — Validate float32 STL at the serialization boundary
 

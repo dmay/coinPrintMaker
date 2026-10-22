@@ -157,5 +157,5 @@ acceptance through floating-point affine normalization is not promised.
 Final local checks: app/core/test typechecking, npm test (459 Vitest +22 retained
 Node cases), build:pages, check:pages and whitespace checks pass. The root index
 and generated JavaScript are synchronized; no M0 spike/fixture/report/sample
-changes are part of this issue. Operator review/merge and final-head CI remain
-the PR boundary; DIG-18 stays unfinished until operator merge.
+changes are part of this issue. Operator review/merge and final-head CI were the
+original PR boundary.

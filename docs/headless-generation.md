@@ -123,10 +123,8 @@ production generation: nine valid, outside-rim/over-lower-hole invalid.
 D-10 artwork retains exact XY [4,24]-[10,30], Z [1.6,2], area 36 mm² and volume
 14.4 mm³, with no repeated transform/Y inversion/recentering.
 
-See [M2 checkpoint](m2-geometry-checkpoint.md) for criterion mapping, native
-bundled evidence and all six issue/PR references. The supported-L 3x3 corner-fill
-terrace still rejects because the planar service requires separated terrace
-polygons; narrower 2x3 passes. Contact/grid/binary mismatch and bounded work or
+The supported-L 3x3 corner-fill terrace still rejects because the planar service
+requires separated terrace polygons; narrower 2x3 passes. Contact/grid/binary mismatch and bounded work or
 ambiguous containment reject, with no policy relaxation. This is a bounded
 mesh/prismatic-source validator, not universal geometry or repair, editor
 responsiveness, new export/slicer or physical-print acceptance. Future serializers
