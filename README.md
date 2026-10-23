@@ -7,6 +7,9 @@ STL and layered 3MF downloads using the imported SVG filename. Successful import
 does not claim valid geometry. See the [production layered 3MF writer](docs/layered-3mf-export.md) and
 [binary STL export](docs/binary-stl-export.md).
 
+New to the codebase? Start with the [new-SDE whiteboard walkthrough](docs/sde-walkthrough.md)
+for the module map, geometry flow and revision/export invariants.
+
 ## Development and publication
 
 Use Node.js 24 and Python 3.14 (the existing independent 3MF ZIP/XML audit uses
@@ -58,3 +61,4 @@ Pending or invalid geometry never contributes current mesh statistics or exports
 
 Representative Inkscape inputs, analytical geometry expectations and verification
 instructions: [fixtures/README.md](fixtures/README.md).
+
